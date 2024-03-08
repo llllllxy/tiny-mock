@@ -1,0 +1,92 @@
+# 项目相关配置
+tinymock:
+  # 名称
+  name: tiny-mock
+  # 版本
+  version: 1.0.0
+  # 数据库类型
+  db-type: mysql
+  # 会话控制(时间类的单位都是秒)
+  tenant-auth-timeout: 1800
+
+server:
+  port: 9019
+  servlet:
+    # 设置编码
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+spring:
+  application:
+    name: tiny-mock
+  mvc:
+    throw-exception-if-no-handler-found: true
+  # 设置上传文件大小
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 200MB
+  # 设置jackson的默认时区和默认格式
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/tiny-mock?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=true
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123654
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 15
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  # Redis配置
+  redis:
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: 123654 # Redis服务器连接密码（默认为空）
+    database: 0 #Redis数据库索引（默认为0）
+    timeout: 10s # 连接超时时间
+    lettuce:
+      pool:
+        max-active: 12 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接
+        min-idle: 0 # 连接池中的最小空闲连接
+        max-wait: 5s # 连接池最大阻塞等待时间（使用负值表示没有限制）
+
+# MyBatis-plus配置 映射xml文件
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  # 起别名
+  type-aliases-package: org.tinycloud.tinymock.**.entity
+  # 去除打印
+  global-config:
+    banner: false
+  # 驼峰命名匹配
+  configuration:
+    map-underscore-to-camel-case: true
+    # 设置在控制台打印sql语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    org.tinycloud.tinymock: info
+    org.springframework: warn
+
+# springboot异步线程配置
+async:
+  executor:
+    thread:
+      core-pool-size: 5 #配置核心线程数
+      keep-alive-seconds: 60 #设置线程活跃时间（秒）
+      max-pool-size: 10 #配置最大线程数
+      name-prefix: async-service- #配置线程池中的线程的名称前缀
+      queue-capacity: 100 #配置队列大小
