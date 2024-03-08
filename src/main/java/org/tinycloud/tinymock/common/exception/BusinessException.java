@@ -5,7 +5,7 @@ import org.tinycloud.tinymock.common.enums.CommonCode;
 
 /**
  * <p>
- * 统一业务异常封装
+ *    统一业务异常封装
  * </p>
  *
  * @author liuxingyu01
