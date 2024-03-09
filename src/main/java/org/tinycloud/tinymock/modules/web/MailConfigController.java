@@ -10,7 +10,7 @@ import org.tinycloud.tinymock.modules.service.MailConfigService;
 
 
 @RestController
-@RequestMapping("/admin/mailconfig")
+@RequestMapping("/mailconfig")
 public class MailConfigController {
 
     @Autowired

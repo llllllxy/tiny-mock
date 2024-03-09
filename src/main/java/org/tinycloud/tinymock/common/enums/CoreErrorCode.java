@@ -1,11 +1,11 @@
 package org.tinycloud.tinymock.common.enums;
 
 public enum CoreErrorCode {
-    USERNAME_OR_PASSWORD_MISMATCH(1001, "用户名或密码错误！"),
-    USER_IS_DISABLED(1002, "用户已被停用！"),
-    THE_ORIGINAL_PASSWORD_IS_WRONG(1003, "原始密码错误，请重新输入后再试！"),
-    THE_NEWPASSWORD_ENTERED_TWICE_DOES_NOT_MATCH(1004, "两次输入的新密码不一致！"),
-
+    MOCK_ADDRESS_RESOLUTION_ERROR(1001, "Mock地址解析错误！"),
+    MOCK_PROJECT_PATH_IS_NOT_EXIST(1002, "Mock项目路径不存在！"),
+    MOCK_URL_IS_NOT_EXIST(1003, "Mock地址不存在！"),
+    MOCK_METHOD_IS_NOT_MATCHED(1004, "HTTP Method不匹配！"),
+    MOCKJS_PARSING_ERROR(1005, "Mock.js解析错误！"),
     ;
 
     private Integer code;
