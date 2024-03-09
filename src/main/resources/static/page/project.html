@@ -1,5 +1,148 @@
+<style>
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .05)
+    }
+
+    .panel-body {
+        padding: 10px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .panel-content {
+        margin-top: 12px;
+    }
+
+    .label {
+        display: inline;
+        padding: .5em;
+        font-size: 100%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+        cursor: pointer;
+    }
+
+    .layui-red {
+        color: red
+    }
+
+    .main_btn > p {
+        height: 40px;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .item {
+        margin-bottom: 12px;
+    }
+
+    .right-bottom-btn {
+        position: fixed;
+        bottom: 50px;
+        right: 50px;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        color: #FFF;
+        z-index: 999;
+        background: #5E7CE0;
+        cursor: pointer;
+        border-radius: 30px;
+        box-shadow: 0px 0px 20px #000;
+    }
+</style>
+
 <div class="layuimini-container layuimini-page-anim">
     <div class="layuimini-main">
-        哈哈哈哈
+
+        <div id="content" class="layui-row layui-col-space15" style="margin: 0">
+
+        </div>
+
+
     </div>
+
+
 </div>
+
+<!-- 右侧悬浮按钮 -->
+<div class="right-bottom-btn" id="addProject">
+    <i class="layui-icon layui-icon-addition" style="color: white; font-size: 30px; font-weight: bold"></i>
+</div>
+
+
+<script>
+    layui.use(['form', 'util'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            util = layui.util;
+
+        let projectList = [];
+
+
+        let content = "";
+        for (let i = 0; i < 10; i++) {
+            content = content + '<div class="layui-col-md3">'
+                + '<div class="panel layui-bg-number">'
+                + '<div class="panel-body">'
+                + '<div class="panel-title">'
+                + '<span class="label pull-right layui-bg-green" into-id="' + i + '">进入项目</span>'
+                + '<h2>项目1</h2>'
+                + '</div>'
+                + '<div class="panel-content">'
+                + '<div class="text item"><span>路径：/test</span></div>'
+                + '<div class="text item"><span>描述：xxxxxxxxxxx</span></div>'
+                + '<div class="text item">'
+                + '<span>操作：</span>'
+                + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + i + '">编辑</span>'
+                + '<span class="layui-badge" style="margin-left: 5px;cursor: pointer;" del-id="' + i + '">删除</span>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
+        }
+
+        $("#content").append(content);
+
+
+        $('body').on('click', '[into-id]', function () {
+            var id = $(this).attr('into-id');
+            layer.msg("进入了 " + id);
+        });
+
+        $('body').on('click', '[edit-id]', function () {
+            var id = $(this).attr('edit-id');
+            layer.msg("编辑了 " + id);
+        });
+
+        $('body').on('click', '[del-id]', function () {
+            var id = $(this).attr('del-id');
+            layer.msg("删除了 " + id);
+        });
+    });
+</script>
