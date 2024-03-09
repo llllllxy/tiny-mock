@@ -151,19 +151,19 @@
                 url: '/auth/logout',
                 success: function (res) {
                     if (res.code === 0) {
-                        sessionStorage.removeItem('tenant_token');
-                        sessionStorage.removeItem('tenant_username');
+                        sessionStorage.removeItem('token');
+                        sessionStorage.removeItem('username');
                         layer.msg('退出登录成功！', {
                             time: 1000
                         }, function () {
-                            window.location = '/page/tenant/login.html';
+                            window.location = '/page/login.html';
                         });
                     }
                 }
             });
         });
 
-        var username = sessionStorage.getItem('tenant_username');
+        var username = sessionStorage.getItem('username');
         if (username) {
             $('#username').text(username);
         } else {

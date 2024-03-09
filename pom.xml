@@ -86,6 +86,12 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>1.76</version>
         </dependency>
+        <!-- UserAgent 获取浏览器信息-->
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>1.21</version>
+        </dependency>
     </dependencies>
 
     <build>

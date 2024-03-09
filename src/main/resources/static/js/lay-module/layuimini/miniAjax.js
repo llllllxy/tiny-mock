@@ -8,9 +8,9 @@ layui.define(["jquery"], function (exports) {
     var $ = layui.jquery;
 
     /**
-     * 定义后端服务的地址（绝对地址，本地测试的时候才会用到这个）
+     * 定义后端服务的地址（绝对地址，前后端分离的时候会用到这个）
      */
-    var baseURL = "https://www.fastmock.site/mock/fa102d30f0d7b9e2fe491b58f4e180ff";
+    var baseURL = "";
 
     /**
      * 定义后端服务的地址（反向代理的地址）
@@ -54,7 +54,7 @@ layui.define(["jquery"], function (exports) {
             // 只有 HTTP 状态码为 200（包括 200-299 范围内）的 Ajax 请求才会触发 success 回调函数
             // 其他状态码将触发 error 回调函数
             success: function (res, textStatus) {
-                if (res.code === 401 || res.code === '401') {
+                if (res.code === 3001 || res.code === '3001') {
                     layer.alert('会话已过期，请重新登录', function (index) {
                         layer.close(index);
                         window.location.href = "/page/login.html";

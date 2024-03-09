@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.tinycloud.tinymock.common.config.interceptor.AccessLimitInterceptor;
+import org.tinycloud.tinymock.common.config.interceptor.TenantAuthInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private AccessLimitInterceptor accessLimitInterceptor;
 
+    @Autowired
+    private TenantAuthInterceptor tenantAuthInterceptor;
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        List<String> tenantIncludePaths = new ArrayList<String>() {{
+        List<String> tenantExcludePaths = new ArrayList<String>() {{
             // 开放登录接口
+            add("/");
             add("/auth/login");
             add("/auth/getCode");
+            add("/auth/register");
 
             // 开放前端静态资源和静态页面
             add("/static/**");
@@ -50,6 +56,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 注册限流拦截器
         registry.addInterceptor(accessLimitInterceptor)
                 .addPathPatterns("/**");
+
+        // 注册会话拦截器
+        registry.addInterceptor(tenantAuthInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(tenantExcludePaths);
     }
 
     /**
