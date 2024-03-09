@@ -128,7 +128,8 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-form"></i>
                         </div>
-                        <input type="text" name="tenantName" value="" lay-verify="required|tenantName" placeholder="组织团队名称"
+                        <input type="text" name="tenantName" value="" lay-verify="required|tenantName"
+                               placeholder="组织团队名称"
                                lay-reqtext="请填写组织团队名称" autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -149,7 +150,8 @@
                             <i class="layui-icon layui-icon-password"></i>
                         </div>
                         <input type="password" name="confirmPassword" value="" lay-verify="required|confirmPassword"
-                               placeholder="确认密码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                               placeholder="确认密码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input"
+                               lay-affix="eye">
                     </div>
                 </div>
 
@@ -167,7 +169,8 @@
                         </div>
                         <div class="layui-col-xs5">
                             <div style="margin-left: 11px;">
-                                <button type="button" class="layui-btn layui-btn-fluid layui-btn-primary" lay-on="sendEmail" id="sendEmail">获取验证码
+                                <button type="button" class="layui-btn layui-btn-fluid layui-btn-primary"
+                                        lay-on="sendEmail" id="sendEmail">获取验证码
                                 </button>
                             </div>
                         </div>
@@ -185,7 +188,8 @@
                 </div>
 
                 <div class="layui-form-item" style="top: 10px">
-                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="register" id="register">立即提交</button>
+                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="register" id="register">立即提交
+                    </button>
                 </div>
             </form>
         </div>
@@ -235,7 +239,7 @@
             if (isvalid) {
                 // 此处可继续书写「发送验证码」等后续逻辑
                 AjaxUtil.get({
-                    url: "/tenant/auth/sendEmail?receiveEmail=" + emailInput,
+                    url: "/auth/sendEmail?receiveEmail=" + emailInput,
                     success: function (res) {
                         if (res.code == 0) {
                             layer.msg(res.msg);
@@ -268,11 +272,9 @@
         });
 
         // 粒子线条背景
-        $(document).ready(function () {
-            $('.layui-container').particleground({
-                dotColor: '#7ec7fd',
-                lineColor: '#7ec7fd'
-            });
+        $('.layui-container').particleground({
+            dotColor: '#7ec7fd',
+            lineColor: '#7ec7fd'
         });
 
         // 进行登录操作
@@ -296,7 +298,7 @@
             data.uuid = verifyKey;
             startLoading();
             AjaxUtil.postJSON({
-                url: "/tenant/auth/register",
+                url: "/auth/register",
                 data: JSON.stringify(data),
                 success: function (res) {
                     stopLoading();
@@ -304,7 +306,7 @@
                         layer.msg('注册成功，请重新登录!', {
                             time: 1000
                         }, function () {
-                            window.location = '/page/tenant/login.html';
+                            window.location = '/page/login.html';
                         });
                     } else {
                         layer.msg(res.msg, {time: 1000});

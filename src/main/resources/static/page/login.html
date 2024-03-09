@@ -29,6 +29,14 @@
         .login-form .layui-form-item input {padding-left:36px;}
 
         .captcha-img img {border:1px solid #e6e6e6;height:36px;width:100%;}
+
+        a {
+            color: #5E7CE0;
+            text-decoration: #5E7CE0;
+        }
+        a:hover {
+            color: #7E96E6
+        }
     </style>
 </head>
 <body>
@@ -70,13 +78,17 @@
                         </div>
                         <div class="layui-col-xs5">
                             <div style="margin-left: 10px;" class="captcha-img">
-                                <img id="captcha" onclick="getCaptcha()">
+                                <img id="captcha" lay-on="getCaptcha">
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="layui-form-item" style="top: 10px">
+                <div class="layui-form-item">
+                    <a href="/page/register.html">注册账号</a>
+                    &nbsp;&nbsp;
+                    <a style="float: right;" href="/page/forget.html">忘记密码？</a>
+                </div>
+                <div class="layui-form-item">
                     <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login" id="login">登 录</button>
                 </div>
             </form>
@@ -95,9 +107,10 @@
     var verifyKey;
     var publicKey;
 
-    layui.use(['form', 'layer', 'miniAjax'], function () {
+    layui.use(['form', 'layer', 'util', 'miniAjax'], function () {
         var $ = layui.jquery,
             form = layui.form,
+            util = layui.util,
             miniAjax = layui.miniAjax,
             layer = layui.layer;
 
@@ -107,11 +120,15 @@
         }
 
         // 粒子线条背景
-        $(document).ready(function(){
-            $('.layui-container').particleground({
-                dotColor:'#7ec7fd',
-                lineColor:'#7ec7fd'
-            });
+        $('.layui-container').particleground({
+            dotColor:'#7ec7fd',
+            lineColor:'#7ec7fd'
+        });
+
+        util.on('lay-on', {
+            getCaptcha: function () {
+                getCaptcha();
+            },
         });
 
         getCaptcha();
@@ -147,7 +164,7 @@
                         layer.msg('登录成功，欢迎回来!', {
                             time: 1000
                         }, function () {
-                            window.location = '/page/tenant/index.html';
+                            window.location = '/';
                         });
                     } else {
                         layer.msg(res.msg, {time: 1000});

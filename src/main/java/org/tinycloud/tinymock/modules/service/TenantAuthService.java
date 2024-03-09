@@ -121,7 +121,7 @@ public class TenantAuthService {
         }
 
         // 构建会话token进行返回
-        String token = "tinyurl_" + UUID.randomUUID().toString().trim().replaceAll("-", "");
+        String token = "tinymock_" + UUID.randomUUID().toString().trim().replaceAll("-", "");
         LoginTenant loginTenant = BeanConvertUtils.convertTo(entity, LoginTenant::new);
         loginTenant.setToken(token);
         UserAgent userAgent = UserAgentUtils.getUserAgent(request);

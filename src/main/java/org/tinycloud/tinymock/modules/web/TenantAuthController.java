@@ -58,19 +58,19 @@ public class TenantAuthController {
 
         Map<String, String> menuItem1 = new HashMap<>();
         menuItem1.put("title", "项目管理");
-        menuItem1.put("href", "/page/project.html");
+        menuItem1.put("href", "page/project.html");
         menuItem1.put("icon", "fa fa-navicon");
         menuItem1.put("target", "_self");
 
         Map<String, String> menuItem2 = new HashMap<>();
         menuItem2.put("title", "接口管理");
-        menuItem2.put("href", "/page/mock.html");
+        menuItem2.put("href", "page/mock.html");
         menuItem2.put("icon", "fa fa-navicon");
         menuItem2.put("target", "_self");
 
         Map<String, String> menuItem3 = new HashMap<>();
         menuItem3.put("title", "数据统计");
-        menuItem3.put("href", "/page/statistic.html");
+        menuItem3.put("href", "page/statistic.html");
         menuItem3.put("icon", "fa fa-navicon");
         menuItem3.put("target", "_self");
 
