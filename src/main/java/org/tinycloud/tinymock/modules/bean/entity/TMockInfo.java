@@ -61,4 +61,7 @@ public class TMockInfo implements Serializable {
 
     @TableField("remark")
     private String remark;
+
+    @TableField("delay")
+    private Long delay;
 }

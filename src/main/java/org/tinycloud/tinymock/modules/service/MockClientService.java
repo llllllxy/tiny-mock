@@ -1,5 +1,6 @@
 package org.tinycloud.tinymock.modules.service;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,8 @@ public class MockClientService {
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     public Object mock(HttpServletRequest request) {
+        long start = System.currentTimeMillis();
+
         String method = request.getMethod();
         String requestUri = request.getRequestURI();
         log.info("MockClientService mock requestUri = {}, method= {}", requestUri, method);
@@ -111,6 +114,16 @@ public class MockClientService {
                 map = JsonUtils.readValue(jsonData, Map.class);
             }
             this.saveAccessLog(mockInfo, request);
+
+            // 模拟返回延时
+            if (Objects.nonNull(mockInfo.getDelay())) {
+                long end = System.currentTimeMillis();
+                long hasBeenConsumed = end - start;
+                if (hasBeenConsumed < mockInfo.getDelay()) {
+                    ThreadUtil.sleep(mockInfo.getDelay() - hasBeenConsumed);
+                }
+            }
+
             return map;
         } catch (ScriptException e) {
             throw new CoreException(CoreErrorCode.MOCKJS_PARSING_ERROR);
