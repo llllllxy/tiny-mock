@@ -1,0 +1,378 @@
+<style>
+    .p-info p {
+        font-size: 12px;
+        height: 24px;
+        background-color: rgba(68, 82, 213, .09411764705882353);
+        line-height: 24px;
+        border-radius: 12px;
+        position: relative;
+        padding-left: 115px;
+        margin-bottom: 10px;
+    }
+
+    .p-info p>span:first-child {
+        display: inline-block;
+        height: 24px;
+        line-height: 24px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: #4579ee;
+        color: #fff;
+        width: 100px;
+        text-align: center;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+    }
+
+    .p-info p:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div>
+            <div style="padding: 10px 10px 10px 10px;" class="layui-panel">
+                <button id="btn-back" lay-on="btnBack" class="layui-btn layui-btn-sm layui-btn-primary">
+                    <i class="layui-icon layui-icon-return"></i>返回
+                </button>
+                <div class="p-info" style="margin-top: 10px">
+                    <p>
+                        <span>项目ID</span>2209af7524129ea3443d4dc613251578
+                    </p>
+                    <p>
+                        <span>项目名称</span>测试项目
+                    </p>
+                    <p>
+                        <span>接口根地址</span><span>https://www.fastmock.site/mock/2209af7524129ea3443d4dc613251578/api</span>
+                    </p>
+                </div>
+            </div>
+            <div style="padding: 10px 10px 10px 10px;margin-top: 10px;" class="layui-panel">
+
+                <fieldset class="table-search-fieldset">
+                    <legend>搜索信息</legend>
+                    <div style="margin: 10px 10px 10px 10px">
+                        <form class="layui-form" action="" lay-filter="search-form">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">接口名称</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="mockName" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">接口地址</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="url" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <button type="submit" class="layui-btn" lay-submit lay-filter="data-search-btn">
+                                        <i class="layui-icon layui-icon-search"></i>搜 索
+                                    </button>
+                                    <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                            lay-filter="data-reset-btn">
+                                        <i class="layui-icon layui-icon-refresh"></i> 重 置
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+                <div class="layuimini-table">
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add">新增</button>
+    </div>
+</script>
+
+<script type="text/html" id="currentTableBar">
+    <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="urlStatus" value="{{= d.id }}" lay-skin="switch" lay-text="启用|停用"
+           lay-filter="urlStatusDemo" {{= d.status== 0 ? "checked" : "" }}>
+</script>
+
+<script type="text/html" id="mockjsFlagTpl">
+    {{#  if(d.mockjsFlag == '0'){ }}
+    <span class="layui-badge layui-bg-blue">是</span>
+    {{#  } else { }}
+    <span class="layui-badge layui-bg-orange">否</span>
+    {{#  } }}
+</script>
+
+<script>
+    layui.use(['form', 'util', 'table', 'miniAjax'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            table = layui.table,
+            miniAjax = layui.miniAjax,
+            util = layui.util;
+
+        util.on('lay-on', {
+            btnBack: function () {
+                window.history.back();
+            },
+        });
+
+        var currTable = table.render({
+            elem: '#currentTableId',
+            url: '/mockinfo/query',
+            method: 'post',
+            contentType: 'application/json',
+            request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
+            },
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.totalCount,
+                    "data": res.data.records
+                };
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [[
+                {field: 'id', width: '10%', title: 'ID', sort: true, align: 'center', fixed: 'left'},
+                {field: 'mockName', width: '20%', title: '接口名称'},
+                {field: 'method', width: '20%', title: '请求类型'},
+                {
+                    field: 'url', width: '10%', title: 'URL', templet: function (d) {
+                        return `<a href="javascript:;" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
+                    }
+                },
+                {field: 'delay', width: '10%', title: '返回时延', align: 'center'},
+                {field: 'createdAt', title: '创建时间', width: '10%'},
+                {field: 'mockjsFlag', title: '启用mock.js', width: '10%', align: 'center', templet: '#mockjsFlagTpl'},
+                {field: 'status', title: '状态', width: '10%', align: 'center', templet: '#switchTpl'},
+                {field: 'remark', width: '10%', title: '备注信息'},
+                {title: '操作', width: '10%', toolbar: '#currentTableBar', align: "center"}
+            ]],
+            autoSort: false,
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            // 执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+            return false;
+        });
+
+        // 监听重置操作
+        form.on('submit(data-reset-btn)', function (data) {
+            form.val("search-form", {
+                "url": '',
+                "mockName": ''
+            });
+            // 执行搜索重载
+            currTable.reload({
+                page: {
+                    curr: 1
+                },
+                where: form.val("search-form")
+            });
+            return false;
+        });
+
+        // 监听启用/停用操作
+        form.on('switch(urlStatusDemo)', function (obj) {
+            console.log(this.value + ' ：' + this.name + '：' + obj.elem.checked);
+            if (obj.elem.checked == true) {
+                miniAjax.get({
+                    url: '/mockinfo/enable?id=' + this.value,
+                    success: function (res) {
+                        if (res.code == '0') {
+                            layer.msg(res.msg, {time: 1000, icon: 1});
+                        } else {
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    }
+                });
+            } else {
+                miniAjax.get({
+                    url: '/mockinfo/disable?id=' + this.value,
+                    success: function (res) {
+                        if (res.code == '0') {
+                            layer.msg(res.msg, {time: 1000, icon: 1});
+                        } else {
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    }
+                });
+            }
+        });
+
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') { // 监听添加操作
+                var index = layer.open({
+                    title: '新增接口',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '580px', // 宽度580, 高度自适应
+                    content: $('#addDialog').html(),
+                    success: function (layero, dIndex) {
+                        form.render('select', 'add-form');
+                        // 表单提交事件
+                        form.on('submit(addSaveBtn)', function (data) {
+                            miniAjax.postJSON({
+                                url: '/mockinfo/add',
+                                data: JSON.stringify(data.field),
+                                success: function (res) {
+                                    if (res.code == '0') {
+                                        layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                            layer.close(dIndex);
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {time: 1000, icon: 2});
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+
+                        // 监听取消按钮
+                        $("button[lay-filter='closeAddDialog']").click(function () {
+                            layer.close(dIndex);
+                            return false;
+                        });
+                    },
+                    end: function (index) {
+                        // 重载表格，刷新数据
+                        currTable.reload();
+                    }
+                });
+            }
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var lineData = obj.data;
+            if (obj.event === 'edit') {
+                var index = layer.open({
+                    title: '编辑接口',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '580px', // 宽度580, 高度自适应
+                    content: $('#editDialog').html(),
+                    success: function (layero, dIndex) {
+                        layero.find("[name='id']").text(lineData.id);
+                        // 表单提交事件
+                        form.on('submit(editSaveBtn)', function (data) {
+                            data.field.id = lineData.id;
+                            miniAjax.postJSON({
+                                url: '/mockinfo/edit',
+                                data: JSON.stringify(data.field),
+                                success: function (res) {
+                                    if (res.code == '0') {
+                                        layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                            layer.close(dIndex);
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {time: 1000, icon: 2});
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+
+                        // 监听取消按钮
+                        $("button[lay-filter='closeEditDialog']").click(function () {
+                            layer.close(dIndex);
+                            return false;
+                        });
+                    },
+                    end: function (index) {
+                        // 重载表格，刷新数据
+                        currTable.reload();
+                    }
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('确定删除此项目吗', function (index) {
+                    layer.close(index);
+                    miniAjax.get({
+                        url: '/mockinfo/del?id=' + lineData.id,
+                        success: function (res) {
+                            if (res.code == '0') {
+                                layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                    // 重载表格，刷新数据
+                                    currTable.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {time: 1000, icon: 2});
+                            }
+                        }
+                    });
+                });
+            } else if (obj.event === 'copy') {
+                handleClipboard(lineData.url)
+            }
+        });
+
+
+    });
+
+    /**
+     * 负责数据到粘贴板
+     * @param text
+     */
+    function handleClipboard(text) {
+        const oInput = document.createElement('input');
+        oInput.value = text;
+        document.body.appendChild(oInput);
+        oInput.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        oInput.className = 'oInput';// 设置class名
+        document.getElementsByClassName("oInput")[0].remove();// 移除这个input
+        layer.msg('已复制到粘贴板');
+    }
+
+    var layerTipIndex
+    window.showTip = function(t) {
+        var row = '点击复制链接';
+        //小tips
+        layerTipIndex = layer.tips(row,t,{
+            tips:[1,'#5E7CE0'],
+            time:4000
+        })
+    }
+
+    window.closeTip = function (t) {
+        layer.close(layerTipIndex);
+    }
+</script>

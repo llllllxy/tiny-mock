@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 个人-本机-127.0.0.1
+ Source Server         : 127.0.0.1
  Source Server Type    : MySQL
  Source Server Version : 50733
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 50733
  File Encoding         : 65001
 
- Date: 08/03/2024 18:54:39
+ Date: 10/03/2024 22:20:59
 */
 
 SET NAMES utf8mb4;
@@ -27,16 +27,12 @@ CREATE TABLE `t_invitees_info`  (
   `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邀请码',
   `invitees_user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '被邀请人',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`invitation_code`) USING BTREE COMMENT '唯一索引，surl不允许重复'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of t_invitees_info
--- ----------------------------
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_mail_config
@@ -51,16 +47,40 @@ CREATE TABLE `t_mail_config`  (
   `receive_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '默认收件邮箱地址(多个用逗号隔开)',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标志（0--未删除1--已删除）',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注描述信息',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `created_by` bigint(20) NOT NULL COMMENT '创建人-对应t_user.id',
   `updated_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人-对应t_user.id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统邮箱配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统邮箱配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of t_mail_config
+-- Table structure for t_mock_access_log
 -- ----------------------------
+DROP TABLE IF EXISTS `t_mock_access_log`;
+CREATE TABLE `t_mock_access_log`  (
+  `id` bigint(20) NOT NULL COMMENT '主键id',
+  `tenant_id` bigint(20) NOT NULL COMMENT '租户id',
+  `project_id` bigint(20) NOT NULL COMMENT '项目id',
+  `mock_id` bigint(20) NOT NULL COMMENT '接口id',
+  `access_time` datetime(0) NOT NULL COMMENT '访问时间',
+  `access_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-IP地址',
+  `access_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-ip物理地址',
+  `access_user_agent` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者的user_agent',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_mock_access_log
+-- ----------------------------
+INSERT INTO `t_mock_access_log` VALUES (1766426839531925506, 1, 1729067620457848832, 1, '2024-03-09 19:32:32', '192.168.0.105', '本地局域网', '{\"operatingSystem\":\"UNKNOWN\",\"browser\":\"UNKNOWN\",\"id\":16843022,\"browserVersion\":null}', '2024-03-09 19:32:31');
+INSERT INTO `t_mock_access_log` VALUES (1766426862617374721, 1, 1729067620457848832, 1, '2024-03-09 19:32:37', '192.168.0.105', '本地局域网', '{\"operatingSystem\":\"UNKNOWN\",\"browser\":\"UNKNOWN\",\"id\":16843022,\"browserVersion\":null}', '2024-03-09 19:32:37');
+INSERT INTO `t_mock_access_log` VALUES (1766427705043333121, 1, 1729067620457848832, 1, '2024-03-09 19:35:58', '192.168.0.105', '本地局域网', '{\"operatingSystem\":\"WINDOWS_7\",\"browser\":\"CHROME54\",\"id\":34934588,\"browserVersion\":{\"version\":\"54.0.2816.0\",\"majorVersion\":\"54\",\"minorVersion\":\"0\"}}', '2024-03-09 19:35:58');
+INSERT INTO `t_mock_access_log` VALUES (1766427767035146242, 1, 1729067620457848832, 1, '2024-03-09 19:36:13', '192.168.0.105', '本地局域网', '{\"operatingSystem\":\"WINDOWS_7\",\"browser\":\"CHROME54\",\"id\":34934588,\"browserVersion\":{\"version\":\"54.0.2816.0\",\"majorVersion\":\"54\",\"minorVersion\":\"0\"}}', '2024-03-09 19:36:12');
+INSERT INTO `t_mock_access_log` VALUES (1766792734884302849, 1, 1729067620457848832, 1, '2024-03-10 19:46:28', '192.168.0.106', '本地局域网', '{\"operatingSystem\":\"WINDOWS_7\",\"browser\":\"CHROME54\",\"id\":34934588,\"browserVersion\":{\"version\":\"54.0.2816.0\",\"majorVersion\":\"54\",\"minorVersion\":\"0\"}}', '2024-03-10 19:46:28');
+INSERT INTO `t_mock_access_log` VALUES (1766792760612163586, 1, 1729067620457848832, 1, '2024-03-10 19:46:34', '192.168.0.106', '本地局域网', '{\"operatingSystem\":\"WINDOWS_7\",\"browser\":\"CHROME54\",\"id\":34934588,\"browserVersion\":{\"version\":\"54.0.2816.0\",\"majorVersion\":\"54\",\"minorVersion\":\"0\"}}', '2024-03-10 19:46:34');
+INSERT INTO `t_mock_access_log` VALUES (1766792783383040002, 1, 1729067620457848832, 1, '2024-03-10 19:46:40', '192.168.0.106', '本地局域网', '{\"operatingSystem\":\"WINDOWS_7\",\"browser\":\"CHROME54\",\"id\":34934588,\"browserVersion\":{\"version\":\"54.0.2816.0\",\"majorVersion\":\"54\",\"minorVersion\":\"0\"}}', '2024-03-10 19:46:39');
 
 -- ----------------------------
 -- Table structure for t_mock_info
@@ -71,22 +91,24 @@ CREATE TABLE `t_mock_info`  (
   `tenant_id` bigint(20) NOT NULL COMMENT '租户ID',
   `project_id` bigint(20) NOT NULL COMMENT '项目ID',
   `mock_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '接口名称',
-  `method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目介绍',
+  `method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'GET,HEAD,POST,PUT, PATCH, DELETE,OPTIONS,TRACE;',
   `json_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '接口数据',
   `mockjs_flag` tinyint(4) NOT NULL COMMENT '是否开启mockjs模拟随机数据，0开启，1不开启',
   `url` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'URL',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`mock_name`) USING BTREE COMMENT '唯一索引，surl不允许重复'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_mock_info
 -- ----------------------------
+INSERT INTO `t_mock_info` VALUES (1, 1, 1729067620457848832, '测试接口1', 'GET', '{\n  \"sites\": {\n    \"site\": [\n      {\n        \"number|1-100\": 100,\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"@integer(10, 30)\",\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"3\",\n        \"name\": \"@name\",\n        \"url\": \"@now\"\n      }\n    ]\n  }\n}', 0, '/inter1/append', 0, 0, '2024-03-09 19:12:46', '2024-03-10 19:45:49', NULL, 4000);
 
 -- ----------------------------
 -- Table structure for t_project_info
@@ -96,37 +118,22 @@ CREATE TABLE `t_project_info`  (
   `id` bigint(20) NOT NULL COMMENT '主键id',
   `tenant_id` bigint(20) NOT NULL COMMENT '租户ID',
   `project_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目名称',
-  `introduce` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目介绍',
+  `introduce` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '项目介绍',
   `path` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目链接',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`project_name`) USING BTREE COMMENT '唯一索引，surl不允许重复'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_project_info
 -- ----------------------------
-INSERT INTO `t_project_info` VALUES (1729067620457848832, 1, '14G65O', 'https://wooadmin.cn/index/index.html', '2023-11-29 14:17:40', 0, 0, '2023-11-28 14:10:01', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729746319198965762, 1, '4f9Njg', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:17:14', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729746426162106370, 1, 'D99Dd', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:17:39', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729746430146695170, 1, '12sg1b', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:17:40', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729746433955123201, 1, '1MeCC1', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:17:41', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729746438795350018, 1, '4fj3xp', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:17:42', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729747797158445058, 1, '3D56Hj', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:23:06', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729747800874598401, 1, '2t8O3k', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:23:07', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729747803378597890, 1, '3AxWMS', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:23:08', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729747806729846786, 1, '2jsGI7', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:23:08', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1729747810248867841, 1, 'pZcUy', 'https://juejin.cn/post/7306192146768183311?utm_source=gold_browser_extension#heading-10', '2023-11-29 14:17:40', 0, 0, '2023-11-29 14:23:09', '2023-11-29 15:02:56', NULL);
-INSERT INTO `t_project_info` VALUES (1731533845312081922, 1, '3hIzMP', 'https://github.com/zjcscut/octopus/issues', '2023-12-11 12:40:14', 0, 0, '2023-12-04 12:40:13', '2023-12-04 12:40:13', '门户平台生成');
-INSERT INTO `t_project_info` VALUES (1732689039072706561, 1, '1FrBfF', 'https://blog.csdn.net/shenju2011/article/details/90748409', '2023-12-14 17:10:33', 0, 0, '2023-12-07 17:10:33', '2023-12-07 17:10:33', '门户平台生成');
-INSERT INTO `t_project_info` VALUES (1763100383005417473, 2212121, 'D8yAY', 'https://blog.csdn.net/sinat_32501475/article/details/106994575#commons-pool2%20%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3', '2123-02-28 15:14:23', 0, 0, '2024-02-29 15:14:22', '2024-03-01 14:49:13', '门户平台生成');
-INSERT INTO `t_project_info` VALUES (1763453231446659074, 2212121, '25UQUy', 'https://tongyi.aliyun.com/qianwen/', '2024-03-08 14:36:28', 0, 0, '2024-03-01 14:36:28', '2024-03-01 14:49:10', '门户平台生成');
-INSERT INTO `t_project_info` VALUES (1763475902263795713, 2212121, 'Z3zpo', 'https://www.qianxin.com/ctp/index.html', '2123-03-01 16:06:34', 0, 0, '2024-03-01 16:06:33', '2024-03-03 16:43:16', '门户平台生成');
-INSERT INTO `t_project_info` VALUES (1764197675944923138, 2212121, 'A2q4z', 'https://top.baidu.com/board?platform=pc&sa=pcindex_entry', '2024-03-31 16:34:11', 0, 1, '2024-03-03 15:54:37', '2024-03-03 16:42:43', '租户生成');
+INSERT INTO `t_project_info` VALUES (1729067620457848832, 1, '测试项目', '测试项目1', '/test', 0, 0, '2023-11-28 14:10:01', '2024-03-09 19:11:14', NULL);
+INSERT INTO `t_project_info` VALUES (1729067620457848833, 1, 'vue-admin-plus', 'vue-admin-plus', '/plus', 0, 0, '2024-03-10 18:34:14', '2024-03-10 18:34:14', NULL);
 
 -- ----------------------------
 -- Table structure for t_tenant
@@ -141,50 +148,16 @@ CREATE TABLE `t_tenant`  (
   `tenant_email` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '租户邮箱',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注册邀请码',
   `tenant_avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户头像',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_tenant
 -- ----------------------------
 INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', 'e960be68749241c3e3562094239e28e2b4482e9d28c65413bbe2f9bd0419cdb8', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', NULL, NULL, '2024-03-08 17:52:49');
-
--- ----------------------------
--- Table structure for t_url_access_log
--- ----------------------------
-DROP TABLE IF EXISTS `t_url_access_log`;
-CREATE TABLE `t_url_access_log`  (
-  `id` bigint(20) NOT NULL COMMENT '主键id',
-  `tenant_id` bigint(20) NOT NULL COMMENT '租户id',
-  `url_id` bigint(20) NOT NULL COMMENT '短链id',
-  `access_time` datetime NOT NULL COMMENT '访问时间',
-  `access_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-IP地址',
-  `access_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-ip物理地址',
-  `access_user_agent` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者的user_agent',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of t_url_access_log
--- ----------------------------
-INSERT INTO `t_url_access_log` VALUES (1763100440500936705, 2212121, 1763100383005417473, '2024-02-29 15:14:36', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-02-29 15:14:36');
-INSERT INTO `t_url_access_log` VALUES (1763100524001140738, 2212121, 1763100383005417473, '2024-03-01 15:14:56', '192.168.5.82', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-02-29 15:14:56');
-INSERT INTO `t_url_access_log` VALUES (1763453297234317313, 2212121, 1763453231446659074, '2024-03-01 14:36:44', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 14:36:44');
-INSERT INTO `t_url_access_log` VALUES (1763453329895362562, 2212121, 1763453231446659074, '2024-03-01 14:36:52', '192.168.5.83', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 14:36:51');
-INSERT INTO `t_url_access_log` VALUES (1763453349214326786, 2212121, 1763453231446659074, '2024-03-01 14:36:56', '192.168.5.80', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 14:36:56');
-INSERT INTO `t_url_access_log` VALUES (1763475915912060929, 2212121, 1763475902263795713, '2024-03-01 16:06:37', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"CHROME12\",\"id\":35131153,\"browserVersion\":{\"version\":\"122.0.0.0\",\"majorVersion\":\"122\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:36');
-INSERT INTO `t_url_access_log` VALUES (1763475944441716738, 2212121, 1763475902263795713, '2024-03-01 16:06:44', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"CHROME12\",\"id\":35131153,\"browserVersion\":{\"version\":\"122.0.0.0\",\"majorVersion\":\"122\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:43');
-INSERT INTO `t_url_access_log` VALUES (1763475951307792385, 2212121, 1763475902263795713, '2024-03-01 16:06:45', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"CHROME12\",\"id\":35131153,\"browserVersion\":{\"version\":\"122.0.0.0\",\"majorVersion\":\"122\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:45');
-INSERT INTO `t_url_access_log` VALUES (1763475972732297218, 2212121, 1763475902263795713, '2024-03-01 16:06:50', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"CHROME12\",\"id\":35131153,\"browserVersion\":{\"version\":\"122.0.0.0\",\"majorVersion\":\"122\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:50');
-INSERT INTO `t_url_access_log` VALUES (1763475994580426753, 2212121, 1763475902263795713, '2024-03-01 16:06:56', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:55');
-INSERT INTO `t_url_access_log` VALUES (1763476002243420162, 2212121, 1763475902263795713, '2024-03-01 16:06:57', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:57');
-INSERT INTO `t_url_access_log` VALUES (1763476008954306562, 2212121, 1763475902263795713, '2024-03-01 16:06:59', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 16:06:59');
-INSERT INTO `t_url_access_log` VALUES (1763476014796972033, 2212121, 1763475902263795713, '2024-03-01 16:07:00', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 16:07:00');
-INSERT INTO `t_url_access_log` VALUES (1763476021017124866, 2212121, 1763475902263795713, '2024-03-01 16:07:02', '192.168.5.81', '本地局域网', '{\"operatingSystem\":\"WINDOWS_10\",\"browser\":\"FIREFOX11\",\"id\":35130716,\"browserVersion\":{\"version\":\"119.0\",\"majorVersion\":\"119\",\"minorVersion\":\"0\"}}', '2024-03-01 16:07:01');
 
 SET FOREIGN_KEY_CHECKS = 1;
