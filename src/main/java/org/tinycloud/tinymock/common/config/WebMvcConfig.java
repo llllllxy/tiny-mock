@@ -36,7 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> tenantExcludePaths = new ArrayList<String>() {{
-            // 开放登录接口
+            // 开放登录等接口
             add("/");
             add("/auth/login");
             add("/auth/getCode");
@@ -53,14 +53,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
             add("/index.html");
         }};
 
-        // 注册限流拦截器
-        registry.addInterceptor(accessLimitInterceptor)
-                .addPathPatterns("/**");
-
+        // 加入的顺序就是拦截器执行的顺序，按顺序执行所有拦截器的preHandle，所有的preHandle 执行完再执行全部postHandle 最后是postHandle
         // 注册会话拦截器
         registry.addInterceptor(tenantAuthInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(tenantExcludePaths);
+
+        // 注册限流拦截器
+        registry.addInterceptor(accessLimitInterceptor)
+                .addPathPatterns("/**");
     }
 
     /**
