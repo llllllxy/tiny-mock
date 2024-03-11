@@ -1,5 +1,59 @@
 <div class="layuimini-container layuimini-page-anim">
     <div class="layuimini-main">
-        首页
+
+        <div class="layui-form">
+
+            <hr class="ws-space-16">
+            <textarea name="jsonText" placeholder="请输入标准的JSON数据" class="layui-textarea"></textarea>
+        </div>
+
+        <div class="layui-btn-container">
+            <button type="button" class="layui-btn" lay-on="formatJson">格式化</button>
+
+            <button type="button" class="layui-btn" lay-on="zipJson">压缩</button>
+        </div>
+
     </div>
 </div>
+
+
+<script>
+    layui.use(['form', 'util'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            util = layui.util;
+
+        util.on('lay-on', {
+            formatJson: function () {
+                let jsonText = $("[name='jsonText']").val();
+                try {
+                    // 使用 JSON.stringify() 将 JSON 数据转换为字符串
+                    // 第二个参数为 null，表示不使用额外的替换函数；第三个参数为缩进空格数，这里使用 2 个空格作为缩进
+                    let formattedJson = JSON.stringify(JSON.parse(jsonText), null, 2);
+
+                    // 将格式化后的 JSON 字符串写入到 textarea 输入框中
+                    $("[name='jsonText']").val(formattedJson);
+                } catch (error) {
+                    // 如果解析失败，捕获错误并提示用户输入的不是有效的 JSON 数据
+                    alert('输入的数据不是有效的 JSON 格式！');
+                }
+            },
+            zipJson: function () {
+                let jsonText = $("[name='jsonText']").val();
+                try {
+                    // 使用 JSON.stringify() 将 JSON 数据转换为字符串
+                    // 第二个参数为 null，表示不使用额外的替换函数；第三个参数为缩进空格数，这里使用 2 个空格作为缩进
+                    let formattedJson = JSON.stringify(JSON.parse(jsonText));
+
+                    // 将格式化后的 JSON 字符串写入到 textarea 输入框中
+                    $("[name='jsonText']").val(formattedJson);
+                } catch (error) {
+                    // 如果解析失败，捕获错误并提示用户输入的不是有效的 JSON 数据
+                    alert('输入的数据不是有效的 JSON 格式！');
+                }
+            }
+        });
+    });
+
+</script>
