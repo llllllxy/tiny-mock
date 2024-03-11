@@ -56,11 +56,12 @@ public class TenantAuthController {
     public ApiResult<?> initMenu() {
         Map<String, Object> initInfo = new HashMap<>();
 
-        Map<String, String> menuItem1 = new HashMap<>();
-        menuItem1.put("title", "项目管理");
-        menuItem1.put("href", "page/project.html");
-        menuItem1.put("icon", "fa fa-navicon");
-        menuItem1.put("target", "_self");
+
+        Map<String, String> menuItem2 = new HashMap<>();
+        menuItem2.put("title", "我的项目");
+        menuItem2.put("href", "page/project.html");
+        menuItem2.put("icon", "fa fa-navicon");
+        menuItem2.put("target", "_self");
 
         Map<String, String> menuItem3 = new HashMap<>();
         menuItem3.put("title", "数据统计");
@@ -68,9 +69,24 @@ public class TenantAuthController {
         menuItem3.put("icon", "fa fa-navicon");
         menuItem3.put("target", "_self");
 
+        Map<String, String> menuItem4 = new HashMap<>();
+        menuItem4.put("title", "使用文档");
+        menuItem4.put("href", "page/doc.html");
+        menuItem4.put("icon", "fa fa-navicon");
+        menuItem4.put("target", "_self");
+
+        Map<String, String> menuItem5 = new HashMap<>();
+        menuItem5.put("title", "Github");
+        menuItem5.put("href", "https://github.com/llllllxy/tiny-mock");
+        menuItem5.put("icon", "fa fa-navicon");
+        menuItem5.put("target", "_blank");
+
         List<Map<String, String>> menuList = new ArrayList<>();
-        menuList.add(menuItem1);
+        menuList.add(menuItem2);
         menuList.add(menuItem3);
+        menuList.add(menuItem4);
+        menuList.add(menuItem5);
+
 
         Map<String, String> homeInfo = new HashMap<>();
         homeInfo.put("title", "首页");
