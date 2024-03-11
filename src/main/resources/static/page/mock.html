@@ -125,6 +125,12 @@
             miniAjax = layui.miniAjax,
             util = layui.util;
 
+
+        // 下面这两种方式都能获取到参数
+        console.log(sessionStorage.getItem("projectId"));
+
+        console.log(getUrlKeyValue( "projectId"));
+
         util.on('lay-on', {
             btnBack: function () {
                 window.history.back();

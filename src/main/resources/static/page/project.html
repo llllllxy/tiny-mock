@@ -79,13 +79,11 @@
     <div class="layuimini-main">
 
         <div id="content" class="layui-row layui-col-space15" style="margin: 0">
-
+            <blockquote class="layui-elem-quote" id="notice" style="display: none;margin-bottom: 0">
+                暂无项目，请点击右下角按钮进行创建
+            </blockquote>
         </div>
-
-
     </div>
-
-
 </div>
 
 <!-- 右侧悬浮按钮 -->
@@ -95,44 +93,60 @@
 
 
 <script>
-    layui.use(['form', 'util'], function () {
+    layui.use(['form', 'util', 'miniAjax'], function () {
         var form = layui.form,
             $ = layui.jquery,
             layer = layui.layer,
+            miniAjax = layui.miniAjax,
             util = layui.util;
 
-        let projectList = [];
+        miniAjax.get({
+            url: "/projectinfo/query",
+            success: function (res) {
+                let projectList = res.data;
+                if (projectList && projectList.length > 0) {
+                    renderCardList(projectList);
+                } else {
+                    $("#notice").show();
+                }
+            },
+            error: function (error) {
+                layer.msg(error, {time: 1000, icon: 2});
+            }
+        });
 
 
-        let content = "";
-        for (let i = 0; i < 10; i++) {
-            content = content + '<div class="layui-col-md3">'
-                + '<div class="panel layui-bg-number">'
-                + '<div class="panel-body">'
-                + '<div class="panel-title">'
-                + '<span class="label pull-right layui-bg-green" layuimini-content-href="page/mock.html" data-title="接口管理" into-id="' + i + '">进入项目</span>'
-                + '<h2>项目1</h2>'
-                + '</div>'
-                + '<div class="panel-content">'
-                + '<div class="text item"><span>路径：/test</span></div>'
-                + '<div class="text item"><span>描述：xxxxxxxxxxx</span></div>'
-                + '<div class="text item">'
-                + '<span>操作：</span>'
-                + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + i + '">编辑</span>'
-                + '<span class="layui-badge" style="margin-left: 5px;cursor: pointer;" del-id="' + i + '">删除</span>'
-                + '</div>'
-                + '</div>'
-                + '</div>'
-                + '</div>'
-                + '</div>'
+        function renderCardList(projectList) {
+            let content = "";
+            for (let item of projectList) {
+                content = content + '<div class="layui-col-md3">'
+                    + '<div class="panel layui-bg-number">'
+                    + '<div class="panel-body">'
+                    + '<div class="panel-title">'
+                    + `<span class="label pull-right layui-bg-green" layuimini-content-href="page/mock.html?projectId=${item.id}" data-title="接口管理" into-id="${item.id}">进入项目</span>`
+                    + '<h2>' + item.projectName + '</h2>'
+                    + '</div>'
+                    + '<div class="panel-content">'
+                    + '<div class="text item"><span>路径：' + item.path + '</span></div>'
+                    + '<div class="text item"><span>描述：' + item.path + '</span></div>'
+                    + '<div class="text item">'
+                    + '<span>操作：</span>'
+                    + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + item.id + '">编辑</span>'
+                    + '<span class="layui-badge" style="margin-left: 5px;cursor: pointer;" del-id="' + item.id + '">删除</span>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+            }
+            $("#content").append(content);
         }
-
-        $("#content").append(content);
 
 
         $('body').on('click', '[into-id]', function () {
             var id = $(this).attr('into-id');
             layer.msg("进入了 " + id);
+            sessionStorage.setItem("projectId", id)
         });
 
         $('body').on('click', '[edit-id]', function () {
