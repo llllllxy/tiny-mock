@@ -77,19 +77,53 @@
 
 <div class="layuimini-container layuimini-page-anim">
     <div class="layuimini-main">
+        <div id="content">
 
-        <div id="content" class="layui-row layui-col-space15" style="margin: 0">
-            <blockquote class="layui-elem-quote" id="notice" style="display: none;margin-bottom: 0">
-                暂无项目，请点击右下角按钮进行创建
-            </blockquote>
+
         </div>
     </div>
 </div>
 
 <!-- 右侧悬浮按钮 -->
-<div class="right-bottom-btn" id="addProject">
+<div class="right-bottom-btn" id="addProject" lay-on="addProject">
     <i class="layui-icon layui-icon-addition" style="color: white; font-size: 30px; font-weight: bold"></i>
 </div>
+
+
+<script type="text/html" id="addDialog">
+    <div class="layuimini-form">
+        <form class="layui-form" action="" lay-filter="add-form" id="add-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">项目名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="projectName" lay-verify="required" lay-reqtext="项目名称不能为空" placeholder="请输入项目名称" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">项目路径</label>
+                <div class="layui-input-block">
+                    <input type="text" name="path" lay-verify="required" lay-reqtext="项目路径不能为空" placeholder="请输入项目路径" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">项目介绍</label>
+                <div class="layui-input-block">
+                    <textarea name="introduce" class="layui-textarea" placeholder="请输入项目介绍"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item text-right">
+                <button class="layui-btn" lay-submit lay-filter="addSaveBtn">保存</button>
+                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeAddDialog">取消</button>
+            </div>
+        </form>
+    </div>
+</script>
 
 
 <script>
@@ -100,45 +134,63 @@
             miniAjax = layui.miniAjax,
             util = layui.util;
 
-        miniAjax.get({
-            url: "/projectinfo/query",
-            success: function (res) {
-                let projectList = res.data;
-                if (projectList && projectList.length > 0) {
-                    renderCardList(projectList);
-                } else {
-                    $("#notice").show();
-                }
-            },
-            error: function (error) {
-                layer.msg(error, {time: 1000, icon: 2});
-            }
-        });
+        queryProject();
 
+        function queryProject() {
+            miniAjax.get({
+                url: "/projectinfo/query",
+                success: function (res) {
+                    let projectList = res.data;
+                    if (projectList && projectList.length > 0) {
+                        renderCardList(projectList);
+                    } else {
+                        renderNotice();
+                    }
+                },
+                error: function (error) {
+                    layer.msg(error, {time: 1000, icon: 2});
+                }
+            });
+        }
+
+        function renderNotice() {
+            var content = '<blockquote class="layui-elem-quote" id="notice" style="margin-bottom: 0">' +
+                '暂无项目，请点击右下角按钮进行创建' +
+                '</blockquote>';
+            $("#content").empty();
+            $("#content").append(content);
+        }
 
         function renderCardList(projectList) {
             let content = "";
-            for (let item of projectList) {
-                content = content + '<div class="layui-col-md3">'
-                    + '<div class="panel layui-bg-number">'
-                    + '<div class="panel-body">'
-                    + '<div class="panel-title">'
-                    + `<span class="label pull-right layui-bg-green" layuimini-content-href="page/mock.html?projectId=${item.id}" data-title="接口管理" into-id="${item.id}">进入项目</span>`
-                    + '<h2>' + item.projectName + '</h2>'
-                    + '</div>'
-                    + '<div class="panel-content">'
-                    + '<div class="text item"><span>路径：' + item.path + '</span></div>'
-                    + '<div class="text item"><span>描述：' + item.path + '</span></div>'
-                    + '<div class="text item">'
-                    + '<span>操作：</span>'
-                    + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + item.id + '">编辑</span>'
-                    + '<span class="layui-badge" style="margin-left: 5px;cursor: pointer;" del-id="' + item.id + '">删除</span>'
-                    + '</div>'
-                    + '</div>'
-                    + '</div>'
-                    + '</div>'
-                    + '</div>'
+            // 四个分成一份，不够四个的话也为一份
+            let projectChunkedArray = chunkArray(projectList, 4);
+            for (let chunk of projectChunkedArray) {
+                content = content + `<div class="layui-row layui-col-space15" style="margin: 0">`;
+                for (let item of chunk) {
+                    content = content + '<div class="layui-col-md3">'
+                        + '<div class="panel layui-bg-number">'
+                        + '<div class="panel-body">'
+                        + '<div class="panel-title">'
+                        + `<span class="label pull-right layui-bg-green" layuimini-content-href="page/mock.html?projectId=${item.id}" data-title="接口管理" into-id="${item.id}">进入项目</span>`
+                        + '<h2>' + item.projectName + '</h2>'
+                        + '</div>'
+                        + '<div class="panel-content">'
+                        + '<div class="text item"><span>路径：' + item.path + '</span></div>'
+                        + '<div class="text item"><span>描述：' + item.path + '</span></div>'
+                        + '<div class="text item">'
+                        + '<span>操作：</span>'
+                        + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + item.id + '">编辑</span>'
+                        + '<span class="layui-badge" style="margin-left: 5px;cursor: pointer;" del-id="' + item.id + '">删除</span>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>';
+                }
+                content = content + `</div>`;
             }
+            $("#content").empty();
             $("#content").append(content);
         }
 
@@ -158,5 +210,68 @@
             var id = $(this).attr('del-id');
             layer.msg("删除了 " + id);
         });
+
+
+        util.on('lay-on', {
+            addProject: function () {
+                var index = layer.open({
+                    title: '新增项目',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '580px', // 宽度580, 高度自适应
+                    content: $('#addDialog').html(),
+                    success: function (layero, dIndex) {
+                        // 表单提交事件
+                        form.on('submit(addSaveBtn)', function (data) {
+                            miniAjax.postJSON({
+                                url: '/project/add',
+                                data: JSON.stringify(data.field),
+                                success: function (res) {
+                                    if (res.code === 0) {
+                                        layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                            layer.close(dIndex);
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {time: 1000, icon: 2});
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                        // 监听取消按钮
+                        $("button[lay-filter='closeAddDialog']").click(function(){
+                            layer.close(dIndex);
+                            return false;
+                        });
+                    },
+                    end: function (index) {
+                        // 重载表格，刷新数据
+                        queryProject();
+                    }
+                });
+            },
+        });
     });
+
+    /**
+     * 将任意长度的数组按照指定大小分割成多个子数组，
+     * 最后的即使不够指定大小也会算作一份
+     * @param array 原始数组
+     * @param chunkSize 每份的大小
+     * @returns {*[]}
+     */
+    function chunkArray(array, chunkSize) {
+        let index = 0;
+        let arrayLength = array.length;
+        let tempArray = [];
+
+        for (index = 0; index < arrayLength; index += chunkSize) {
+            let myChunk = array.slice(index, index + chunkSize);
+            tempArray.push(myChunk);
+        }
+
+        return tempArray;
+    }
 </script>
