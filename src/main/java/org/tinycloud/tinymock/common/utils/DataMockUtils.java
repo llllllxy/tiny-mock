@@ -6,7 +6,6 @@ import cn.hutool.core.text.StrFormatter;
 import cn.hutool.script.ScriptUtil;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -258,7 +257,7 @@ public class DataMockUtils {
     public static Object loadMockJs(String script) {
         String scriptString = "";
         // 把mockjs读取到内存缓存里
-        if (cacheMap.isEmpty() || StringUtils.isEmpty(cacheMap.get("scriptString"))) {
+        if (cacheMap.isEmpty() || StrUtils.isEmpty(cacheMap.get("scriptString"))) {
             // 读取resource路径下的js
             String path = "static/lib/mock/mock-min.js";
             ResourceLoader resourceLoader = new DefaultResourceLoader();
