@@ -10,7 +10,7 @@
         margin-bottom: 10px;
     }
 
-    .p-info p>span:first-child {
+    .p-info p > span:first-child {
         display: inline-block;
         height: 24px;
         line-height: 24px;
@@ -105,7 +105,7 @@
 
 <script type="text/html" id="switchTpl">
     <input type="checkbox" name="urlStatus" value="{{= d.id }}" lay-skin="switch" lay-text="启用|停用"
-           lay-filter="urlStatusDemo" {{= d.status== 0 ? "checked" : "" }}>
+           lay-filter="urlStatusDemo" {{=d.status== 0 ? "checked" : "" }}>
 </script>
 
 <script type="text/html" id="mockjsFlagTpl">
@@ -128,8 +128,7 @@
 
         // 下面这两种方式都能获取到参数
         console.log(sessionStorage.getItem("projectId"));
-
-        console.log(getUrlKeyValue( "projectId"));
+        console.log(getUrlKeyValue("projectId"));
 
         util.on('lay-on', {
             btnBack: function () {
@@ -369,12 +368,12 @@
     }
 
     var layerTipIndex
-    window.showTip = function(t) {
-        var row = '点击复制链接';
+    window.showTip = function (t) {
+        var msg = '点击复制链接';
         //小tips
-        layerTipIndex = layer.tips(row,t,{
-            tips:[1,'#5E7CE0'],
-            time:4000
+        layerTipIndex = layer.tips(msg, t, {
+            tips: [1, '#5E7CE0'],
+            time: 4000
         })
     }
 

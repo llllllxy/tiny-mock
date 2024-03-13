@@ -102,7 +102,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">项目路径</label>
                 <div class="layui-input-block">
-                    <input type="text" name="path" lay-verify="required" lay-reqtext="项目路径不能为空" placeholder="请输入项目路径" value="" class="layui-input">
+                    <input type="text" name="path" lay-verify="required|pathCheck" lay-reqtext="项目路径不能为空" placeholder="请输入项目路径" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
@@ -126,6 +126,41 @@
 </script>
 
 
+<script type="text/html" id="editDialog">
+    <div class="layuimini-form">
+        <form class="layui-form" action="" lay-filter="edit-form" id="edit-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">项目名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="projectName" lay-verify="required" lay-reqtext="项目名称不能为空" placeholder="请输入项目名称" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">项目路径</label>
+                <div class="layui-input-block">
+                    <input type="text" name="path" lay-verify="required|pathCheck" lay-reqtext="项目路径不能为空" placeholder="请输入项目路径" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">项目介绍</label>
+                <div class="layui-input-block">
+                    <textarea name="introduce" class="layui-textarea" placeholder="请输入项目介绍"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item text-right">
+                <button class="layui-btn" lay-submit lay-filter="editSaveBtn">保存</button>
+                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeEditDialog">取消</button>
+            </div>
+        </form>
+    </div>
+</script>
+
 <script>
     layui.use(['form', 'util', 'miniAjax'], function () {
         var form = layui.form,
@@ -134,13 +169,31 @@
             miniAjax = layui.miniAjax,
             util = layui.util;
 
+        form.verify({
+            pathCheck: function (value, item) {
+                if (!!value) {
+                    if (!value.startsWith('/')) {
+                        return ('项目路径必须以/开头');
+                    }
+                    const n = (value.split('/')).length - 1;
+                    if (n > 1) {
+                        return ('项目路径只能有一个/');
+                    } else {
+                    }
+                } else {
+                    return ('项目路径不能为空');
+                }
+            }
+        });
+
+        let projectList = [];
         queryProject();
 
         function queryProject() {
             miniAjax.get({
                 url: "/projectinfo/query",
                 success: function (res) {
-                    let projectList = res.data;
+                    projectList = res.data;
                     if (projectList && projectList.length > 0) {
                         renderCardList(projectList);
                     } else {
@@ -194,23 +247,76 @@
             $("#content").append(content);
         }
 
-
         $('body').on('click', '[into-id]', function () {
             var id = $(this).attr('into-id');
-            layer.msg("进入了 " + id);
             sessionStorage.setItem("projectId", id)
         });
 
         $('body').on('click', '[edit-id]', function () {
             var id = $(this).attr('edit-id');
-            layer.msg("编辑了 " + id);
+            var index = layer.open({
+                title: '编辑项目',
+                type: 1,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: false,
+                area: '580px', // 宽度580, 高度自适应
+                content: $('#editDialog').html(),
+                success: function (layero, dIndex) {
+                    // 回显表单数据
+                    var lineData = projectList.find(obj => obj.id === id);
+                    form.val('edit-form', lineData);
+                    // 表单提交事件
+                    form.on('submit(editSaveBtn)', function (data) {
+                        data.field.id = id;
+                        miniAjax.postJSON({
+                            url: '/projectinfo/edit',
+                            data: JSON.stringify(data.field),
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                        layer.close(dIndex);
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {time: 1000, icon: 2});
+                                }
+                            }
+                        });
+                        return false;
+                    });
+
+                    // 监听取消按钮
+                    $("button[lay-filter='closeEditDialog']").click(function(){
+                        layer.close(dIndex);
+                        return false;
+                    });
+                },
+                end: function (index) {
+                    // 重载表格，刷新数据
+                    queryProject();
+                }
+            });
         });
 
         $('body').on('click', '[del-id]', function () {
             var id = $(this).attr('del-id');
-            layer.msg("删除了 " + id);
+            layer.confirm('确定删除此项目吗', function (index) {
+                layer.close(index);
+                miniAjax.get({
+                    url: '/projectinfo/delete?id=' + id,
+                    success: function (res) {
+                        if (res.code === 0) {
+                            layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                // 重载表格，刷新数据
+                                queryProject();
+                            });
+                        } else {
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    }
+                });
+            });
         });
-
 
         util.on('lay-on', {
             addProject: function () {
@@ -226,7 +332,7 @@
                         // 表单提交事件
                         form.on('submit(addSaveBtn)', function (data) {
                             miniAjax.postJSON({
-                                url: '/project/add',
+                                url: '/projectinfo/add',
                                 data: JSON.stringify(data.field),
                                 success: function (res) {
                                     if (res.code === 0) {
