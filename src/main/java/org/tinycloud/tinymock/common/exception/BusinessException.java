@@ -62,4 +62,8 @@ public class BusinessException extends RuntimeException {
     public BusinessException(CommonCode code, Object errT) {
         this(code.getCode(), code.getDesc(), errT);
     }
+
+    public BusinessException(Throwable throwable) {
+        super(throwable);
+    }
 }
