@@ -32,11 +32,18 @@ public class ProjectInfoService {
     private ProjectInfoMapper projectInfoMapper;
 
     public List<ProjectInfoVo> query() {
-        // 然后校验url是否存在
         List<TProjectInfo> projectInfos = this.projectInfoMapper.selectList(
                 Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
                         .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
         return BeanConvertUtils.convertListTo(projectInfos, ProjectInfoVo::new);
+    }
+
+    public ProjectInfoVo detail(Long id) {
+        TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
+                        .eq(TProjectInfo::getId, id)
+                        .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+        return BeanConvertUtils.convertTo(projectInfo, ProjectInfoVo::new);
     }
 
     public Boolean add(ProjectAddDto dto) {

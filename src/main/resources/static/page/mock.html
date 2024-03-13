@@ -41,13 +41,13 @@
                 </button>
                 <div class="p-info" style="margin-top: 10px">
                     <p>
-                        <span>项目ID</span>2209af7524129ea3443d4dc613251578
+                        <span>项目ID</span><span id="headerProjectId"></span>
                     </p>
                     <p>
-                        <span>项目名称</span>测试项目
+                        <span>项目名称</span><span id="headerProjectName"></span>
                     </p>
                     <p>
-                        <span>接口根地址</span><span>https://www.fastmock.site/mock/2209af7524129ea3443d4dc613251578/api</span>
+                        <span>接口根地址</span><span id="headerRootAddress">https://www.fastmock.site/mock/2209af7524129ea3443d4dc613251578/api</span>
                     </p>
                 </div>
             </div>
@@ -125,10 +125,26 @@
             miniAjax = layui.miniAjax,
             util = layui.util;
 
-
         // 下面这两种方式都能获取到参数
         console.log(sessionStorage.getItem("projectId"));
         console.log(getUrlKeyValue("projectId"));
+        let projectId = isNotEmpty(getUrlKeyValue("projectId")) ? getUrlKeyValue("projectId") : sessionStorage.getItem("projectId");
+
+        miniAjax.get({
+            url: "/projectinfo/detail?id=" + getUrlKeyValue("projectId"),
+            success: function (res) {
+                if (res.code === 0) {
+                    $("#headerProjectId").text(res.data.id);
+                    $("#headerProjectName").text(res.data.projectName);
+                    $("#headerRootAddress").text(getLocalHost() + '/mock/' + res.data.id + res.data.path);
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            },
+            error: function (error) {
+                layer.msg(error, {time: 1000, icon: 2});
+            }
+        });
 
         util.on('lay-on', {
             btnBack: function () {
@@ -141,6 +157,7 @@
             url: '/mockinfo/query',
             method: 'post',
             contentType: 'application/json',
+            where: {'projectId': projectId}, // 初始化时带的参数
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'
@@ -186,7 +203,7 @@
                 page: {
                     curr: 1
                 },
-                where: data.field
+                where: Object.assign({}, data.field, { 'projectId': projectId })
             });
             return false;
         });
@@ -202,7 +219,7 @@
                 page: {
                     curr: 1
                 },
-                where: form.val("search-form")
+                where: Object.assign({}, form.val("search-form") , { 'projectId': projectId })
             });
             return false;
         });
@@ -365,6 +382,14 @@
         oInput.className = 'oInput';// 设置class名
         document.getElementsByClassName("oInput")[0].remove();// 移除这个input
         layer.msg('已复制到粘贴板');
+    }
+
+    function getLocalHost() {
+        let url = location.href;
+        let protocolIndex = url.indexOf('://');
+        let index = url.indexOf('/', protocolIndex + 3); // 从第三个 '/' 字符开始查找
+        let baseUrl = url.substring(0, index); // 截取从开头到 '/' 的子串
+        return (baseUrl); // 输出 https://127.0.0.1:9019
     }
 
     var layerTipIndex

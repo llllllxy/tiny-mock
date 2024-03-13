@@ -193,11 +193,15 @@
             miniAjax.get({
                 url: "/projectinfo/query",
                 success: function (res) {
-                    projectList = res.data;
-                    if (projectList && projectList.length > 0) {
-                        renderCardList(projectList);
+                    if (res.code === 0) {
+                        projectList = res.data;
+                        if (projectList && projectList.length > 0) {
+                            renderCardList(projectList);
+                        } else {
+                            renderNotice();
+                        }
                     } else {
-                        renderNotice();
+                        layer.msg(res.msg, {time: 1000, icon: 2});
                     }
                 },
                 error: function (error) {

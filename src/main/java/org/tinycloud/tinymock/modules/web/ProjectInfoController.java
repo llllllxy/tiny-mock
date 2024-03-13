@@ -36,6 +36,16 @@ public class ProjectInfoController {
     }
 
     /**
+     * 获取项目明细项目
+     *
+     * @return
+     */
+    @GetMapping("/detail")
+    public ApiResult<ProjectInfoVo> detail(@RequestParam("id") Long id) {
+        return ApiResult.success(projectInfoService.detail(id), "获取成功");
+    }
+
+    /**
      * 新增项目
      *
      * @return
