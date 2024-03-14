@@ -105,7 +105,7 @@
 
 <script type="text/html" id="switchTpl">
     <input type="checkbox" name="urlStatus" value="{{= d.id }}" lay-skin="switch" lay-text="启用|停用"
-           lay-filter="urlStatusDemo" {{=d.status== 0 ? "checked" : "" }}>
+           lay-filter="statusDemo" {{=d.status== 0 ? "checked" : "" }}>
 </script>
 
 <script type="text/html" id="mockjsFlagTpl">
@@ -377,7 +377,7 @@
         });
 
         // 监听启用/停用操作
-        form.on('switch(urlStatusDemo)', function (obj) {
+        form.on('switch(statusDemo)', function (obj) {
             console.log(this.value + ' ：' + this.name + '：' + obj.elem.checked);
             if (obj.elem.checked == true) {
                 miniAjax.get({
