@@ -129,7 +129,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">请求方式</label>
                 <div class="layui-input-block">
-                    <select name="status" lay-filter="method" lay-verify="required" lay-reqtext="请求方式不能为空">
+                    <select name="method" lay-filter="method" lay-verify="required" lay-reqtext="请求方式不能为空">
                         <option value="POST">POST</option>
                         <option value="GET">GET</option>
                     </select>
@@ -152,7 +152,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">开启Mock.js</label>
                 <div class="layui-input-block">
-                    <input type="checkbox" name="checkIpFlag" value="0" lay-skin="switch" lay-filter="switchFlag"
+                    <input type="checkbox" name="mockjsFlag" value="0" lay-skin="switch" lay-filter="switchFlag"
                            title="是|否">
                 </div>
             </div>
@@ -162,15 +162,17 @@
                     <div class="layui-form-item layui-form-text">
                         <label class="layui-form-label required">接口数据</label>
                         <div class="layui-input-block">
-                            <textarea name="jsonData" class="layui-textarea" rows="10" placeholder="请输入接口数据" lay-verify="required"
+                            <textarea name="jsonData" class="layui-textarea" rows="10" placeholder="请输入接口数据"
+                                      lay-verify="required"
                                       lay-reqtext="接口数据不能为空"></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="layui-col-md1">
                     <div style="margin-left: 11px;" class="layui-btn-container">
-                        <button type="button" class="layui-btn layui-btn-sm" lay-on="format" id="format">格式化</button>
-                        <button type="button" class="layui-btn layui-btn-sm" lay-on="zip" id="zip" style="width: 57px;">压缩</button>
+                        <button type="button" class="layui-btn layui-btn-sm" lay-on="format">格式化</button>
+                        <button type="button" class="layui-btn layui-btn-sm" lay-on="zip" style="width: 57px;">压缩
+                        </button>
                     </div>
                 </div>
             </div>
@@ -178,7 +180,8 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">备注信息</label>
                 <div class="layui-input-block">
-                    <textarea name="remark" class="layui-textarea layui-textarea-small" placeholder="请输入其他备注信息"></textarea>
+                    <textarea name="remark" class="layui-textarea layui-textarea-small"
+                              placeholder="请输入其他备注信息"></textarea>
                 </div>
             </div>
             <div class="layui-form-item text-right">
@@ -189,6 +192,81 @@
     </div>
 </script>
 
+<script type="text/html" id="editDialog">
+    <div class="layuimini-form">
+        <form class="layui-form" action="" lay-filter="edit-form" id="edit-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">接口名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="mockName" lay-verify="required" lay-reqtext="接口名称不能为空"
+                           placeholder="请输入接口名称" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">请求方式</label>
+                <div class="layui-input-block">
+                    <select name="method" lay-filter="method" lay-verify="required" lay-reqtext="请求方式不能为空">
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">接口路径</label>
+                <div class="layui-input-block">
+                    <input type="text" name="url" lay-verify="required" lay-reqtext="接口路径不能为空"
+                           placeholder="请输入接口路径" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">返回延时</label>
+                <div class="layui-input-block">
+                    <input type="number" name="delay" lay-affix="number" placeholder="请输入返回延时" class="layui-input"
+                           step="1" min="0">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">开启Mock.js</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="mockjsFlag" value="0" lay-skin="switch" lay-filter="switchFlag"
+                           title="是|否">
+                </div>
+            </div>
+
+            <div class="layui-row">
+                <div class="layui-col-md11">
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label required">接口数据</label>
+                        <div class="layui-input-block">
+                            <textarea name="jsonData" class="layui-textarea" rows="10" placeholder="请输入接口数据"
+                                      lay-verify="required"
+                                      lay-reqtext="接口数据不能为空"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md1">
+                    <div style="margin-left: 11px;" class="layui-btn-container">
+                        <button type="button" class="layui-btn layui-btn-sm" lay-on="format">格式化</button>
+                        <button type="button" class="layui-btn layui-btn-sm" lay-on="zip" style="width: 57px;">压缩
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" class="layui-textarea layui-textarea-small"
+                              placeholder="请输入其他备注信息"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item text-right">
+                <button class="layui-btn" lay-submit lay-filter="editSaveBtn">保存</button>
+                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeEditDialog">取消</button>
+            </div>
+        </form>
+    </div>
+</script>
 
 <script>
     layui.use(['form', 'util', 'table', 'miniAjax'], function () {
@@ -402,10 +480,35 @@
                     area: '780px', // 宽度580, 高度自适应
                     content: $('#editDialog').html(),
                     success: function (layero, dIndex) {
-                        layero.find("[name='id']").text(lineData.id);
+                        // 回显表单数据
+                        form.render(null, 'edit-form');
+                        form.val('edit-form', lineData);
+                        form.val("edit-form", {
+                            "mockjsFlag": lineData.mockjsFlag === 0
+                        });
+
+                        util.on('lay-on', {
+                            format: function () {
+                                let data = form.val("edit-form");
+                                form.val("edit-form", {
+                                    "jsonData": formatJson(data.jsonData)
+                                });
+                            },
+                            zip: function () {
+                                let data = form.val("edit-form");
+                                form.val("edit-form", {
+                                    "jsonData": zipJson(data.jsonData)
+                                });
+                            },
+                        });
+
                         // 表单提交事件
                         form.on('submit(editSaveBtn)', function (data) {
                             data.field.id = lineData.id;
+                            if (!data.field.mockjsFlag) {
+                                data.field.mockjsFlag = 1;
+                            }
+
                             miniAjax.postJSON({
                                 url: '/mockinfo/edit',
                                 data: JSON.stringify(data.field),
