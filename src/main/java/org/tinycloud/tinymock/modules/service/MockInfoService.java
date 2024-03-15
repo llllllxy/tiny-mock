@@ -19,7 +19,9 @@ import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
+import org.tinycloud.tinymock.modules.bean.entity.TMockInfoHistory;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
+import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
 import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
 
 import java.util.Objects;
@@ -37,6 +39,9 @@ public class MockInfoService {
 
     @Autowired
     private MockInfoMapper mockInfoMapper;
+
+    @Autowired
+    private MockInfoHistoryMapper mockInfoHistoryMapper;
 
     public PageModel<MockInfoVo> query(MockInfoQueryDto queryParam) {
         PageModel<MockInfoVo> responsePage = new PageModel<>(queryParam.getPageNo(), queryParam.getPageSize());
@@ -140,7 +145,7 @@ public class MockInfoService {
         }
 
         // 插入旧的数据到历史版本表中
-
+        this.saveHistory(mockInfo);
 
         LambdaUpdateWrapper<TMockInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TMockInfo::getId, dto.getId());
@@ -153,7 +158,28 @@ public class MockInfoService {
         wrapper.set(TMockInfo::getMockjsFlag, dto.getMockjsFlag());
 
         int rows = this.mockInfoMapper.update(null, wrapper);
-
         return rows > 0;
+    }
+
+    public void saveHistory(TMockInfo mockInfo) {
+        Integer version = this.mockInfoHistoryMapper.selectVersion(mockInfo.getId(), mockInfo.getProjectId());
+        if (Objects.isNull(version)) {
+            version = 1;
+        } else {
+            version = version + 1;
+        }
+        TMockInfoHistory tMockInfoHistory = new TMockInfoHistory();
+        tMockInfoHistory.setMockId(mockInfo.getId());
+        tMockInfoHistory.setTenantId(mockInfo.getTenantId());
+        tMockInfoHistory.setProjectId(mockInfo.getProjectId());
+        tMockInfoHistory.setVersion(version);
+        tMockInfoHistory.setMockName(mockInfo.getMockName());
+        tMockInfoHistory.setMethod(mockInfo.getMethod());
+        tMockInfoHistory.setDelay(mockInfo.getDelay());
+        tMockInfoHistory.setMockjsFlag(mockInfo.getMockjsFlag());
+        tMockInfoHistory.setJsonData(mockInfo.getJsonData());
+        tMockInfoHistory.setUrl(mockInfo.getUrl());
+        tMockInfoHistory.setRemark(mockInfo.getRemark());
+        this.mockInfoHistoryMapper.insert(tMockInfoHistory);
     }
 }
