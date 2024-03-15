@@ -11,7 +11,7 @@
  Target Server Version : 50733
  File Encoding         : 65001
 
- Date: 15/03/2024 18:39:44
+ Date: 15/03/2024 18:44:21
 */
 
 SET NAMES utf8mb4;
@@ -146,8 +146,9 @@ INSERT INTO `t_mock_info` VALUES (1768544377218842626, 2212121, 1729067620457848
 DROP TABLE IF EXISTS `t_mock_info_history`;
 CREATE TABLE `t_mock_info_history`  (
   `id` bigint(20) NOT NULL COMMENT '主键id',
-  `tenant_id` bigint(20) NOT NULL COMMENT '租户ID',
   `mock_id` bigint(20) NOT NULL COMMENT '接口ID',
+  `version` int(11) NOT NULL COMMENT '历史版本号，从1开始，每次加1',
+  `tenant_id` bigint(20) NOT NULL COMMENT '租户ID',
   `project_id` bigint(20) NOT NULL COMMENT '项目ID',
   `mock_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '接口名称',
   `method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'GET,HEAD,POST,PUT, PATCH, DELETE,OPTIONS,TRACE;',
@@ -156,10 +157,9 @@ CREATE TABLE `t_mock_info_history`  (
   `url` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'URL',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '历史记录创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`mock_name`) USING BTREE COMMENT '唯一索引，surl不允许重复'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口历史版本表' ROW_FORMAT = DYNAMIC;

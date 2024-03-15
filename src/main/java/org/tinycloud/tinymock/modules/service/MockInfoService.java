@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
@@ -129,6 +130,7 @@ public class MockInfoService {
         return rows > 0;
     }
 
+    @Transactional
     public Boolean edit(MockInfoEditDto dto) {
         TMockInfo mockInfo = this.mockInfoMapper.selectOne(Wrappers.<TMockInfo>lambdaQuery()
                 .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
@@ -136,6 +138,10 @@ public class MockInfoService {
         if (Objects.isNull(mockInfo)) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NOT_EXIST);
         }
+
+        // 插入旧的数据到历史版本表中
+
+
         LambdaUpdateWrapper<TMockInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TMockInfo::getId, dto.getId());
         wrapper.set(StringUtils.hasLength(dto.getRemark()), TMockInfo::getRemark, dto.getRemark());
@@ -147,6 +153,7 @@ public class MockInfoService {
         wrapper.set(TMockInfo::getMockjsFlag, dto.getMockjsFlag());
 
         int rows = this.mockInfoMapper.update(null, wrapper);
+
         return rows > 0;
     }
 }
