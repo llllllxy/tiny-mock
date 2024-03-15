@@ -14,6 +14,8 @@ import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.model.PageModel;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
+import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
+import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
@@ -110,4 +112,41 @@ public class MockInfoService {
         return rows > 0;
     }
 
+    public Boolean add(MockInfoAddDto dto) {
+        TMockInfo tMockInfo = new TMockInfo();
+        tMockInfo.setTenantId(TenantHolder.getTenantId());
+        tMockInfo.setDelFlag(GlobalConstant.NOT_DELETED);
+        tMockInfo.setStatus(GlobalConstant.ENABLED);
+        tMockInfo.setRemark(dto.getRemark());
+        tMockInfo.setMockName(dto.getMockName());
+        tMockInfo.setMethod(dto.getMethod());
+        tMockInfo.setDelay(dto.getDelay());
+        tMockInfo.setUrl(dto.getUrl());
+        tMockInfo.setJsonData(dto.getJsonData());
+        tMockInfo.setProjectId(dto.getProjectId());
+        tMockInfo.setMockjsFlag(dto.getMockjsFlag());
+        int rows = this.mockInfoMapper.insert(tMockInfo);
+        return rows > 0;
+    }
+
+    public Boolean edit(MockInfoEditDto dto) {
+        TMockInfo mockInfo = this.mockInfoMapper.selectOne(Wrappers.<TMockInfo>lambdaQuery()
+                .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
+                .eq(TMockInfo::getId, dto.getId()));
+        if (Objects.isNull(mockInfo)) {
+            throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NOT_EXIST);
+        }
+        LambdaUpdateWrapper<TMockInfo> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TMockInfo::getId, dto.getId());
+        wrapper.set(StringUtils.hasLength(dto.getRemark()), TMockInfo::getRemark, dto.getRemark());
+        wrapper.set(TMockInfo::getMockName, dto.getMockName());
+        wrapper.set(TMockInfo::getMethod, dto.getMethod());
+        wrapper.set(Objects.nonNull(dto.getDelay()), TMockInfo::getDelay, dto.getDelay());
+        wrapper.set(TMockInfo::getUrl, dto.getUrl());
+        wrapper.set(TMockInfo::getJsonData, dto.getJsonData());
+        wrapper.set(TMockInfo::getMockjsFlag, dto.getMockjsFlag());
+
+        int rows = this.mockInfoMapper.update(null, wrapper);
+        return rows > 0;
+    }
 }

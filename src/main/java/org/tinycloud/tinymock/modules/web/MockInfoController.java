@@ -5,6 +5,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.common.model.PageModel;
+import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
+import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
 import org.tinycloud.tinymock.modules.service.MockInfoService;
@@ -48,14 +50,13 @@ public class MockInfoController {
         return ApiResult.success(mockInfoService.disable(id), "禁用成功!");
     }
 
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ApiResult<Boolean> add(@Validated @RequestBody MockInfoAddDto dto) {
+        return ApiResult.success(mockInfoService.add(dto), "新增成功!");
+    }
 
-//    @RequestMapping(value = "/add", method = RequestMethod.POST)
-//    public ApiResult<Boolean> add(@Validated @RequestBody MockInfoAddDto dto) {
-//        return ApiResult.success(mockInfoService.add(dto), "新增成功!");
-//    }
-//
-//    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-//    public ApiResult<Boolean> edit(@Validated @RequestBody MockInfoEditDto dto) {
-//        return ApiResult.success(mockInfoService.edit(dto), "修改成功!");
-//    }
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public ApiResult<Boolean> edit(@Validated @RequestBody MockInfoEditDto dto) {
+        return ApiResult.success(mockInfoService.edit(dto), "修改成功!");
+    }
 }

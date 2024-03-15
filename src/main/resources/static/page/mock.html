@@ -440,7 +440,7 @@
                         form.on('submit(addSaveBtn)', function (data) {
                             miniAjax.postJSON({
                                 url: '/mockinfo/add',
-                                data: JSON.stringify(data.field),
+                                data: JSON.stringify(Object.assign({}, data.field, {'projectId': projectId})),
                                 success: function (res) {
                                     if (res.code == 0) {
                                         layer.msg(res.msg, {time: 1000, icon: 1}, function () {
