@@ -101,6 +101,7 @@
 <script type="text/html" id="currentTableBar">
     <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-xs layui-bg-purple data-count-history" lay-event="history">版本</a>
 </script>
 
 <script type="text/html" id="switchTpl">
@@ -269,12 +270,13 @@
 </script>
 
 <script>
-    layui.use(['form', 'util', 'table', 'miniAjax'], function () {
+    layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage'], function () {
         var form = layui.form,
             $ = layui.jquery,
             layer = layui.layer,
             table = layui.table,
             miniAjax = layui.miniAjax,
+            miniPage = layui.miniPage,
             util = layui.util;
 
         // 下面这两种方式都能获取到参数
@@ -325,12 +327,12 @@
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
-                {field: 'id', width: '10%', title: 'ID', sort: true, align: 'center', fixed: 'left'},
+                {type: 'numbers', width: '5%', title: '#', align: 'center'},
                 {field: 'mockName', width: '10%', title: '接口名称'},
                 {field: 'method', width: '5%', title: '请求类型'},
                 {
                     field: 'url', width: '15%', title: 'URL', templet: function (d) {
-                        return `<a href="javascript:;" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
+                        return `<a href="javascript:;" style="color: #5E7CE0;text-decoration: underline;" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
                     }
                 },
                 {field: 'delay', width: '10%', title: '返回时延', align: 'center'},
@@ -338,7 +340,7 @@
                 {field: 'mockjsFlag', title: '启用mock.js', width: '10%', align: 'center', templet: '#mockjsFlagTpl'},
                 {field: 'status', title: '状态', width: '10%', align: 'center', templet: '#switchTpl'},
                 {field: 'remark', width: '10%', title: '备注信息'},
-                {title: '操作', width: '10%', toolbar: '#currentTableBar', align: "center"}
+                {title: '操作', width: '15%', toolbar: '#currentTableBar', align: "center"}
             ]],
             autoSort: false,
             limits: [10, 15, 20, 25, 50, 100],
@@ -556,6 +558,29 @@
                 });
             } else if (obj.event === 'copy') {
                 handleClipboard(lineData.url)
+            } else if (obj.event === 'history') {
+                window.mockId = lineData.id;
+                var content = miniPage.getHrefContent('page/mockHistory.html');
+                var index = layer.open({
+                    title: '接口历史版本',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '980px', // 宽度780, 高度自适应
+                    content: content,
+                    success: function (layero, dIndex) {
+                    },
+                    end: function (index) {
+                    },
+                    full: function(layero, index, that) {
+                        // 这样做，是为了放大缩小时，表格可以自适应大小
+                        table.reload('historyTableId');
+                    },
+                    restore: function(layero, index, that) {
+                        table.reload('historyTableId');
+                    }
+                });
             }
         });
 

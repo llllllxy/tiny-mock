@@ -1,0 +1,86 @@
+<div class="layuimini-main">
+    <table class="layui-hide" id="historyTableId" lay-filter="historyTableFilter"></table>
+</div>
+
+
+<script type="text/html" id="jsonDataDialog">
+    <div>
+        <pre class="layui-code code-demo">
+        </pre>
+    </div>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'layer'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            table = layui.table;
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        var mockId = window.mockId;
+        console.log("mockId = " + mockId)
+
+
+        var historyTable = table.render({
+            elem: '#historyTableId',
+            url: '/mockinfo/history',
+            contentType: 'application/json',
+            method: 'post', //如果无需自定义HTTP类型，可不加该参数
+            where: {'mockId': mockId}, // 初始化时带的参数
+            cols: [
+                [
+                    {field: 'version', title: '版本', align: 'center',},
+                    {field: 'createdAt', title: '版本时间', align: 'center'},
+                    {field: 'mockName', title: '接口名称', align: 'center'},
+                    {field: 'method', title: '请求方式', align: 'center'},
+                    {field: 'url', title: '接口地址', align: 'center'},
+                    {field: 'delay', title: '延迟时间', align: "center"},
+                    {field: 'mockjsFlag', title: '开启Mock.js', align: "center"},
+                    {field: 'jsonData', title: '接口数据', align: 'center', expandedMode: 'tips', templet: function (d) {
+                            return `<a href="javascript:;" style="color: #5E7CE0;text-decoration: underline;" lay-event="preview">${d.jsonData}</a>`
+                        }
+                    }
+                ]
+            ],
+            skin: 'line', // 行边框风格
+            parseData: function (res) {
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.totalCount,
+                    "data": res.data.records
+                };
+            }
+        });
+
+
+        table.on('tool(historyTableFilter)', function (obj) {
+            var lineData = obj.data;
+            if (obj.event === 'preview') {
+                var index = layer.open({
+                    title: '预览',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '780px', // 宽度580, 高度自适应
+                    content: $('#jsonDataDialog').html(),
+                    success: function (layero, dIndex) {
+                        layui.code({
+                            elem: '.code-demo',
+                            lang: 'json',
+                            code: lineData.jsonData
+                        });
+                    },
+                    end: function (index) {
+
+                    }
+                });
+            }
+        });
+    });
+
+</script>

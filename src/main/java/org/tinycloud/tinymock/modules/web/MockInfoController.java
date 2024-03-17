@@ -7,8 +7,11 @@ import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.common.model.PageModel;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
+import org.tinycloud.tinymock.modules.bean.dto.MockInfoHistoryQueryDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
+import org.tinycloud.tinymock.modules.bean.vo.MockInfoHistoryVo;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
+import org.tinycloud.tinymock.modules.service.MockInfoHistoryService;
 import org.tinycloud.tinymock.modules.service.MockInfoService;
 
 /**
@@ -25,9 +28,17 @@ public class MockInfoController {
     @Autowired
     private MockInfoService mockInfoService;
 
+    @Autowired
+    private MockInfoHistoryService mockInfoHistoryService;
+
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public ApiResult<PageModel<MockInfoVo>> query(@RequestBody MockInfoQueryDto dto) {
         return ApiResult.success(mockInfoService.query(dto), "查询成功!");
+    }
+
+    @RequestMapping(value = "/history", method = RequestMethod.POST)
+    public ApiResult<PageModel<MockInfoHistoryVo>> history(@RequestBody MockInfoHistoryQueryDto dto) {
+        return ApiResult.success(mockInfoHistoryService.query(dto), "查询成功!");
     }
 
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
