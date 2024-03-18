@@ -1,0 +1,109 @@
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: 60px 1fr; /* 左侧固定宽度，右侧自动填充 */
+    }
+</style>
+
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div>
+            <div style="padding: 10px 10px 10px 10px;" class="layui-panel">
+                <div class="container">
+                    <div >
+                        <img id="questionMark" src="images/questionMark.png" alt="" style="height: 50px; width: 50px">
+                    </div>
+                    <div >
+                        <h2>问题与建议</h2>
+                        <p>提交你在TinyMock使用中发现的问题和对TinyMock的建议，我们将尽快处理并联系您！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 10px 10px 10px 10px;margin-top: 10px;" class="layui-panel">
+                <blockquote class="layui-elem-quote">
+                    对您给予的帮助和支持，深表感谢！我们默认会通过您注册时填写的邮箱地址联系您，若您希望我们通过其他邮箱联系您，请修改邮箱地址。
+                </blockquote>
+                <div class="layui-form" action="" lay-filter="add-form" id="add-form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label required">邮箱地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="email" lay-verify="required|email" placeholder="请输入你的联系邮箱" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label required">反馈内容</label>
+                        <div class="layui-input-block">
+                            <textarea name="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit lay-filter="saveBtn">立即提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['form', 'util', 'miniAjax'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            miniAjax = layui.miniAjax,
+            util = layui.util;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        miniAjax.get({
+            url: "/auth/getTenantInfo",
+            success: function (res) {
+                if (res.code === 0) {
+                    form.val('add-form', {
+                        'email': res.data.tenantEmail
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            },
+            error: function (error) {
+                layer.msg(error, {time: 1000, icon: 2});
+            }
+        });
+
+
+        // 监听提交
+        form.on('submit(saveBtn)', function (data) {
+            console.log(data.failed);
+            layer.confirm('确定要提交建议信息吗', {
+                title: '提示'
+            }, function (index) {
+                miniAjax.postJSON({
+                    url: '/feedback/add',
+                    data: JSON.stringify(data.field),
+                    success: function (res) {
+                        if (res.code === 0) {
+                            layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                layer.close(index);
+                            });
+                        } else {
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    }
+                });
+            });
+            return false;
+        });
+    });
+
+</script>

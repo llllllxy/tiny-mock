@@ -76,16 +76,23 @@ public class TenantAuthController {
         menuItem4.put("target", "_self");
 
         Map<String, String> menuItem5 = new HashMap<>();
-        menuItem5.put("title", "Github");
-        menuItem5.put("href", "https://github.com/llllllxy/tiny-mock");
+        menuItem5.put("title", "问题和建议");
+        menuItem5.put("href", "page/feedback.html");
         menuItem5.put("icon", "fa fa-navicon");
-        menuItem5.put("target", "_blank");
+        menuItem5.put("target", "_self");
+
+        Map<String, String> menuItem6 = new HashMap<>();
+        menuItem6.put("title", "Github");
+        menuItem6.put("href", "https://github.com/llllllxy/tiny-mock");
+        menuItem6.put("icon", "fa fa-navicon");
+        menuItem6.put("target", "_blank");
 
         List<Map<String, String>> menuList = new ArrayList<>();
         menuList.add(menuItem2);
         menuList.add(menuItem3);
         menuList.add(menuItem4);
         menuList.add(menuItem5);
+        menuList.add(menuItem6);
 
 
         Map<String, String> homeInfo = new HashMap<>();
