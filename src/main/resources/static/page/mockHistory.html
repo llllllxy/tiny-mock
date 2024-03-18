@@ -39,10 +39,7 @@
                     {field: 'url', title: '接口地址', align: 'center'},
                     {field: 'delay', title: '延迟时间', align: "center"},
                     {field: 'mockjsFlag', title: '开启Mock.js', align: "center"},
-                    {field: 'jsonData', title: '接口数据', align: 'center', expandedMode: 'tips', templet: function (d) {
-                            return `<a href="javascript:;" style="color: #5E7CE0;text-decoration: underline;" lay-event="preview">${d.jsonData}</a>`
-                        }
-                    }
+                    {field: 'jsonData', title: '接口数据', align: 'center', expandedMode: 'tips', templet: '<div><a href="javascript:;" class="layuimini-link" lay-event="preview">{{= d.jsonData }}</a></div>'}
                 ]
             ],
             skin: 'line', // 行边框风格

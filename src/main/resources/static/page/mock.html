@@ -332,7 +332,7 @@
                 {field: 'method', width: '5%', title: '请求类型'},
                 {
                     field: 'url', width: '15%', title: 'URL', templet: function (d) {
-                        return `<a href="javascript:;" style="color: #5E7CE0;text-decoration: underline;" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
+                        return `<a href="javascript:;" class="layuimini-link" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
                     }
                 },
                 {field: 'delay', width: '10%', title: '返回时延', align: 'center'},

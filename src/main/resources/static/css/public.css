@@ -88,3 +88,11 @@
     height: 60px !important;
     min-height: 60px !important;
 }
+
+.layuimini-link {
+    color: #5E7CE0;
+    text-decoration: underline;
+}
+.layuimini-link:hover {
+    color: #7E96E6
+}
