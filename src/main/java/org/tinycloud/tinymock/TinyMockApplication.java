@@ -5,12 +5,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.tinycloud.tinymock.common.utils.LocalHostUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Slf4j
+@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"org.tinycloud.tinymock"})
 public class TinyMockApplication {
     public static void main(String[] args) throws UnknownHostException {

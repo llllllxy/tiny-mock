@@ -1,4 +1,4 @@
-package org.tinycloud.tinymock.common.config;
+package org.tinycloud.tinymock.common.config.mybatis;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
