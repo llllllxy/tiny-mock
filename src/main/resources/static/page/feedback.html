@@ -27,6 +27,14 @@
                 </blockquote>
                 <div class="layui-form" action="" lay-filter="add-form" id="add-form">
                     <div class="layui-form-item">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="feedType" value="0" title="建议" checked>
+                            <input type="radio" name="feedType" value="1" title="问题反馈">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
                         <label class="layui-form-label required">邮箱地址</label>
                         <div class="layui-input-block">
                             <input type="text" name="email" lay-verify="required|email" placeholder="请输入你的联系邮箱" autocomplete="off" class="layui-input">
@@ -85,7 +93,7 @@
         // 监听提交
         form.on('submit(saveBtn)', function (data) {
             console.log(data.failed);
-            layer.confirm('确定要提交建议信息吗', {
+            layer.confirm('确定要提交吗', {
                 title: '提示'
             }, function (index) {
                 miniAjax.postJSON({
