@@ -116,6 +116,16 @@
                 <div class="layui-form-item">
                     <div class="layui-input-wrap">
                         <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-note"></i>
+                        </div>
+                        <input type="text" name="invitationCode" value="" lay-verify="required|invitationCode"
+                               placeholder="邀请码" lay-reqtext="请填写邀请码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-username"></i>
                         </div>
                         <input type="text" name="tenantAccount" value="" lay-verify="required|tenantAccount"
