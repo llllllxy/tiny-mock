@@ -27,7 +27,7 @@ public class SeqService {
         try {
             Map<String, Object> result = this.jdbcTemplate.queryForMap(sql, seqCode);
             // 在原本的基础上加10万，防止时间回滚
-            return Long.parseLong(result.get("seq_value").toString()) + 100000;
+            return Long.parseLong(result.get("seq_value").toString()) + 1 + 100000;
         } catch (EmptyResultDataAccessException e) {
             return null;
         }

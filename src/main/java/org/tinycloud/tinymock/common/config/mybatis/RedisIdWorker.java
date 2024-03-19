@@ -41,7 +41,7 @@ public class RedisIdWorker {
     private SeqService seqService;
 
 
-    public Long nextId(String tableName) {
+    public synchronized Long nextId(String tableName) {
         LocalDate now = LocalDate.now();
         int year = now.getYear();
         // 获取今天是今年的第几天
@@ -65,8 +65,8 @@ public class RedisIdWorker {
             this.stringRedisTemplate.expire(keyPrefix, expireTime, TimeUnit.SECONDS);
         });
         String number = padWithZero(current, 9);
-        // today-7位， number-9位（最大值999999999，一天这么多个ID也够用了，不够的话就再补充长度）
-        // 相加共16位，如2024064000000090
+        // today-7位， number-9位，随机数-3位
+        // 相加共19位，如2024064000000090
         return Long.parseLong(today + number + StrUtils.randomNumber(3));
     }
 

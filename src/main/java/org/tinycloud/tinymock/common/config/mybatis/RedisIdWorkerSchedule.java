@@ -6,10 +6,11 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.tinycloud.tinymock.common.utils.DateUtils;
 import org.tinycloud.tinymock.modules.service.SeqService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -31,18 +32,19 @@ public class RedisIdWorkerSchedule {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @Scheduled(initialDelay = 20000, fixedDelay = 20000)
+    @Scheduled(initialDelay = 300 * 1000, fixedDelay = 300 * 1000)
     public void scheduled() {
-        log.info("scheduled >>>" + new Date());
-
+        log.info("scheduled start >>> " + DateUtils.now());
         Set<String> keys = this.scanTargetKeys("icr:", 10L);
-
-
-        log.info("keys >>> {}", keys);
         // 更新redis内的缓存持久化到db
         for (String key : keys) {
-
+            String value = this.stringRedisTemplate.opsForValue().get(key);
+            if (StringUtils.hasText(value)) {
+                String seqCode = transKey(key);
+                this.seqService.updateSeqValue(seqCode, Long.parseLong(value));
+            }
         }
+        log.info("scheduled end >>> " + DateUtils.now());
     }
 
 

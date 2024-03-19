@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 127.0.0.1
+ Source Server         : 个人-本机-127.0.0.1
  Source Server Type    : MySQL
  Source Server Version : 50733
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 50733
  File Encoding         : 65001
 
- Date: 17/03/2024 22:44:07
+ Date: 19/03/2024 13:02:19
 */
 
 SET NAMES utf8mb4;
@@ -27,12 +27,16 @@ CREATE TABLE `t_invitees_info`  (
   `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邀请码',
   `invitees_user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '被邀请人',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`invitation_code`) USING BTREE COMMENT '唯一索引，surl不允许重复'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of t_invitees_info
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for t_mail_config
@@ -47,12 +51,16 @@ CREATE TABLE `t_mail_config`  (
   `receive_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '默认收件邮箱地址(多个用逗号隔开)',
   `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标志（0--未删除1--已删除）',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注描述信息',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   `created_by` bigint(20) NOT NULL COMMENT '创建人-对应t_user.id',
   `updated_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人-对应t_user.id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统邮箱配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统邮箱配置表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of t_mail_config
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for t_mock_access_log
@@ -63,13 +71,13 @@ CREATE TABLE `t_mock_access_log`  (
   `tenant_id` bigint(20) NOT NULL COMMENT '租户id',
   `project_id` bigint(20) NOT NULL COMMENT '项目id',
   `mock_id` bigint(20) NOT NULL COMMENT '接口id',
-  `access_time` datetime(0) NOT NULL COMMENT '访问时间',
+  `access_time` datetime NOT NULL COMMENT '访问时间',
   `access_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-IP地址',
   `access_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者-ip物理地址',
   `access_user_agent` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '访问者的user_agent',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_mock_access_log
@@ -118,12 +126,12 @@ CREATE TABLE `t_mock_info`  (
   `url` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'URL',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_mock_info
@@ -149,9 +157,9 @@ CREATE TABLE `t_mock_info_history`  (
   `url` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'URL',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '历史记录创建时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '历史记录创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口历史版本表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口历史版本表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_mock_info_history
@@ -172,12 +180,12 @@ CREATE TABLE `t_project_info`  (
   `path` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目链接',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `t_ur_map_surl_unique`(`project_name`) USING BTREE COMMENT '唯一索引，surl不允许重复'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_project_info
@@ -186,6 +194,38 @@ INSERT INTO `t_project_info` VALUES (1729067620457848832, 2212121, '测试项目
 INSERT INTO `t_project_info` VALUES (1729067620457848833, 2212121, 'vue-admin-plus', 'vue-admin-plus', '/plus', 0, 0, '2024-03-10 18:34:14', '2024-03-13 12:03:02', NULL);
 INSERT INTO `t_project_info` VALUES (1767819694047502338, 2212121, '测试项目2', '', '/test2', 0, 1, '2024-03-13 15:47:14', '2024-03-13 16:05:56', '');
 INSERT INTO `t_project_info` VALUES (1767820137268035585, 2212121, '测试项目3', NULL, '/test3', 0, 0, '2024-03-13 15:48:59', '2024-03-13 15:48:59', '');
+
+-- ----------------------------
+-- Table structure for t_seq
+-- ----------------------------
+DROP TABLE IF EXISTS `t_seq`;
+CREATE TABLE `t_seq`  (
+  `seq_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `seq_value` bigint(20) NOT NULL COMMENT '当前值',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`seq_code`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_seq
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for t_seq_copy1
+-- ----------------------------
+DROP TABLE IF EXISTS `t_seq_copy1`;
+CREATE TABLE `t_seq_copy1`  (
+  `seq_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `seq_value` bigint(20) NOT NULL COMMENT '当前值',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`seq_code`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_seq_copy1
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for t_tenant
@@ -200,12 +240,12 @@ CREATE TABLE `t_tenant`  (
   `tenant_email` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '租户邮箱',
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
-  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注册邀请码',
   `tenant_avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户头像',
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_tenant
