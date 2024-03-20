@@ -44,9 +44,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TenantAuthService {
 
-    private static final String expireTimeString = "2099-12-31 23:59:59";
-    private static final String expireTimePattern = "yyyy-MM-dd HH:mm:ss";
-
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -58,6 +55,9 @@ public class TenantAuthService {
 
     @Autowired
     private MailConfigService mailConfigService;
+
+    @Autowired
+    private InviteesInfoService inviteesInfoService;
 
     public TenantCaptchaCodeVo getCode() {
         // 保存验证码信息，生成验证key
@@ -179,13 +179,13 @@ public class TenantAuthService {
 
         // 发送邮件
         MailConfigVo mailConfig = mailConfigService.detail();
-        String emailTitle = "TINY短链租户账户激活邮箱验证";
-        String emailMsg = "<h2>您好，感谢您注册TINY短链平台！</h2>"
+        String emailTitle = "TINY-MOCK租户账户激活邮箱验证";
+        String emailMsg = "<h2>您好，感谢您注册TINY-MOCK平台！</h2>"
                 + "您的账户激活邮箱验证码为: " + randomCode + "，有效期十分钟"
                 + "<br/><br/>"
                 + "如果不是本人操作，请忽略。"
                 + "<br/><br/>"
-                + "TINY短链 - 专业的短链服务商";
+                + "TINY-MOCK - 简单好用的在线接口 MOCK 平台";
         EmailUtils.sendMsg(mailConfig.getEmailAccount(), mailConfig.getEmailPassword(), mailConfig.getSmtpAddress(), mailConfig.getSmtpPort(),
                 new String[]{receiveEmail}, emailTitle, emailMsg);
 
@@ -201,13 +201,6 @@ public class TenantAuthService {
     @Transactional
     public Boolean register(TenantRegisterDto dto) {
         String invitationCode = dto.getInvitationCode();
-        TTenant tTenant = this.tenantMapper.selectOne(
-                Wrappers.<TTenant>lambdaQuery().eq(TTenant::getInvitationCode, invitationCode)
-                        .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
-        if (Objects.isNull(tTenant)) {
-            throw new TenantException(TenantErrorCode.INVITATIONCODE_IS_NOT_EXIST);
-        }
-
         String tenantAccount = dto.getTenantAccount();
         String password = dto.getPassword();
         String tenantName = dto.getTenantName();
@@ -225,6 +218,14 @@ public class TenantAuthService {
         if (!emailCode.equalsIgnoreCase(code)) {
             throw new TenantException(TenantErrorCode.EMAILCODE_IS_MISMATCH);
         }
+
+        TTenant tTenant = this.tenantMapper.selectOne(
+                Wrappers.<TTenant>lambdaQuery().eq(TTenant::getInvitationCode, invitationCode)
+                        .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (Objects.isNull(tTenant)) {
+            throw new TenantException(TenantErrorCode.INVITATIONCODE_IS_NOT_EXIST);
+        }
+
         String passwordDecrypt = SM2Utils.decrypt(privateKey, password);
         if (StrUtils.isEmpty(passwordDecrypt)) {
             throw new TenantException(TenantErrorCode.EMAILCODE_IS_MISMATCH);
@@ -242,7 +243,7 @@ public class TenantAuthService {
         this.tenantMapper.insert(entity);
 
         // 记录租户邀请码记录表
-
+        this.inviteesInfoService.add(tTenant.getId(), invitationCode, entity.getId());
 
         return true;
     }

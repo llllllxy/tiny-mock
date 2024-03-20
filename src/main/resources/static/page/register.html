@@ -217,10 +217,11 @@
     var verifyKey;
     var publicKey;
 
-    layui.use(['form', 'layer'], function () {
+    layui.use(['form', 'layer', 'miniAjax'], function () {
         var $ = layui.jquery,
             form = layui.form,
             layer = layui.layer,
+            miniAjax = layui.miniAjax,
             util = layui.util;
 
         // 自定义验证规则
@@ -248,7 +249,7 @@
             var emailInput = $('input[name="tenantEmail"]').val();
             if (isvalid) {
                 // 此处可继续书写「发送验证码」等后续逻辑
-                AjaxUtil.get({
+                miniAjax.get({
                     url: "/auth/sendEmail?receiveEmail=" + emailInput,
                     success: function (res) {
                         if (res.code == 0) {
@@ -307,7 +308,7 @@
             data.password = encryptData;
             data.uuid = verifyKey;
             startLoading();
-            AjaxUtil.postJSON({
+            miniAjax.postJSON({
                 url: "/auth/register",
                 data: JSON.stringify(data),
                 success: function (res) {

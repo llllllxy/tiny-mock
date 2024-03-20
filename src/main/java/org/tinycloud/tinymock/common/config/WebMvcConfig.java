@@ -41,6 +41,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             add("/auth/login");
             add("/auth/getCode");
             add("/auth/register");
+            add("/auth/sendEmail");
             add("/mock/**");
 
             // 开放前端静态资源和静态页面
