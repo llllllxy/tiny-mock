@@ -19,6 +19,9 @@ import java.io.Serializable;
 public class TenantRegisterDto implements Serializable {
     private static final long serialVersionUID = -1L;
 
+    @NotEmpty(message = "邀请码不能为空")
+    private String invitationCode;
+
     @NotEmpty(message = "登录账户不能为空")
     private String tenantAccount;
 

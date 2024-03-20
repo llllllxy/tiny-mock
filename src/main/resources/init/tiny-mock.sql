@@ -11,11 +11,34 @@
  Target Server Version : 50733
  File Encoding         : 65001
 
- Date: 19/03/2024 13:02:19
+ Date: 20/03/2024 18:39:24
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for t_feedback
+-- ----------------------------
+DROP TABLE IF EXISTS `t_feedback`;
+CREATE TABLE `t_feedback`  (
+  `id` bigint(20) NOT NULL COMMENT '主键id',
+  `tenant_id` bigint(20) NOT NULL COMMENT '租户id',
+  `feed_type` tinyint(4) NOT NULL COMMENT '反馈类型，0建议，1问题',
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱',
+  `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `t_ur_map_surl_unique`(`content`) USING BTREE COMMENT '唯一索引，surl不允许重复'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '反馈建议表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of t_feedback
+-- ----------------------------
+INSERT INTO `t_feedback` VALUES (2024079000000002192, 2212121, 0, '哈哈哈哈哈哈', '17862718963@email.com', 0, '2024-03-19 15:59:18', '2024-03-19 15:59:18');
+INSERT INTO `t_feedback` VALUES (2024079000000003955, 2212121, 1, '哈哈哈哈哈哈11111', '17862718963@email.com', 0, '2024-03-19 15:59:37', '2024-03-19 15:59:37');
 
 -- ----------------------------
 -- Table structure for t_invitees_info
@@ -210,6 +233,9 @@ CREATE TABLE `t_seq`  (
 -- ----------------------------
 -- Records of t_seq
 -- ----------------------------
+INSERT INTO `t_seq` VALUES ('2024066_hhhh', 1100, '2024-03-19 13:48:50', '2024-03-19 13:48:50');
+INSERT INTO `t_seq` VALUES ('2024078_t_url_map', 1, '2024-03-19 13:48:50', '2024-03-19 13:48:50');
+INSERT INTO `t_seq` VALUES ('2024079_t_feedback', 3, '2024-03-19 16:03:51', '2024-03-19 16:03:51');
 
 -- ----------------------------
 -- Table structure for t_seq_copy1
@@ -241,7 +267,7 @@ CREATE TABLE `t_tenant`  (
   `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注册邀请码',
+  `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注册邀请码（8位随机字符）',
   `tenant_avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户头像',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -250,6 +276,6 @@ CREATE TABLE `t_tenant`  (
 -- ----------------------------
 -- Records of t_tenant
 -- ----------------------------
-INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', 'e960be68749241c3e3562094239e28e2b4482e9d28c65413bbe2f9bd0419cdb8', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', NULL, NULL, '2024-03-08 17:52:49');
+INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', 'e960be68749241c3e3562094239e28e2b4482e9d28c65413bbe2f9bd0419cdb8', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', 'AaNs8ROo', NULL, '2024-03-20 17:03:02');
 
 SET FOREIGN_KEY_CHECKS = 1;

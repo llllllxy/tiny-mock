@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.tinycloud.tinymock.common.annotation.AccessLimit;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantLoginDto;
@@ -126,6 +127,7 @@ public class TenantAuthController {
         return ApiResult.success(tenantAuthService.sendEmail(receiveEmail), "邮件发送成功！");
     }
 
+    @AccessLimit(seconds = 300, maxCount = 3, msg = "5分钟内只能注册三次，请稍后再试")
     @PostMapping("/register")
     public ApiResult<Boolean> register(@Validated @RequestBody TenantRegisterDto dto) {
         return ApiResult.success(tenantAuthService.register(dto), "注册成功！");

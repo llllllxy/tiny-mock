@@ -7,6 +7,8 @@ public enum TenantErrorCode {
     CAPTCHA_IS_MISMATCH(3004, "验证码错误或已过期！"),
     EMAILCODE_IS_MISMATCH(3005, "邮箱验证码错误或已过期！"),
 
+    INVITATIONCODE_IS_NOT_EXIST(3006, "邀请码不正确或不存在！"),
+
     TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST(3100, "项目名称或项目路径已存在，请修改！"),
     TENANT_MOCKINFO_IS_ENABLE(3101, "只可启用'停用'状态的接口！"),
     TENANT_MOCKINFO_IS_DISABLE(3102, "只可停用'启用'状态的接口！"),

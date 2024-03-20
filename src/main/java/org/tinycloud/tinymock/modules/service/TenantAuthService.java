@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.LoginTenant;
 import org.tinycloud.tinymock.common.config.interceptor.TenantAuthUtil;
@@ -197,7 +198,16 @@ public class TenantAuthService {
         }};
     }
 
+    @Transactional
     public Boolean register(TenantRegisterDto dto) {
+        String invitationCode = dto.getInvitationCode();
+        TTenant tTenant = this.tenantMapper.selectOne(
+                Wrappers.<TTenant>lambdaQuery().eq(TTenant::getInvitationCode, invitationCode)
+                        .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (Objects.isNull(tTenant)) {
+            throw new TenantException(TenantErrorCode.INVITATIONCODE_IS_NOT_EXIST);
+        }
+
         String tenantAccount = dto.getTenantAccount();
         String password = dto.getPassword();
         String tenantName = dto.getTenantName();
@@ -221,6 +231,7 @@ public class TenantAuthService {
         }
         String passwordDecryptHash = SM3Utils.hash(passwordDecrypt);
 
+        // 插入租户
         TTenant entity = new TTenant();
         entity.setDelFlag(GlobalConstant.NOT_DELETED);
         entity.setStatus(GlobalConstant.ENABLED);
@@ -229,6 +240,10 @@ public class TenantAuthService {
         entity.setTenantEmail(tenantEmail);
         entity.setTenantName(tenantName);
         this.tenantMapper.insert(entity);
+
+        // 记录租户邀请码记录表
+
+
         return true;
     }
 }
