@@ -239,17 +239,6 @@ INSERT INTO `t_seq` VALUES ('2024066_hhhh', 1100, '2024-03-19 13:48:50', '2024-0
 INSERT INTO `t_seq` VALUES ('2024078_t_url_map', 1, '2024-03-19 13:48:50', '2024-03-19 13:48:50');
 INSERT INTO `t_seq` VALUES ('2024079_t_feedback', 3, '2024-03-19 16:03:51', '2024-03-19 16:03:51');
 
--- ----------------------------
--- Table structure for t_seq_copy1
--- ----------------------------
-DROP TABLE IF EXISTS `t_seq_copy1`;
-CREATE TABLE `t_seq_copy1`  (
-  `seq_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `seq_value` bigint(20) NOT NULL COMMENT '当前值',
-  `created_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
-  PRIMARY KEY (`seq_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_tenant
