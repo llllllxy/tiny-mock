@@ -1,0 +1,58 @@
+<style>
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <form class="layui-form layuimini-form" action="" lay-filter="edit-form" id="edit-form">
+            <div class="layui-form-item label-super-wide">
+                <label class="layui-form-label">邀请码</label>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid" id="invitationCode" style="word-break: break-all"></div>
+                </div>
+            </div>
+            <div class="layui-btn-container" style="margin-top: 10px;margin-left: 25px;">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" lay-on="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'miniPage', 'util', 'miniAjax'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            util = layui.util,
+            miniAjax = layui.miniAjax,
+            miniPage = layui.miniPage;
+
+        util.on('lay-on', {
+            reset: function () {
+                miniAjax.get({
+                    url: '/auth/refreshInvitationCode',
+                    success: function (res) {
+                        if (res.code === 0) {
+                            $('#invitationCode').text(res.data);
+                        } else {
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    }
+                });
+            },
+        });
+
+
+        miniAjax.get({
+            url: '/auth/getTenantInfo',
+            success: function (res) {
+                if (res.code === 0) {
+                    $('#invitationCode').text(res.data.invitationCode);
+                    form.render();
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            }
+        });
+
+    });
+</script>

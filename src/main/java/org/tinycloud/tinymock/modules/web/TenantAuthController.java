@@ -133,4 +133,8 @@ public class TenantAuthController {
         return ApiResult.success(tenantAuthService.register(dto), "注册成功！");
     }
 
+    @GetMapping("/refreshInvitationCode")
+    public ApiResult<String> refreshInvitationCode() {
+        return ApiResult.success(tenantAuthService.refreshInvitationCode(), "重置邀请码成功！");
+    }
 }

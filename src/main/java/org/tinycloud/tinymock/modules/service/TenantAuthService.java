@@ -247,4 +247,14 @@ public class TenantAuthService {
 
         return true;
     }
+
+    public String refreshInvitationCode() {
+        String newCode = StrUtils.randomStr(8);
+        Long tenantId = TenantHolder.getTenantId();
+        LambdaUpdateWrapper<TTenant> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TTenant::getId, tenantId);
+        wrapper.set(TTenant::getInvitationCode, newCode);
+        int rows = this.tenantMapper.update(wrapper);
+        return newCode;
+    }
 }
