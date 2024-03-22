@@ -1,7 +1,6 @@
 package org.tinycloud.tinymock.common.utils;
 
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -239,8 +238,6 @@ public class StrUtils {
      * @return 随机字符串
      */
     public static String randomStr(int count) {
-
-        Random random = new Random();
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < count; i++) {
             String r = String.valueOf(charSeq[ThreadLocalRandom.current().nextInt(charSeq.length)]);
