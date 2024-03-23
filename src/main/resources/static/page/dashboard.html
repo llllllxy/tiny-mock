@@ -131,10 +131,10 @@
             success: function (res) {
                 if (res.code == '0') {
                     // 刷新数据
-                    $("#urlQuantity").text(res.data.urlQuantity);
+                    $("#projectQuantity").text(res.data.projectQuantity);
+                    $("#mockQuantity").text(res.data.mockQuantity);
                     $("#accessQuantity").text(res.data.accessQuantity);
-                    $("#todayAccessQuantity").text(res.data.todayAccessQuantity);
-                    $("#todayIpQuantity").text(res.data.todayIpQuantity);
+                    $("#inviteesQuantity").text(res.data.inviteesQuantity);
                 } else {
                     layer.msg(res.msg, {time: 1000, icon: 2});
                 }
