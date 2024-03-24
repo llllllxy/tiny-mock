@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tinycloud.tinymock.modules.service.MockClientService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ public class MockClientController {
      * @return mock后的数据
      */
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.POST})
-    public Object mock(HttpServletRequest request) {
-        return mockClientService.mock(request);
+    public Object mock(HttpServletRequest request, HttpServletResponse response) {
+        return mockClientService.mock(request, response);
     }
 }

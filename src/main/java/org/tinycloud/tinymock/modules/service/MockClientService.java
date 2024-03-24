@@ -21,6 +21,7 @@ import org.tinycloud.tinymock.modules.mapper.ProjectInfoMapper;
 
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class MockClientService {
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    public Object mock(HttpServletRequest request) {
+    public Object mock(HttpServletRequest request, HttpServletResponse response) {
         long start = System.currentTimeMillis();
 
         String method = request.getMethod();
@@ -118,6 +119,12 @@ public class MockClientService {
                 if (hasBeenConsumed < mockInfo.getDelay()) {
                     ThreadUtil.sleep(mockInfo.getDelay() - hasBeenConsumed);
                 }
+            }
+            // 模拟http status code
+            if (Objects.nonNull(mockInfo.getHttpCode())) {
+                response.setStatus(mockInfo.getHttpCode());
+            } else {
+                response.setStatus(HttpServletResponse.SC_OK);
             }
 
             return map;

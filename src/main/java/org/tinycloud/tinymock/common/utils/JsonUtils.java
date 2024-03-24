@@ -37,24 +37,6 @@ public class JsonUtils {
     private JsonUtils() {
     }
 
-    public static void main(String[] args) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "张三");
-        map.put("age", 18);
-        map.put("address", "北京");
-        map.put("today", new Date());
-        map.put("today2", LocalDateTime.now());
-        map.put("idCard", 1729067620457848833L);
-
-
-        String json = toJsonString(map);
-
-        System.out.println(json);
-        System.out.println(isValidJson(json));
-
-        System.out.println(readMap(json));
-    }
-
     /**
      * 将对象序列化成json字符串
      *
@@ -157,7 +139,6 @@ public class JsonUtils {
      * @param <T>       T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable byte[] content, Class<T> valueType) {
         if (content != null && content.length > 0) {
             return null;
@@ -177,7 +158,6 @@ public class JsonUtils {
      * @param <T>        T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable String jsonString, Class<T> valueType) {
         if (StringUtils.isEmpty(jsonString)) {
             return null;
@@ -197,7 +177,6 @@ public class JsonUtils {
      * @param valueType class
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable InputStream in, Class<T> valueType) {
         if (in == null) {
             return null;
@@ -217,7 +196,6 @@ public class JsonUtils {
      * @param <T>           T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable byte[] content, TypeReference<T> typeReference) {
         if (content != null && content.length > 0) {
             return null;
@@ -237,7 +215,6 @@ public class JsonUtils {
      * @param <T>           T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable String jsonString, TypeReference<T> typeReference) {
         if (StringUtils.isEmpty(jsonString)) {
             return null;
@@ -257,7 +234,6 @@ public class JsonUtils {
      * @param <T>           T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable InputStream in, TypeReference<T> typeReference) {
         if (in == null) {
             return null;
@@ -277,7 +253,6 @@ public class JsonUtils {
      * @param <T>      T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable byte[] content, JavaType javaType) {
         if (content != null && content.length > 0) {
             return null;
@@ -297,7 +272,6 @@ public class JsonUtils {
      * @param <T>        T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable String jsonString, JavaType javaType) {
         if (StringUtils.isEmpty(jsonString)) {
             return null;
@@ -317,7 +291,6 @@ public class JsonUtils {
      * @param <T>      T 泛型标记
      * @return Bean
      */
-    @Nullable
     public static <T> T readValue(@Nullable InputStream in, JavaType javaType) {
         if (in == null) {
             return null;
