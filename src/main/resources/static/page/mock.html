@@ -422,6 +422,9 @@
                     content: $('#addDialog').html(),
                     success: function (layero, dIndex) {
                         form.render(null, 'add-form');
+                        form.val('add-form', {
+                            "mockjsFlag": true,
+                        });
 
                         util.on('lay-on', {
                             format: function () {
@@ -444,7 +447,7 @@
                                 url: '/mockinfo/add',
                                 data: JSON.stringify(Object.assign({}, data.field, {'projectId': projectId})),
                                 success: function (res) {
-                                    if (res.code == 0) {
+                                    if (res.code === 0) {
                                         layer.msg(res.msg, {time: 1000, icon: 1}, function () {
                                             layer.close(dIndex);
                                         });
