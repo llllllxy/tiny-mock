@@ -191,11 +191,10 @@ public class TenantAuthService {
 
         // 将验证码和私钥，存入redis 60秒
         this.stringRedisTemplate.opsForValue().set(codeRedisKey, String.join("&", randomCode, privateKey), 60, TimeUnit.SECONDS);
-
-        return new HashMap<String, String>() {{
-            put("publicKey", publicKey);
-            put("uuid", uuid);
-        }};
+        HashMap<String, String> result = new HashMap<String, String>();
+        result.put("publicKey", publicKey);
+        result.put("uuid", uuid);
+        return result;
     }
 
     @Transactional

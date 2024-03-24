@@ -1,6 +1,7 @@
 package org.tinycloud.tinymock.common.config;
 
 
+import cn.hutool.core.collection.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -35,24 +36,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        List<String> tenantExcludePaths = new ArrayList<String>() {{
-            // 开放登录等接口
-            add("/");
-            add("/auth/login");
-            add("/auth/getCode");
-            add("/auth/register");
-            add("/auth/sendEmail");
-            add("/mock/**");
-
-            // 开放前端静态资源和静态页面
-            add("/static/**");
-            add("/css/**");
-            add("/images/**");
-            add("/js/**");
-            add("/lib/**");
-            add("/page/**");
-            add("/index.html");
-        }};
+        List<String> tenantExcludePaths = ListUtil.toList(
+                "/", "/auth/login", "/auth/getCode", "/auth/register", "/auth/sendEmail", "/mock/**", // 开放登录等接口
+                "/static/**", "/css/**", "/images/**", "/js/**", "/lib/**", "/page/**", "/index.html" // 开放前端静态资源和静态页面
+        );
 
         // 加入的顺序就是拦截器执行的顺序，按顺序执行所有拦截器的preHandle，所有的preHandle 执行完再执行全部postHandle 最后是postHandle
         // 注册会话拦截器
