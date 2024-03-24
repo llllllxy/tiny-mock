@@ -518,7 +518,7 @@
                                 url: '/mockinfo/edit',
                                 data: JSON.stringify(data.field),
                                 success: function (res) {
-                                    if (res.code == 0) {
+                                    if (res.code === 0) {
                                         layer.msg(res.msg, {time: 1000, icon: 1}, function () {
                                             layer.close(dIndex);
                                         });
@@ -546,9 +546,9 @@
                 layer.confirm('确定删除此接口吗', function (index) {
                     layer.close(index);
                     miniAjax.get({
-                        url: '/mockinfo/del?id=' + lineData.id,
+                        url: '/mockinfo/delete?id=' + lineData.id,
                         success: function (res) {
-                            if (res.code == 0) {
+                            if (res.code === 0) {
                                 layer.msg(res.msg, {time: 1000, icon: 1}, function () {
                                     // 重载表格，刷新数据
                                     currTable.reload();
