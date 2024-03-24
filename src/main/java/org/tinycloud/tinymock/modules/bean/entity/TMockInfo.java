@@ -64,4 +64,7 @@ public class TMockInfo implements Serializable {
 
     @TableField("delay")
     private Long delay;
+
+    @TableField("http_code")
+    private Integer httpCode;
 }
