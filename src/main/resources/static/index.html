@@ -29,6 +29,14 @@
         .layui-body {
             padding-bottom: 0 !important
         }
+
+        .avatar-index {
+            display: block;
+            margin-left: 24px;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%
+        }
     </style>
 </head>
 <body class="layui-layout-body layuimini-all">
@@ -61,6 +69,9 @@
                 </li>
                 <li class="layui-nav-item mobile layui-hide-xs" lay-unselect>
                     <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
+                </li>
+                <li class="layui-nav-item" lay-unselect>
+                    <img class="avatar-index" src="">
                 </li>
                 <li class="layui-nav-item layuimini-setting">
                     <a href="javascript:;" id="username">admin</a>
@@ -162,12 +173,32 @@
             });
         });
 
-        var username = sessionStorage.getItem('username');
-        if (username) {
-            $('#username').text(username);
-        } else {
-            $('#username').text('null');
-        }
+        miniAjax.get({
+            url: "/auth/getTenantInfo",
+            success: function (res) {
+                if (res.code === 0) {
+                    var username = res.data.tenantName;
+                    var tenantAvatar = res.data.tenantAvatar;
+                    if (username) {
+                        $('#username').text(username);
+                    } else {
+                        $('#username').text('null');
+                    }
+                    if (tenantAvatar) {
+                        $(".avatar-index").attr('src', tenantAvatar);
+                    } else {
+                        $(".avatar-index").attr('src', '/images/avatar.gif');
+                    }
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            },
+            error: function (error) {
+                layer.msg(error, {time: 1000, icon: 2});
+            }
+        });
+
+
     });
 </script>
 </body>

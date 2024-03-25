@@ -30,6 +30,8 @@ public class ApplicationConfig {
      */
     private String dbType = "mysql";
 
+    private String uploadPath;
+
     /**
      * 租户系统会话时长
      */
@@ -66,5 +68,13 @@ public class ApplicationConfig {
 
     public void setTenantAuthTimeout(Integer tenantAuthTimeout) {
         this.tenantAuthTimeout = tenantAuthTimeout;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 }

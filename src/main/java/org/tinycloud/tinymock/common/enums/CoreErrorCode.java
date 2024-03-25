@@ -6,6 +6,11 @@ public enum CoreErrorCode {
     MOCK_URL_IS_NOT_EXIST(1003, "Mock地址不存在！"),
     MOCK_METHOD_IS_NOT_MATCHED(1004, "HTTP Method不匹配！"),
     MOCKJS_PARSING_ERROR(1005, "Mock.js解析错误！"),
+
+    FILE_UPLOAD_FAILED(2001, "文件上传失败，请联系系统管理员！"),
+    FILE_NOT_EXIST(2002, "文件不存在！"),
+    FILE_DOWNLOAD_FAILED(2003, "文件下载失败，请联系系统管理员！"),
+    FILE_DELETE_FAILED(2004, "文件删除失败，请联系系统管理员！"),
     ;
 
     private Integer code;
