@@ -58,5 +58,5 @@ public class TTenant implements Serializable {
     private String invitationCode;
 
     @TableField("tenant_avatar")
-    private String tenantAvatar;
+    private Long tenantAvatar;
 }

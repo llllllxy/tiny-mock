@@ -33,4 +33,6 @@ public class TenantEditDto implements Serializable {
     @NotEmpty(message = "电子邮箱不能为空")
     @Email(message = "请输入正确的电子邮箱地址")
     private String tenantEmail;
+
+    private Long tenantAvatar;
 }

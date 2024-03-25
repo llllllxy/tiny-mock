@@ -36,5 +36,7 @@ public class TenantInfoVo implements Serializable {
 
     private String invitationCode;
 
-    private String tenantAvatar;
+    private Long tenantAvatar;
+
+    private String tenantAvatarAddress;
 }

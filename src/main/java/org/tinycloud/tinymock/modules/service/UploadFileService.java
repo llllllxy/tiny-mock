@@ -48,6 +48,27 @@ public class UploadFileService {
     @Autowired
     private UploadFileMapper uploadFileMapper;
 
+    public String imageToBase64(Long id) {
+        // 根据fileId获取文件信息
+        TUploadFile uploadFile = this.uploadFileMapper.selectById(id);
+        // 如若文件不存在，则直接返回
+        if (Objects.isNull(uploadFile)) {
+            throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
+        }
+        // 获取文件路径
+        String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
+        Path filePath = Paths.get(realpath);
+        try {
+            if (uploadFile.getFileSuffix().equals("jpg")) {
+                uploadFile.setFileSuffix("jpeg");
+            }
+            return "data:image/" + uploadFile.getFileSuffix() + ";base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(filePath));
+        } catch (IOException e) {
+            log.error("获取fileId为: " + id + " 的文件出现异常", e);
+            throw new CoreException(CoreErrorCode.FILE_DOWNLOAD_FAILED);
+        }
+    }
+
     public UploadFileVo put(MultipartFile multipartFile, String fileName) {
         // 文件原名称
         String oldName;
@@ -66,7 +87,7 @@ public class UploadFileService {
         // 文件类型
         String contentType = multipartFile.getContentType();
         String md5 = FileTools.getFileMD5(multipartFile);
-        String sha1 = FileTools.getFileMD5(multipartFile);
+        String sha1 = FileTools.getFileSHA1(multipartFile);
 
         // 在 basePath 文件夹中通过日期对上传的文件归类保存
         // 比如：/2019/06/06/cf13891e4b95400081ebb6d70ae44930.png
@@ -124,7 +145,7 @@ public class UploadFileService {
         try {
             byte[] byteArr = Base64.getDecoder().decode(base64Str);
             String md5 = FileTools.getFileMD5(byteArr);
-            String sha1 = FileTools.getFileMD5(byteArr);
+            String sha1 = FileTools.getFileSHA1(byteArr);
             long fileSize = byteArr.length;
             Files.createDirectories(folder);
             // 文件保存到指定位置

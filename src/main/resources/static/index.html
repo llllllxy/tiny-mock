@@ -178,7 +178,7 @@
             success: function (res) {
                 if (res.code === 0) {
                     var username = res.data.tenantName;
-                    var tenantAvatar = res.data.tenantAvatar;
+                    var tenantAvatar = res.data.tenantAvatarAddress;
                     if (username) {
                         $('#username').text(username);
                     } else {

@@ -9,6 +9,7 @@ import org.tinycloud.tinymock.modules.bean.vo.UploadFileVo;
 import org.tinycloud.tinymock.modules.service.UploadFileService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -29,6 +30,13 @@ public class UploadFileController {
     @PostMapping("/put")
     public ApiResult<UploadFileVo> put(@RequestParam("file") MultipartFile multipartFile,
                                        @RequestParam(value = "fileName", required = false) String fileName) {
-        return ApiResult.success(uploadService.put(multipartFile, fileName), "登录成功，欢迎回来！");
+        return ApiResult.success(uploadService.put(multipartFile, fileName), "上传成功！");
+    }
+
+    @GetMapping("/getImage")
+    public void getImage(@RequestParam(value = "sizes", required = false, defaultValue = "") String sizes,
+                         @RequestParam(value = "id", required = true) Long id,
+                    HttpServletResponse response) {
+        uploadService.getImage(id, sizes, response);
     }
 }

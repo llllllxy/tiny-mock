@@ -59,6 +59,9 @@ public class TenantAuthService {
     @Autowired
     private InviteesInfoService inviteesInfoService;
 
+    @Autowired
+    private UploadFileService uploadFileService;
+
     public TenantCaptchaCodeVo getCode() {
         // 保存验证码信息，生成验证key
         String uuid = UUID.randomUUID().toString().trim().replaceAll("-", "");
@@ -151,6 +154,9 @@ public class TenantAuthService {
                 Wrappers.<TTenant>lambdaQuery().eq(TTenant::getId, tenantId)
                         .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
         TenantInfoVo tenantInfoVo = BeanConvertUtils.convertTo(entity, TenantInfoVo::new);
+        if (Objects.nonNull(entity.getTenantAvatar())) {
+            tenantInfoVo.setTenantAvatarAddress(uploadFileService.imageToBase64(entity.getTenantAvatar()));
+        }
         return tenantInfoVo;
     }
 
@@ -161,6 +167,7 @@ public class TenantAuthService {
         wrapper.set(TTenant::getTenantName, dto.getTenantName());
         wrapper.set(TTenant::getTenantPhone, dto.getTenantPhone());
         wrapper.set(TTenant::getTenantEmail, dto.getTenantEmail());
+        wrapper.set(Objects.nonNull(dto.getTenantAvatar()), TTenant::getTenantAvatar, dto.getTenantAvatar());
         int rows = this.tenantMapper.update(wrapper);
         return rows > 0;
     }
