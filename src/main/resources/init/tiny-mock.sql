@@ -154,7 +154,7 @@ CREATE TABLE `t_mock_info`  (
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
-  `http_code` tinyint(4) NULL DEFAULT NULL COMMENT 'http响应码',
+  `http_code` int(10) NULL DEFAULT NULL COMMENT 'http响应码',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
