@@ -45,4 +45,6 @@ public class MockInfoVo implements Serializable {
     private String remark;
 
     private Long delay;
+
+    private Integer httpCode;
 }

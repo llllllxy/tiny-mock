@@ -131,6 +131,7 @@ public class MockInfoService {
         tMockInfo.setJsonData(dto.getJsonData());
         tMockInfo.setProjectId(dto.getProjectId());
         tMockInfo.setMockjsFlag(dto.getMockjsFlag());
+        tMockInfo.setHttpCode(dto.getHttpCode());
         int rows = this.mockInfoMapper.insert(tMockInfo);
         return rows > 0;
     }
@@ -143,7 +144,6 @@ public class MockInfoService {
         if (Objects.isNull(mockInfo)) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NOT_EXIST);
         }
-
         // 插入旧的数据到历史版本表中
         this.saveHistory(mockInfo);
 
@@ -153,6 +153,7 @@ public class MockInfoService {
         wrapper.set(TMockInfo::getMockName, dto.getMockName());
         wrapper.set(TMockInfo::getMethod, dto.getMethod());
         wrapper.set(Objects.nonNull(dto.getDelay()), TMockInfo::getDelay, dto.getDelay());
+        wrapper.set(Objects.nonNull(dto.getHttpCode()), TMockInfo::getHttpCode, dto.getHttpCode());
         wrapper.set(TMockInfo::getUrl, dto.getUrl());
         wrapper.set(TMockInfo::getJsonData, dto.getJsonData());
         wrapper.set(TMockInfo::getMockjsFlag, dto.getMockjsFlag());

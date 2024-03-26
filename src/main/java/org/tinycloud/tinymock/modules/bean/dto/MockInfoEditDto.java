@@ -47,4 +47,6 @@ public class MockInfoEditDto implements Serializable {
 
     @Length(max = 255, min = 0, message = "备注信息不能超过255个字符")
     private String remark;
+
+    private Integer httpCode;
 }

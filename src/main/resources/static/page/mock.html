@@ -137,6 +137,13 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">HTTP响应码</label>
+                <div class="layui-input-block">
+                    <input type="number" name="httpCode" lay-affix="number" placeholder="请输入返回延时" class="layui-input" value="200"
+                           step="1" min="0">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label required">接口路径</label>
                 <div class="layui-input-block">
                     <input type="text" name="url" lay-verify="required" lay-reqtext="接口路径不能为空"
@@ -210,6 +217,12 @@
                         <option value="POST">POST</option>
                         <option value="GET">GET</option>
                     </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">HTTP响应码</label>
+                <div class="layui-input-block">
+                    <input type="number" name="httpCode" lay-affix="number" placeholder="请输入返回延时" class="layui-input" step="1" min="0">
                 </div>
             </div>
             <div class="layui-form-item">
