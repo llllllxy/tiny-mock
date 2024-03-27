@@ -181,6 +181,7 @@ public class MockInfoService {
         tMockInfoHistory.setJsonData(mockInfo.getJsonData());
         tMockInfoHistory.setUrl(mockInfo.getUrl());
         tMockInfoHistory.setRemark(mockInfo.getRemark());
+        tMockInfoHistory.setHttpCode(mockInfo.getHttpCode());
         this.mockInfoHistoryMapper.insert(tMockInfoHistory);
     }
 }

@@ -61,4 +61,7 @@ public class TMockInfoHistory implements Serializable {
 
     @TableField("created_at")
     private Date createdAt;
+
+    @TableField("http_code")
+    private Integer httpCode;
 }
