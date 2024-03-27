@@ -1,6 +1,5 @@
 package org.tinycloud.tinymock.modules.service;
 
-import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +116,7 @@ public class MockClientService {
                 long end = System.currentTimeMillis();
                 long hasBeenConsumed = end - start;
                 if (hasBeenConsumed < mockInfo.getDelay()) {
-                    ThreadUtil.sleep(mockInfo.getDelay() - hasBeenConsumed);
+                    ThreadUtils.sleep(mockInfo.getDelay() - hasBeenConsumed);
                 }
             }
             // 模拟http status code
