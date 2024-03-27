@@ -1,9 +1,6 @@
 package org.tinycloud.tinymock.common.utils;
 
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.lang.Console;
-import cn.hutool.core.text.StrFormatter;
-import cn.hutool.script.ScriptUtil;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -11,9 +8,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import cn.hutool.core.io.IoUtil;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Map;
@@ -31,6 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class DataMockUtils {
+
+    private static Invocable invocable = null;
+
+
     public static final String num = "0123456789";
     public static final String base = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String firstName = "赵钱孙李周吴郑王冯陈褚卫蒋沈韩杨朱秦尤许何吕施张孔曹严华金魏陶姜戚谢邹喻柏水窦章云苏潘葛奚范彭郎鲁韦昌马苗凤花方俞任袁柳酆鲍史唐费廉岑薛雷贺倪汤滕殷罗毕郝邬安常乐于时傅皮卞齐康伍余元卜顾孟平黄和穆萧尹姚邵湛汪祁毛禹狄米贝明臧计伏成戴谈宋茅庞熊纪舒屈项祝董梁杜阮蓝闵席季麻强贾路娄危江童颜郭梅盛林刁钟徐邱骆高夏蔡田樊胡凌霍虞万支柯咎管卢莫经房裘缪干解应宗宣丁贲邓郁单杭洪包诸左石崔吉钮龚程嵇邢滑裴陆荣翁荀羊於惠甄魏加封芮羿储靳汲邴糜松井段富巫乌焦巴弓牧隗山谷车侯宓蓬全郗班仰秋仲伊宫宁仇栾暴甘钭厉戎祖武符刘姜詹束龙叶幸司韶郜黎蓟薄印宿白怀蒲台从鄂索咸籍赖卓蔺屠蒙池乔阴郁胥能苍双闻莘党翟谭贡劳逄姬申扶堵冉宰郦雍却璩桑桂濮牛寿通边扈燕冀郏浦尚农温别庄晏柴瞿阎充慕连茹习宦艾鱼容向古易慎戈廖庚终暨居衡步都耿满弘匡国文寇广禄阙东殴殳沃利蔚越夔隆师巩厍聂晁勾敖融冷訾辛阚那简饶空曾毋沙乜养鞠须丰巢关蒯相查后江红游竺权逯盖益桓公万俟司马上官欧阳夏侯诸葛闻人东方赫连皇甫尉迟公羊澹台公冶宗政濮阳淳于仲孙太叔申屠公孙乐正轩辕令狐钟离闾丘长孙慕容鲜于宇文司徒司空亓官司寇仉督子车颛孙端木巫马公西漆雕乐正壤驷公良拓拔夹谷宰父谷粱晋楚阎法汝鄢涂钦段干百里东郭南门呼延归海羊舌微生岳帅缑亢况后有琴梁丘左丘东门西门商牟佘佴伯赏南宫墨哈谯笪年爱阳佟第五言福百家姓续";
@@ -249,6 +252,23 @@ public class DataMockUtils {
         return str17 + verificationCode(str17);
     }
 
+
+    static {
+        // 读取resource路径下的js
+        String path = "static/lib/mock/mock-min.js";
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        Resource resource = resourceLoader.getResource("classpath:" + path);
+
+        try (InputStream inputStream = resource.getInputStream(); ) {
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+            engine.eval(new BufferedReader(new InputStreamReader(inputStream)));
+            invocable = (Invocable) engine;
+        } catch (ScriptException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * 方法描述：调用mock.js生成模拟数据.
      *
@@ -406,7 +426,7 @@ public class DataMockUtils {
     public static String string(String pool, int length) throws ScriptException {
         String format = StrFormatter.format("Random.string('{}',{})", pool, length);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -420,7 +440,7 @@ public class DataMockUtils {
     public static String string(String pool, int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.string('{}',{},{})", pool, min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -457,7 +477,7 @@ public class DataMockUtils {
     public static String date() throws ScriptException {
         String format = StrFormatter.format("Random.date()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -469,7 +489,7 @@ public class DataMockUtils {
     public static String date(String dateFormat) throws ScriptException {
         String format = StrFormatter.format("Random.date('{}')", dateFormat);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -479,7 +499,7 @@ public class DataMockUtils {
     public static String time() throws ScriptException {
         String format = StrFormatter.format("Random.time()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -491,7 +511,7 @@ public class DataMockUtils {
     public static String time(String timeFormat) throws ScriptException {
         String format = StrFormatter.format("Random.time('{}')", timeFormat);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -501,7 +521,7 @@ public class DataMockUtils {
     public static String datetime() throws ScriptException {
         String format = StrFormatter.format("Random.datetime()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -513,7 +533,7 @@ public class DataMockUtils {
     public static String datetime(String datetimeFormat) throws ScriptException {
         String format = StrFormatter.format("Random.datetime('{}')", datetimeFormat);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -523,7 +543,7 @@ public class DataMockUtils {
     public static String image() throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image()");
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -535,7 +555,7 @@ public class DataMockUtils {
     public static String image(String size) throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image('{}')", size);
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -548,7 +568,7 @@ public class DataMockUtils {
     public static String image(String size, String background) throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image('{}','{}')", size, background);
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -562,7 +582,7 @@ public class DataMockUtils {
     public static String image(String size, String background, String text) throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image('{}','{}','{}')", size, background, text);
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -577,7 +597,7 @@ public class DataMockUtils {
     public static String image(String size, String background, String foreground, String text) throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image('{}','{}','{}','{}')", size, background, foreground, text);
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -593,7 +613,7 @@ public class DataMockUtils {
     public static String image(String size, String background, String foreground, String imgFormat, String text) throws ScriptException, UnsupportedEncodingException {
         String format = StrFormatter.format("Random.image('{}','{}','{}','{}','{}')", size, background, foreground, imgFormat, text);
         Object random = loadMockJs(format);
-        return java.net.URLEncoder.encode(Convert.toStr(random), "UTF-8");
+        return java.net.URLEncoder.encode(String.valueOf(random), "UTF-8");
     }
 
     /**
@@ -603,7 +623,7 @@ public class DataMockUtils {
     public static String color() throws ScriptException {
         String format = StrFormatter.format("Random.color()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -613,7 +633,7 @@ public class DataMockUtils {
     public static String hex() throws ScriptException {
         String format = StrFormatter.format("Random.hex()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -623,7 +643,7 @@ public class DataMockUtils {
     public static String rgb() throws ScriptException {
         String format = StrFormatter.format("Random.rgb()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -633,7 +653,7 @@ public class DataMockUtils {
     public static String rgba() throws ScriptException {
         String format = StrFormatter.format("Random.rgba()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -643,7 +663,7 @@ public class DataMockUtils {
     public static String hsl() throws ScriptException {
         String format = StrFormatter.format("Random.hsl()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -653,7 +673,7 @@ public class DataMockUtils {
     public static String paragraph() throws ScriptException {
         String format = StrFormatter.format("Random.paragraph()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -665,7 +685,7 @@ public class DataMockUtils {
     public static String paragraph(int len) throws ScriptException {
         String format = StrFormatter.format("Random.paragraph({})", len);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -678,7 +698,7 @@ public class DataMockUtils {
     public static String paragraph(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.paragraph({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -688,7 +708,7 @@ public class DataMockUtils {
     public static String cparagraph() throws ScriptException {
         String format = StrFormatter.format("Random.cparagraph()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -700,7 +720,7 @@ public class DataMockUtils {
     public static String cparagraph(int len) throws ScriptException {
         String format = StrFormatter.format("Random.cparagraph({})", len);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -713,7 +733,7 @@ public class DataMockUtils {
     public static String cparagraph(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.cparagraph({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -723,7 +743,7 @@ public class DataMockUtils {
     public static String word() throws ScriptException {
         String format = StrFormatter.format("Random.word()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -735,7 +755,7 @@ public class DataMockUtils {
     public static String word(int len) throws ScriptException {
         String format = StrFormatter.format("Random.word({})", len);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -748,7 +768,7 @@ public class DataMockUtils {
     public static String word(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.word({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -758,7 +778,7 @@ public class DataMockUtils {
     public static String cword() throws ScriptException {
         String format = StrFormatter.format("Random.cword()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -770,7 +790,7 @@ public class DataMockUtils {
     public static String cword(String pool) throws ScriptException {
         String format = StrFormatter.format("Random.cword('{}')", pool);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -782,7 +802,7 @@ public class DataMockUtils {
     public static String cword(int length) throws ScriptException {
         String format = StrFormatter.format("Random.cword({})", length);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -795,7 +815,7 @@ public class DataMockUtils {
     public static String cword(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.cword({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -809,7 +829,7 @@ public class DataMockUtils {
     public static String cword(String pool, int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.cword('{}',{},{})", pool, min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -819,7 +839,7 @@ public class DataMockUtils {
     public static String title() throws ScriptException {
         String format = StrFormatter.format("Random.title()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -831,7 +851,7 @@ public class DataMockUtils {
     public static String title(int len) throws ScriptException {
         String format = StrFormatter.format("Random.title({})", len);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -844,7 +864,7 @@ public class DataMockUtils {
     public static String title(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.title({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -854,7 +874,7 @@ public class DataMockUtils {
     public static String ctitle() throws ScriptException {
         String format = StrFormatter.format("Random.ctitle()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -866,7 +886,7 @@ public class DataMockUtils {
     public static String ctitle(int len) throws ScriptException {
         String format = StrFormatter.format("Random.ctitle({})", len);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -879,7 +899,7 @@ public class DataMockUtils {
     public static String ctitle(int min, int max) throws ScriptException {
         String format = StrFormatter.format("Random.ctitle({},{})", min, max);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -889,7 +909,7 @@ public class DataMockUtils {
     public static String first() throws ScriptException {
         String format = StrFormatter.format("Random.first()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -899,7 +919,7 @@ public class DataMockUtils {
     public static String last() throws ScriptException {
         String format = StrFormatter.format("Random.last()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -909,7 +929,7 @@ public class DataMockUtils {
     public static String name() throws ScriptException {
         String format = StrFormatter.format("Random.name()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -921,7 +941,7 @@ public class DataMockUtils {
     public static String name(boolean middle) throws ScriptException {
         String format = StrFormatter.format("Random.name({})", middle);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -931,7 +951,7 @@ public class DataMockUtils {
     public static String cfirst() throws ScriptException {
         String format = StrFormatter.format("Random.cfirst()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -941,7 +961,7 @@ public class DataMockUtils {
     public static String clast() throws ScriptException {
         String format = StrFormatter.format("Random.clast()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -951,7 +971,7 @@ public class DataMockUtils {
     public static String cname() throws ScriptException {
         String format = StrFormatter.format("Random.cname()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -961,7 +981,7 @@ public class DataMockUtils {
     public static String url() throws ScriptException {
         String format = StrFormatter.format("Random.url()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -974,7 +994,7 @@ public class DataMockUtils {
     public static String url(String protocol, String host) throws ScriptException {
         String format = StrFormatter.format("Random.url('{}','{}')", protocol, host);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -986,7 +1006,7 @@ public class DataMockUtils {
     public static String protocol() throws ScriptException {
         String format = StrFormatter.format("Random.protocol()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -996,7 +1016,7 @@ public class DataMockUtils {
     public static String domain() throws ScriptException {
         String format = StrFormatter.format("Random.domain()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1006,7 +1026,7 @@ public class DataMockUtils {
     public static String tld() throws ScriptException {
         String format = StrFormatter.format("Random.tld()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1016,7 +1036,7 @@ public class DataMockUtils {
     public static String email() throws ScriptException {
         String format = StrFormatter.format("Random.email()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1026,7 +1046,7 @@ public class DataMockUtils {
     public static String email(String domain) throws ScriptException {
         String format = StrFormatter.format("Random.email('{}')", domain);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1036,7 +1056,7 @@ public class DataMockUtils {
     public static String ip() throws ScriptException {
         String format = StrFormatter.format("Random.ip()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1046,7 +1066,7 @@ public class DataMockUtils {
     public static String region() throws ScriptException {
         String format = StrFormatter.format("Random.region()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1056,7 +1076,7 @@ public class DataMockUtils {
     public static String province() throws ScriptException {
         String format = StrFormatter.format("Random.province()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1066,7 +1086,7 @@ public class DataMockUtils {
     public static String city() throws ScriptException {
         String format = StrFormatter.format("Random.city()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1078,7 +1098,7 @@ public class DataMockUtils {
     public static String city(boolean prefix) throws ScriptException {
         String format = StrFormatter.format("Random.city({})", prefix);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1088,7 +1108,7 @@ public class DataMockUtils {
     public static String county() throws ScriptException {
         String format = StrFormatter.format("Random.county()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1100,7 +1120,7 @@ public class DataMockUtils {
     public static String county(boolean prefix) throws ScriptException {
         String format = StrFormatter.format("Random.county({})", prefix);
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1110,7 +1130,7 @@ public class DataMockUtils {
     public static String zip() throws ScriptException {
         String format = StrFormatter.format("Random.zip()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1120,7 +1140,7 @@ public class DataMockUtils {
     public static String id() throws ScriptException {
         String format = StrFormatter.format("Random.id()");
         Object random = loadMockJs(format);
-        return Convert.toStr(random);
+        return String.valueOf(random);
     }
 
     /**
@@ -1136,91 +1156,91 @@ public class DataMockUtils {
     }
 
     public static void main(String[] args) throws ScriptException, UnsupportedEncodingException {
-        Console.log(bool());
-        Console.log(bool(1, 9, true));
-        Console.log(natural());
-        Console.log(natural(99));
-        Console.log(natural(100, 1000));
-        Console.log(floatNumber());
-        Console.log(floatNumber(0, 100, 0, 2));
-        Console.log(character());
-        Console.log(character("symbol"));
-        Console.log(character("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-        Console.log(string("壹贰叁肆伍陆柒捌玖拾", 3));
-        Console.log(string("壹贰叁肆伍陆柒捌玖拾", 3, 6));
-        Console.log(range(1, 20));
-        Console.log(range(1, 20, 3));
-        Console.log(date());
-        Console.log(date("y-MM-dd"));
-        Console.log(time());
-        Console.log(time("A HH:mm:ss"));
-        Console.log(datetime());
-        Console.log(datetime("y-M-d H:m:s"));
-        Console.log(image());
-        Console.log(image("530x123"));
-        Console.log(image("530x123", "#009688"));
-        Console.log(image("530x123", "#009688", "is a image!"));
-        Console.log(image("530x123", "#009688", "#F0F0F0", "is a image!"));
-        Console.log(image("530x123", "#009688", "#F0F0F0", "gif", "image"));
-        Console.log(color());
-        Console.log(hex());
-        Console.log(rgb());
-        Console.log(rgba());
-        Console.log(hsl());
-        Console.log(paragraph());
-        Console.log(paragraph(10));
-        Console.log(paragraph(1, 5));
-        Console.log(cparagraph());
-        Console.log(cparagraph(10));
-        Console.log(cparagraph(1, 5));
-        Console.log(word());
-        Console.log(word(10));
-        Console.log(word(1, 5));
-        Console.log(cword());
-        Console.log(cword("零一二三四五六七八九十"));
-        Console.log(cword(3));
-        Console.log(cword(1, 5));
-        Console.log(cword("零一二三四五六七八九十", 1, 5));
-        Console.log(title());
-        Console.log(title(3));
-        Console.log(title(3, 6));
-        Console.log(ctitle());
-        Console.log(ctitle(3));
-        Console.log(ctitle(3, 6));
-        Console.log(first());
-        Console.log(last());
-        Console.log(name());
-        Console.log(name(true));
-        Console.log(cfirst());
-        Console.log(clast());
-        Console.log(cname());
-        Console.log(url());
-        Console.log(url("https", "www.lixingwu.com"));
-        Console.log(protocol());
-        Console.log(domain());
-        Console.log(tld());
-        Console.log(email());
-        Console.log(email("163.com"));
-        Console.log(ip());
-        Console.log(region());
-        Console.log(province());
-        Console.log(city());
-        Console.log(city(true));
-        Console.log(county());
-        Console.log(county(true));
-        Console.log(zip());
-        Console.log(id());
-        Console.log(mock("{'number1|1-100.1-10': 1,'number2|123.1-10': 1 ,'number3|123.3': 1, 'number4|123.10': 1.123 }"));
-        Console.log(getSymbol());
-        Console.log(getChar());
-        Console.log(getLoginName(5));
-        Console.log(getAddress());
-        Console.log(getChineseName());
-        Console.log(getTel());
-        Console.log(getEmail(5, 8));
-        Console.log(getBirthday());
-        Console.log(verificationCode("53212419930319134"));
-        Console.log(getIdCard());
+        System.out.println(bool());
+        System.out.println(bool(1, 9, true));
+        System.out.println(natural());
+        System.out.println(natural(99));
+        System.out.println(natural(100, 1000));
+        System.out.println(floatNumber());
+        System.out.println(floatNumber(0, 100, 0, 2));
+        System.out.println(character());
+        System.out.println(character("symbol"));
+        System.out.println(character("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+        System.out.println(string("壹贰叁肆伍陆柒捌玖拾", 3));
+        System.out.println(string("壹贰叁肆伍陆柒捌玖拾", 3, 6));
+        System.out.println(range(1, 20));
+        System.out.println(range(1, 20, 3));
+        System.out.println(date());
+        System.out.println(date("y-MM-dd"));
+        System.out.println(time());
+        System.out.println(time("A HH:mm:ss"));
+        System.out.println(datetime());
+        System.out.println(datetime("y-M-d H:m:s"));
+        System.out.println(image());
+        System.out.println(image("530x123"));
+        System.out.println(image("530x123", "#009688"));
+        System.out.println(image("530x123", "#009688", "is a image!"));
+        System.out.println(image("530x123", "#009688", "#F0F0F0", "is a image!"));
+        System.out.println(image("530x123", "#009688", "#F0F0F0", "gif", "image"));
+        System.out.println(color());
+        System.out.println(hex());
+        System.out.println(rgb());
+        System.out.println(rgba());
+        System.out.println(hsl());
+        System.out.println(paragraph());
+        System.out.println(paragraph(10));
+        System.out.println(paragraph(1, 5));
+        System.out.println(cparagraph());
+        System.out.println(cparagraph(10));
+        System.out.println(cparagraph(1, 5));
+        System.out.println(word());
+        System.out.println(word(10));
+        System.out.println(word(1, 5));
+        System.out.println(cword());
+        System.out.println(cword("零一二三四五六七八九十"));
+        System.out.println(cword(3));
+        System.out.println(cword(1, 5));
+        System.out.println(cword("零一二三四五六七八九十", 1, 5));
+        System.out.println(title());
+        System.out.println(title(3));
+        System.out.println(title(3, 6));
+        System.out.println(ctitle());
+        System.out.println(ctitle(3));
+        System.out.println(ctitle(3, 6));
+        System.out.println(first());
+        System.out.println(last());
+        System.out.println(name());
+        System.out.println(name(true));
+        System.out.println(cfirst());
+        System.out.println(clast());
+        System.out.println(cname());
+        System.out.println(url());
+        System.out.println(url("https", "www.lixingwu.com"));
+        System.out.println(protocol());
+        System.out.println(domain());
+        System.out.println(tld());
+        System.out.println(email());
+        System.out.println(email("163.com"));
+        System.out.println(ip());
+        System.out.println(region());
+        System.out.println(province());
+        System.out.println(city());
+        System.out.println(city(true));
+        System.out.println(county());
+        System.out.println(county(true));
+        System.out.println(zip());
+        System.out.println(id());
+        System.out.println(mock("{'number1|1-100.1-10': 1,'number2|123.1-10': 1 ,'number3|123.3': 1, 'number4|123.10': 1.123 }"));
+        System.out.println(getSymbol());
+        System.out.println(getChar());
+        System.out.println(getLoginName(5));
+        System.out.println(getAddress());
+        System.out.println(getChineseName());
+        System.out.println(getTel());
+        System.out.println(getEmail(5, 8));
+        System.out.println(getBirthday());
+        System.out.println(verificationCode("53212419930319134"));
+        System.out.println(getIdCard());
 
         Map map = mock("{\"code\":\"0000\",\"data\":{\"list|20\":[{\"name\":\"@name\",\"age\":\"@integer(10, 30)\"}],\"url\":\"@email\"},\"desc\":\"成功\"}");
 
