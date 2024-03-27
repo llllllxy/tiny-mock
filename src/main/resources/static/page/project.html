@@ -251,12 +251,12 @@
             $("#content").append(content);
         }
 
-        $('body').on('click', '[into-id]', function () {
+        $('#content').on('click', '[into-id]', function () {
             var id = $(this).attr('into-id');
             sessionStorage.setItem("projectId", id)
         });
 
-        $('body').on('click', '[edit-id]', function () {
+        $('#content').on('click', '[edit-id]', function () {
             var id = $(this).attr('edit-id');
             var index = layer.open({
                 title: '编辑项目',
@@ -290,9 +290,8 @@
                     });
 
                     // 监听取消按钮
-                    $("button[lay-filter='closeEditDialog']").click(function(){
+                    layero.find("button[lay-filter='closeEditDialog']").click(function(){
                         layer.close(dIndex);
-                        return false;
                     });
                 },
                 end: function (index) {
@@ -302,7 +301,7 @@
             });
         });
 
-        $('body').on('click', '[del-id]', function () {
+        $('#content').on('click', '[del-id]', function () {
             var id = $(this).attr('del-id');
             layer.confirm('确定删除此项目吗', function (index) {
                 layer.close(index);
@@ -351,9 +350,8 @@
                             return false;
                         });
                         // 监听取消按钮
-                        $("button[lay-filter='closeAddDialog']").click(function(){
+                        layero.find("button[lay-filter='closeAddDialog']").click(function(){
                             layer.close(dIndex);
-                            return false;
                         });
                     },
                     end: function (index) {
