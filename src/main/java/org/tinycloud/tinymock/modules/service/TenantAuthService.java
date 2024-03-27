@@ -155,7 +155,11 @@ public class TenantAuthService {
                         .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
         TenantInfoVo tenantInfoVo = BeanConvertUtils.convertTo(entity, TenantInfoVo::new);
         if (Objects.nonNull(entity.getTenantAvatar())) {
-            tenantInfoVo.setTenantAvatarAddress(uploadFileService.imageToBase64(entity.getTenantAvatar()));
+            try {
+                tenantInfoVo.setTenantAvatarAddress(uploadFileService.imageToBase64(entity.getTenantAvatar()));
+            } catch (Exception e) {
+                tenantInfoVo.setTenantAvatarAddress(null);
+            }
         }
         return tenantInfoVo;
     }
