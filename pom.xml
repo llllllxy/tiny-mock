@@ -62,12 +62,6 @@
             <version>1.18.16</version>
             <scope>provided</scope>
         </dependency>
-        <!-- hutool工具包 -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.26</version>
-        </dependency>
         <!-- 邮件发送工具包 -->
         <dependency>
             <groupId>com.sun.mail</groupId>

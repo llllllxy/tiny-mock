@@ -105,7 +105,7 @@ public class MockClientService {
             // 判断是否需要使用mockjs进行解析
             Map map;
             if (mockjsFlag == 0) {
-                map = DataMockUtils.mock(jsonData);
+                map = (Map)DataMockUtils.mock(jsonData);
             } else {
                 map = JsonUtils.readValue(jsonData, Map.class);
             }
