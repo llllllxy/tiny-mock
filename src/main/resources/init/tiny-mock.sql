@@ -11,7 +11,7 @@
  Target Server Version : 50733
  File Encoding         : 65001
 
- Date: 25/03/2024 17:39:59
+ Date: 27/03/2024 11:15:32
 */
 
 SET NAMES utf8mb4;
@@ -161,7 +161,7 @@ CREATE TABLE `t_mock_info`  (
 -- ----------------------------
 -- Records of t_mock_info
 -- ----------------------------
-INSERT INTO `t_mock_info` VALUES (1, 2212121, 1729067620457848832, '测试接口1', 'GET', '{\n  \"sites\": {\n    \"site\": [\n      {\n        \"number|1-100\": 100,\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"@integer(10, 30)\",\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"3\",\n        \"name\": \"@name\",\n        \"url\": \"@now\"\n      }\n    ]\n  }\n}', 0, '/inter1/append', 0, 0, '2024-03-09 19:12:46', '2024-03-15 15:30:53', NULL, 4000, NULL);
+INSERT INTO `t_mock_info` VALUES (1, 2212121, 1729067620457848832, '测试接口1', 'GET', '{\n  \"sites\": {\n    \"site\": [\n      {\n        \"number|1-100\": 100,\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"@integer(10, 30)\",\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"3\",\n        \"name\": \"@name\",\n        \"url\": \"@now\"\n      }\n    ]\n  }\n}', 0, '/inter1/append', 0, 0, '2024-03-09 19:12:46', '2024-03-26 13:36:34', NULL, 4000, 200);
 INSERT INTO `t_mock_info` VALUES (1768538350125629441, 2212121, 1729067620457848832, '登录接口', 'POST', '{\"data\":{\"token\":\"Admin-DwCfwXoeaNoTTx1tJEBbGP7GJbT5uy\"},\"code\":200,\"message\":\"登录成功\"}', 0, '/login', 0, 0, '2024-03-15 15:22:55', '2024-03-15 15:30:21', 'XXXX', 200, NULL);
 INSERT INTO `t_mock_info` VALUES (1768544377218842626, 2212121, 1729067620457848832, '获取省份', 'POST', '{\"object|2\":{\"310000\":\"上海市\",\"320000\":\"江苏省\",\"330000\":\"浙江省\",\"340000\":\"安徽省\"}}', 0, '/province', 0, 0, '2024-03-15 15:46:52', '2024-03-15 22:26:19', 'YYYY', 333, NULL);
 
@@ -182,6 +182,7 @@ CREATE TABLE `t_mock_info_history`  (
   `url` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'URL',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `delay` bigint(20) NULL DEFAULT NULL COMMENT '返回延时（单位毫秒）',
+  `http_code` int(10) NULL DEFAULT NULL COMMENT 'http响应码',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '历史记录创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '接口历史版本表' ROW_FORMAT = DYNAMIC;
@@ -189,9 +190,10 @@ CREATE TABLE `t_mock_info_history`  (
 -- ----------------------------
 -- Records of t_mock_info_history
 -- ----------------------------
-INSERT INTO `t_mock_info_history` VALUES (1768639055106686978, 1768544377218842626, 1, 2212121, 1729067620457848832, '获取省', 'POST', '{\n  \"object|2\": {\n    \"310000\": \"上海市\",\n    \"320000\": \"江苏省\",\n    \"330000\": \"浙江省\",\n    \"340000\": \"安徽省\"\n  }\n}', 0, '/province', '', 200, '2024-03-15 22:03:05');
-INSERT INTO `t_mock_info_history` VALUES (1768644872535121922, 1768544377218842626, 2, 2212121, 1729067620457848832, '获取省', 'POST', '{\"object|2\":{\"310000\":\"上海市\",\"320000\":\"江苏省\",\"330000\":\"浙江省\",\"340000\":\"安徽省\"}}', 0, '/province', 'YYYY', 2000, '2024-03-15 22:26:12');
-INSERT INTO `t_mock_info_history` VALUES (1768644902046244865, 1768544377218842626, 3, 2212121, 1729067620457848832, '获取省份', 'POST', '{\"object|2\":{\"310000\":\"上海市\",\"320000\":\"江苏省\",\"330000\":\"浙江省\",\"340000\":\"安徽省\"}}', 0, '/province', 'YYYY', 222, '2024-03-15 22:26:19');
+INSERT INTO `t_mock_info_history` VALUES (1768639055106686978, 1768544377218842626, 1, 2212121, 1729067620457848832, '获取省', 'POST', '{\n  \"object|2\": {\n    \"310000\": \"上海市\",\n    \"320000\": \"江苏省\",\n    \"330000\": \"浙江省\",\n    \"340000\": \"安徽省\"\n  }\n}', 0, '/province', '', 200, NULL, '2024-03-15 22:03:05');
+INSERT INTO `t_mock_info_history` VALUES (1768644872535121922, 1768544377218842626, 2, 2212121, 1729067620457848832, '获取省', 'POST', '{\"object|2\":{\"310000\":\"上海市\",\"320000\":\"江苏省\",\"330000\":\"浙江省\",\"340000\":\"安徽省\"}}', 0, '/province', 'YYYY', 2000, NULL, '2024-03-15 22:26:12');
+INSERT INTO `t_mock_info_history` VALUES (1768644902046244865, 1768544377218842626, 3, 2212121, 1729067620457848832, '获取省份', 'POST', '{\"object|2\":{\"310000\":\"上海市\",\"320000\":\"江苏省\",\"330000\":\"浙江省\",\"340000\":\"安徽省\"}}', 0, '/province', 'YYYY', 222, NULL, '2024-03-15 22:26:19');
+INSERT INTO `t_mock_info_history` VALUES (2024086000000003918, 1, 1, 2212121, 1729067620457848832, '测试接口1', 'GET', '{\n  \"sites\": {\n    \"site\": [\n      {\n        \"number|1-100\": 100,\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"@integer(10, 30)\",\n        \"name\": \"@name\",\n        \"url\": \"@email\"\n      },\n      {\n        \"id\": \"3\",\n        \"name\": \"@name\",\n        \"url\": \"@now\"\n      }\n    ]\n  }\n}', 0, '/inter1/append', NULL, 4000, NULL, '2024-03-26 13:36:34');
 
 -- ----------------------------
 -- Table structure for t_project_info
@@ -348,7 +350,8 @@ INSERT INTO `t_seq` VALUES ('2024080_t_project_info', 1, '2024-03-24 21:59:43', 
 INSERT INTO `t_seq` VALUES ('2024080_t_tenant', 1, '2024-03-24 21:59:43', '2024-03-24 21:59:43');
 INSERT INTO `t_seq` VALUES ('2024084_t_mock_access_log', 19, '2024-03-24 21:59:43', '2024-03-24 21:59:43');
 INSERT INTO `t_seq` VALUES ('2024084_t_mock_info', 1, '2024-03-24 21:59:43', '2024-03-24 21:59:43');
-INSERT INTO `t_seq` VALUES ('2024085_t_upload_file', 1, '2024-03-25 17:00:49', '2024-03-25 17:00:49');
+INSERT INTO `t_seq` VALUES ('2024085_t_upload_file', 5, '2024-03-25 17:00:49', '2024-03-26 13:39:12');
+INSERT INTO `t_seq` VALUES ('2024086_t_mock_info_history', 3, '2024-03-26 13:39:12', '2024-03-26 13:39:12');
 
 -- ----------------------------
 -- Table structure for t_tenant
