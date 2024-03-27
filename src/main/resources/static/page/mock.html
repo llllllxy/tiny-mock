@@ -101,7 +101,11 @@
 <script type="text/html" id="currentTableBar">
     <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
-    <a class="layui-btn layui-btn-xs layui-bg-purple data-count-history" lay-event="history">版本</a>
+
+    <a class="layui-btn layui-btn-xs" lay-event="more">
+        更多
+        <i class="layui-icon layui-icon-down"></i>
+    </a>
 </script>
 
 <script type="text/html" id="switchTpl">
@@ -283,11 +287,12 @@
 </script>
 
 <script>
-    layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage'], function () {
+    layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage', 'dropdown'], function () {
         var form = layui.form,
             $ = layui.jquery,
             layer = layui.layer,
             table = layui.table,
+            dropdown = layui.dropdown,
             miniAjax = layui.miniAjax,
             miniPage = layui.miniPage,
             util = layui.util;
@@ -574,29 +579,70 @@
                 });
             } else if (obj.event === 'copy') {
                 handleClipboard(lineData.url)
-            } else if (obj.event === 'history') {
+            } else if (obj.event === 'more') {
                 window.mockId = lineData.id;
-                var content = miniPage.getHrefContent('page/mockHistory.html');
-                var index = layer.open({
-                    title: '接口历史版本',
-                    type: 1,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: false,
-                    area: '980px', // 宽度780, 高度自适应
-                    content: content,
-                    success: function (layero, dIndex) {
+                // 更多 - 下拉菜单
+                dropdown.render({
+                    elem: this, // 触发事件的 DOM 对象
+                    show: true, // 外部事件触发即显示
+                    data: [{
+                        title: '版本',
+                        id: 'history'
+                    },{
+                        title: '日志',
+                        id: 'accessLog'
+                    }],
+                    click: function(menudata){
+                        if(menudata.id === 'history'){
+                            let content = miniPage.getHrefContent('page/mockHistory.html');
+                            let index = layer.open({
+                                title: '接口历史版本',
+                                type: 1,
+                                shade: 0.2,
+                                maxmin: true,
+                                shadeClose: false,
+                                area: '980px', // 宽度780, 高度自适应
+                                offset: '100px', // 手动设置垂直坐标
+                                content: content,
+                                success: function (layero, dIndex) {
+                                },
+                                end: function (index) {
+                                },
+                                full: function(layero, index, that) {
+                                    // 这样做，是为了放大缩小时，表格可以自适应大小
+                                    table.reload('historyTableId');
+                                },
+                                restore: function(layero, index, that) {
+                                    table.reload('historyTableId');
+                                }
+                            });
+                        } else if(menudata.id === 'accessLog'){
+                            let content = miniPage.getHrefContent('page/mockAccessLog.html');
+                            let index = layer.open({
+                                title: '接口访问日志',
+                                type: 1,
+                                shade: 0.2,
+                                shadeClose: false,
+                                area: '780px', // 宽度780, 高度自适应
+                                offset: '100px', // 手动设置垂直坐标
+                                content: content,
+                                success: function (layero, dIndex) {
+                                },
+                                end: function (index) {
+                                },
+                                full: function(layero, index, that) {
+                                    // 这样做，是为了放大缩小时，表格可以自适应大小
+                                    table.reload('accessLogTableId');
+                                },
+                                restore: function(layero, index, that) {
+                                    table.reload('accessLogTableId');
+                                }
+                            });
+                        }
                     },
-                    end: function (index) {
-                    },
-                    full: function(layero, index, that) {
-                        // 这样做，是为了放大缩小时，表格可以自适应大小
-                        table.reload('historyTableId');
-                    },
-                    restore: function(layero, index, that) {
-                        table.reload('historyTableId');
-                    }
-                });
+                    align: 'right', // 右对齐弹出
+                    style: 'box-shadow: 1px 1px 10px rgb(0 0 0 / 12%);' // 设置额外样式
+                })
             }
         });
 

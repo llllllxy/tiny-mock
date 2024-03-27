@@ -5,12 +5,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.common.model.PageModel;
-import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
-import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
-import org.tinycloud.tinymock.modules.bean.dto.MockInfoHistoryQueryDto;
-import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
+import org.tinycloud.tinymock.modules.bean.dto.*;
+import org.tinycloud.tinymock.modules.bean.vo.MockAccessLogVo;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoHistoryVo;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
+import org.tinycloud.tinymock.modules.service.MockAccessLogService;
 import org.tinycloud.tinymock.modules.service.MockInfoHistoryService;
 import org.tinycloud.tinymock.modules.service.MockInfoService;
 
@@ -31,6 +30,9 @@ public class MockInfoController {
     @Autowired
     private MockInfoHistoryService mockInfoHistoryService;
 
+    @Autowired
+    private MockAccessLogService mockAccessLogService;
+
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public ApiResult<PageModel<MockInfoVo>> query(@RequestBody MockInfoQueryDto dto) {
         return ApiResult.success(mockInfoService.query(dto), "查询成功!");
@@ -39,6 +41,11 @@ public class MockInfoController {
     @RequestMapping(value = "/history", method = RequestMethod.POST)
     public ApiResult<PageModel<MockInfoHistoryVo>> history(@RequestBody MockInfoHistoryQueryDto dto) {
         return ApiResult.success(mockInfoHistoryService.query(dto), "查询成功!");
+    }
+
+    @RequestMapping(value = "/accessLog", method = RequestMethod.POST)
+    public ApiResult<PageModel<MockAccessLogVo>> accessLog(@RequestBody MockAccessLogQueryDto dto) {
+        return ApiResult.success(mockAccessLogService.query(dto), "查询成功!");
     }
 
     @RequestMapping(value = "/detail", method = RequestMethod.GET)

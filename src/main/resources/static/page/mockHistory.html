@@ -50,6 +50,13 @@
                     "count": res.data.totalCount,
                     "data": res.data.records
                 };
+            },
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
             }
         });
 

@@ -35,12 +35,12 @@ public class MockInfoHistoryService {
         queryWrapper.eq(TMockInfoHistory::getTenantId, TenantHolder.getTenantId());
         queryWrapper.eq(TMockInfoHistory::getMockId, queryParam.getMockId());
 
-        Page<TMockInfoHistory> logPage = this.mockInfoHistoryMapper.selectPage(Page.of(queryParam.getPageNo(), queryParam.getPageSize()), queryWrapper);
+        Page<TMockInfoHistory> historyPage = this.mockInfoHistoryMapper.selectPage(Page.of(queryParam.getPageNo(), queryParam.getPageSize()), queryWrapper);
 
-        if (logPage != null && !CollectionUtils.isEmpty(logPage.getRecords())) {
-            responsePage.setTotalPage(logPage.getPages());
-            responsePage.setTotalCount(logPage.getTotal());
-            responsePage.setRecords(logPage.getRecords().stream().map(x -> {
+        if (historyPage != null && !CollectionUtils.isEmpty(historyPage.getRecords())) {
+            responsePage.setTotalPage(historyPage.getPages());
+            responsePage.setTotalCount(historyPage.getTotal());
+            responsePage.setRecords(historyPage.getRecords().stream().map(x -> {
                 return BeanConvertUtils.convertTo(x, MockInfoHistoryVo::new);
             }).collect(Collectors.toList()));
         }
