@@ -103,11 +103,11 @@ public class MockClientService {
             Integer mockjsFlag = mockInfo.getMockjsFlag();
 
             // 判断是否需要使用mockjs进行解析
-            Map map;
+            Map<String, Object> map;
             if (mockjsFlag == 0) {
-                map = (Map)DataMockUtils.mock(jsonData);
+                map = DataMockUtils.mock(jsonData);
             } else {
-                map = JsonUtils.readValue(jsonData, Map.class);
+                map = JsonUtils.readMap(jsonData);
             }
             this.saveAccessLog(mockInfo, request);
 
