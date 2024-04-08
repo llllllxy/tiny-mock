@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.tinycloud.tinymock.modules.mapper.MockInfoMapper">
 
+    <delete id="deleteByProjectAndTenant">
+        delete
+        from t_mock_info
+        where tenant_id = #{tenantId}
+          and project_id = #{projectId}
+    </delete>
+
+    <insert id="commonInsert" parameterType="string">
+        ${value}
+    </insert>
 </mapper>

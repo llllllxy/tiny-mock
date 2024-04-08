@@ -245,7 +245,7 @@ public class MockInfoService {
         String folderPath = UUID.randomUUID().toString().replace("-", "");
         // 根据folderPath创建文件夹
         Path folder = Paths.get(tempDirPath + folderPath);
-
+        log.info("export folder: {}", folder.toString());
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             Files.createDirectories(folder);
             for (TMockInfo mockInfo : mockInfoList) {
@@ -291,15 +291,16 @@ public class MockInfoService {
         }
     }
 
-    public boolean importZip( MultipartFile multipartFile, String fileName, Long projectId) {
+    @Transactional
+    public boolean importZip(MultipartFile multipartFile, String fileName, Long projectId) {
         String folderPath = UUID.randomUUID().toString().replace("-", "");
         // 根据folderPath创建文件夹
         Path folder = Paths.get(tempDirPath + folderPath);
         if (!StringUtils.hasText(fileName)) {
             fileName = multipartFile.getOriginalFilename();
         }
-        log.info("folder: {}", folder.toString());
-        log.info("fileName: {}", fileName);
+        log.info("importZip folder: {}", folder.toString());
+        log.info("importZip fileName: {}", fileName);
         try {
             Files.createDirectories(folder);
             Path zipFilePath = folder.resolve(fileName);
@@ -311,20 +312,38 @@ public class MockInfoService {
             // 加载备份文件
             Path projectBackFilePath = folder.resolve(projectId + ".back");
             if (!Files.exists(projectBackFilePath)) {
-                throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST);
+                throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_BACK_FILE_NOT_BELONG_THIS_PROJECT);
             }
-
-
+            // 读取文件内容
             String backContent = new String(Files.readAllBytes(projectBackFilePath), StandardCharsets.UTF_8);
+            // 解密文件数据
             backContent = SM4Utils.decrypt(applicationConfig.getProjectExportDek(), backContent);
 
-
-
-
+            this.mockInfoMapper.deleteByProjectAndTenant(TenantHolder.getTenantId(), projectId);
+            this.mockInfoMapper.commonInsert(backContent);
         } catch (Exception e) {
+            log.error("importZip error: ", e);
+            throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_IMPORT_PROJECT_ERROR);
+        } finally {
+            // 清空这个文件夹
+            try {
+                Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file); // 删除文件
+                        return FileVisitResult.CONTINUE;
+                    }
 
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        Files.delete(dir); // 删除文件夹
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                log.error("export walkFileTree error: ", e);
+            }
         }
-
         return true;
     }
 

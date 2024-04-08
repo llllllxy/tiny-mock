@@ -17,7 +17,7 @@ public enum TenantErrorCode {
     TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST(3104, "接口名称或路径已存在，请修改！"),
 
     TENANT_MOCKINFO_BACK_FILE_NOT_BELONG_THIS_PROJECT(3105, "备份文件不属于这个项目，请修改！"),
-
+    TENANT_MOCKINFO_IMPORT_PROJECT_ERROR(3105, "导入项目失败，请修改！"),
     ;
 
     private Integer code;

@@ -1,6 +1,7 @@
 package org.tinycloud.tinymock.modules.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
 
@@ -13,4 +14,7 @@ import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
  */
 @Repository
 public interface MockInfoMapper extends BaseMapper<TMockInfo> {
+    int commonInsert(String value);
+
+    int deleteByProjectAndTenant(@Param("tenantId") Long tenantId, @Param("projectId") Long projectId);
 }

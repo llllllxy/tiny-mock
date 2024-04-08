@@ -41,7 +41,7 @@ spring:
     resources:
       add-mappings: false
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/tiny-mock?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/tiny-mock?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=true&allowMultiQueries=true
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: 123654
