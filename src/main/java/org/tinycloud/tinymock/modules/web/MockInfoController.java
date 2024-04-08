@@ -3,6 +3,7 @@ package org.tinycloud.tinymock.modules.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.common.model.PageModel;
 import org.tinycloud.tinymock.modules.bean.dto.*;
@@ -83,5 +84,12 @@ public class MockInfoController {
     @RequestMapping(value = "/export", method = RequestMethod.GET)
     public void export(@RequestParam("projectId") Long projectId, HttpServletResponse response) {
         mockInfoService.export(projectId, response);
+    }
+
+    @PostMapping("/import")
+    public ApiResult<Boolean> importZip(@RequestParam("file") MultipartFile multipartFile,
+                                        @RequestParam(value = "projectId", required = false) Long projectId,
+                                        @RequestParam(value = "fileName", required = false) String fileName) {
+        return ApiResult.success(mockInfoService.importZip(multipartFile, fileName, projectId), "上传成功！");
     }
 }

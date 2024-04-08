@@ -51,7 +51,7 @@
                         <button id="btn-export" lay-on="btnExport" class="layui-btn layui-btn-sm">
                             <i class="layui-icon layui-icon-download-circle"></i>导出项目
                         </button>
-                        <button id="btn-import" lay-on="btnImport" class="layui-btn layui-btn-sm">
+                        <button id="btn-import" lay-on="btnImport" class="layui-btn layui-btn-sm" lay-options="{accept: 'file', exts: 'zip|rar|7z'}">
                             <i class="layui-icon layui-icon-upload-circle"></i>导入项目
                         </button>
                     </div>
@@ -305,7 +305,7 @@
 </script>
 
 <script>
-    layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage', 'dropdown'], function () {
+    layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage', 'dropdown', 'upload'], function () {
         var form = layui.form,
             $ = layui.jquery,
             layer = layui.layer,
@@ -313,6 +313,7 @@
             dropdown = layui.dropdown,
             miniAjax = layui.miniAjax,
             miniPage = layui.miniPage,
+            upload = layui.upload,
             util = layui.util;
 
         // 下面这两种方式都能获取到参数
@@ -333,6 +334,19 @@
             },
             error: function (error) {
                 layer.msg(error, {time: 1000, icon: 2});
+            }
+        });
+
+        // 渲染
+        upload.render({
+            elem: '#btn-import', // 绑定多个元素
+            url: '/mockinfo/import', // 此处配置你自己的上传接口即可
+            accept: 'file', // 普通文件
+            data: {
+                projectId: projectId
+            },
+            done: function(res) {
+                layer.msg(res.msg, {time: 1000, icon: 1});
             }
         });
 

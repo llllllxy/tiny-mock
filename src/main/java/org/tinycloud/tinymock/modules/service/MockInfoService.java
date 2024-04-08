@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
@@ -290,6 +291,42 @@ public class MockInfoService {
         }
     }
 
+    public boolean importZip( MultipartFile multipartFile, String fileName, Long projectId) {
+        String folderPath = UUID.randomUUID().toString().replace("-", "");
+        // 根据folderPath创建文件夹
+        Path folder = Paths.get(tempDirPath + folderPath);
+        if (!StringUtils.hasText(fileName)) {
+            fileName = multipartFile.getOriginalFilename();
+        }
+        log.info("folder: {}", folder.toString());
+        log.info("fileName: {}", fileName);
+        try {
+            Files.createDirectories(folder);
+            Path zipFilePath = folder.resolve(fileName);
+            // 文件保存到指定位置
+            multipartFile.transferTo(zipFilePath);
+
+            // 解压
+            Zip4jUtils.unZip(zipFilePath.toString(), folder.toString(), null);
+            // 加载备份文件
+            Path projectBackFilePath = folder.resolve(projectId + ".back");
+            if (!Files.exists(projectBackFilePath)) {
+                throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST);
+            }
+
+
+            String backContent = new String(Files.readAllBytes(projectBackFilePath), StandardCharsets.UTF_8);
+            backContent = SM4Utils.decrypt(applicationConfig.getProjectExportDek(), backContent);
+
+
+
+
+        } catch (Exception e) {
+
+        }
+
+        return true;
+    }
 
     /**
      * 根据表里的数据，生成insert语句
