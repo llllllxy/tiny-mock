@@ -38,7 +38,7 @@ public class Zip4jUtils {
         par.setCompressionMethod(CompressionMethod.DEFLATE);
         par.setCompressionLevel(CompressionLevel.NORMAL);
         // 可以设置压缩包内是否包含根路径，即位是否包xxx那一级目录
-        // par.setIncludeRootFolder(false);
+        par.setIncludeRootFolder(false);
 
         if (passwd != null) {
             par.setEncryptFiles(true);
@@ -124,9 +124,9 @@ public class Zip4jUtils {
         String passwd = "123456";
         try {
             // 测试压缩
-            // Zip4jUtils.zip("D:/opt/csp-app-server/logs", "D:/opt/csp-app-server/logs2.zip", passwd);
+            Zip4jUtils.zip("D:/opt/coolcars/logs", "D:/opt/coolcars/logs/logs2.zip", passwd);
             // 测试解压
-            Zip4jUtils.unZip("D:/opt/csp-app-server/logs2.zip", "D:/opt/csp-app-server/dest", passwd);
+            //Zip4jUtils.unZip("D:/opt/coolcars/logs2.zip", "D:/opt/csp-app-server/dest", passwd);
         } catch (ZipException e) {
             e.printStackTrace();
         }

@@ -28,6 +28,12 @@
     .p-info p:last-child {
         margin-bottom: 0;
     }
+
+    .top-button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 </style>
 
 
@@ -36,9 +42,21 @@
 
         <div>
             <div style="padding: 10px 10px 10px 10px;" class="layui-panel">
-                <button id="btn-back" lay-on="btnBack" class="layui-btn layui-btn-sm layui-btn-primary">
-                    <i class="layui-icon layui-icon-return"></i>返回
-                </button>
+
+                <div class="top-button-container">
+                    <button id="btn-back" lay-on="btnBack" class="layui-btn layui-btn-sm layui-btn-primary">
+                        <i class="layui-icon layui-icon-return"></i>返回
+                    </button>
+                    <div>
+                        <button id="btn-export" lay-on="btnExport" class="layui-btn layui-btn-sm">
+                            <i class="layui-icon layui-icon-download-circle"></i>导出项目
+                        </button>
+                        <button id="btn-import" lay-on="btnImport" class="layui-btn layui-btn-sm">
+                            <i class="layui-icon layui-icon-upload-circle"></i>导入项目
+                        </button>
+                    </div>
+                </div>
+
                 <div class="p-info" style="margin-top: 10px">
                     <p>
                         <span>项目ID</span><span id="headerProjectId"></span>
@@ -322,6 +340,14 @@
             btnBack: function () {
                 window.history.back();
             },
+            btnExport: function () {
+                miniAjax.download({
+                    url: '/mockinfo/export?projectId=' + projectId
+                });
+            },
+            btnImport: function () {
+
+            }
         });
 
         var currTable = table.render({

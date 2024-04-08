@@ -13,6 +13,8 @@ import org.tinycloud.tinymock.modules.service.MockAccessLogService;
 import org.tinycloud.tinymock.modules.service.MockInfoHistoryService;
 import org.tinycloud.tinymock.modules.service.MockInfoService;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * </p>
@@ -76,5 +78,10 @@ public class MockInfoController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResult<Boolean> edit(@Validated @RequestBody MockInfoEditDto dto) {
         return ApiResult.success(mockInfoService.edit(dto), "修改成功!");
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.GET)
+    public void export(@RequestParam("projectId") Long projectId, HttpServletResponse response) {
+        mockInfoService.export(projectId, response);
     }
 }

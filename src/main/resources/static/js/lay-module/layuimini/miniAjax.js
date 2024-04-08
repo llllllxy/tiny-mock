@@ -230,6 +230,44 @@ layui.define(["jquery"], function (exports) {
                     options.error("错误提示： " + XMLHttpRequest.status + " " + XMLHttpRequest.statusText);
                 }
             });
+        },
+        /**
+         * download 文件上下载 请求
+         * 改为ajax下载文件，这样方便设置header，适配前后端分离的情况（$.ajax不支持blob类型，所以这里用原生的XMLHttpRequest）
+         */
+        download: function (options) {
+            if (!options.url) {
+                alert('请求错误，url不可为空!');
+                return false;
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', options.url, true);    // 也可以使用POST方式，根据接口
+            xhr.responseType = 'blob';    // 返回类型blob
+            xhr.setRequestHeader("token", sessionStorage.getItem('token'));
+            // 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+            xhr.onload = function () {
+                // 请求完成
+                if (this.status === 200) {
+                    // 返回200
+                    let blob = this.response;
+                    let temp = xhr.getResponseHeader("content-disposition").split(";")[1].split("=")[1];
+                    let fileName = decodeURIComponent(temp);
+                    console.log("fileName = " + fileName);
+                    let reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onload = function (e) {
+                        // 转换完成，创建一个a标签用于下载
+                        let a = document.createElement('a');
+                        a.download = fileName;
+                        a.href = e.target.result;
+                        $("body").append(a);    // 修复firefox中无法触发click
+                        a.click();
+                        $(a).remove();
+                    }
+                }
+            };
+            // 发送ajax请求
+            xhr.send()
         }
     };
 

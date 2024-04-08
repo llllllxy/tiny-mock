@@ -12,7 +12,9 @@ public enum TenantErrorCode {
     TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST(3100, "项目名称或项目路径已存在，请修改！"),
     TENANT_MOCKINFO_IS_ENABLE(3101, "只可启用'停用'状态的接口！"),
     TENANT_MOCKINFO_IS_DISABLE(3102, "只可停用'启用'状态的接口！"),
-    TENANT_MOCKINFO_NOT_EXIST(3102, "接口不存在！"),
+    TENANT_MOCKINFO_NOT_EXIST(3103, "接口不存在！"),
+
+    TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST(3104, "接口名称或路径已存在，请修改！"),
 
     ;
 

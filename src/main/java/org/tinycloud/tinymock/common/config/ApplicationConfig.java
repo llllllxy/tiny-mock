@@ -37,6 +37,11 @@ public class ApplicationConfig {
      */
     private Integer tenantAuthTimeout = 1800;
 
+    /**
+     * 项目导出备份加密密钥（sm4）
+     */
+    private String projectExportDek;
+
 
     public String getName() {
         return name;
@@ -76,5 +81,13 @@ public class ApplicationConfig {
 
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
+    }
+
+    public String getProjectExportDek() {
+        return projectExportDek;
+    }
+
+    public void setProjectExportDek(String projectExportDek) {
+        this.projectExportDek = projectExportDek;
     }
 }
