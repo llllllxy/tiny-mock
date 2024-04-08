@@ -88,8 +88,8 @@
 数据统计
 ![数据统计](src/main/resources/static/images/readme/数据统计.png)
 
-问题和建议
-![问题和建议](src/main/resources/static/images/readme/问题和建议.png)
+问题与建议
+![问题与建议](src/main/resources/static/images/readme/问题与建议.png)
 
 使用文档
 ![使用文档](src/main/resources/static/images/readme/使用文档.png)
