@@ -47,14 +47,14 @@ public class ProjectInfoService {
     }
 
     public Boolean add(ProjectAddDto dto) {
-        TProjectInfo tProjectInfo = this.projectInfoMapper.selectOne(Wrappers.<TProjectInfo>lambdaQuery()
+        boolean exists = this.projectInfoMapper.exists(Wrappers.<TProjectInfo>lambdaQuery()
                 .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
                 .and(i -> i.eq(TProjectInfo::getProjectName, dto.getProjectName())
                         .or()
                         .eq(TProjectInfo::getPath, dto.getPath()))
         );
-        if (Objects.nonNull(tProjectInfo)) {
+        if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST);
         }
 
@@ -71,14 +71,14 @@ public class ProjectInfoService {
     }
 
     public Boolean edit(ProjectEditDto dto) {
-        TProjectInfo tProjectInfo = this.projectInfoMapper.selectOne(Wrappers.<TProjectInfo>lambdaQuery()
+        boolean exists = this.projectInfoMapper.exists(Wrappers.<TProjectInfo>lambdaQuery()
                 .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
                 .and(i -> i.eq(TProjectInfo::getProjectName, dto.getProjectName())
                         .or()
                         .eq(TProjectInfo::getPath, dto.getPath()))
         );
-        if (Objects.nonNull(tProjectInfo)) {
+        if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST);
         }
         LambdaUpdateWrapper<TProjectInfo> wrapper = new LambdaUpdateWrapper<>();
