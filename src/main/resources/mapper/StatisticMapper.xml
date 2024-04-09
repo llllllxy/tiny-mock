@@ -20,7 +20,7 @@
         left join t_project_info tpi on tpi.id = tmi.project_id
         where tmi.tenant_id = #{queryDto.tenantId}
         <if test="queryDto.mockName != null and queryDto.mockName != ''">
-            and tmi.surl like CONCAT('%',#{queryDto.mockName},'%')
+            and tmi.mock_name like CONCAT('%',#{queryDto.mockName},'%')
         </if>
         <if test="queryDto.projectId != null">
             and tmi.project_id = #{queryDto.projectId}
