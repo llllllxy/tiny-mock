@@ -149,14 +149,14 @@ public class MockInfoService {
     }
 
     public Boolean add(MockInfoAddDto dto) {
-        TMockInfo oneMockInfo = this.mockInfoMapper.selectOne(Wrappers.<TMockInfo>lambdaQuery()
+        boolean exists = this.mockInfoMapper.exists(Wrappers.<TMockInfo>lambdaQuery()
                 .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TMockInfo::getProjectId, dto.getProjectId())
                 .and(i -> i.eq(TMockInfo::getMockName, dto.getMockName())
                         .or()
                         .eq(TMockInfo::getUrl, dto.getUrl()))
         );
-        if (Objects.nonNull(oneMockInfo)) {
+        if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST);
         }
 
@@ -185,14 +185,14 @@ public class MockInfoService {
         if (Objects.isNull(mockInfo)) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NOT_EXIST);
         }
-        mockInfo = this.mockInfoMapper.selectOne(Wrappers.<TMockInfo>lambdaQuery()
+        boolean exists = this.mockInfoMapper.exists(Wrappers.<TMockInfo>lambdaQuery()
                 .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TMockInfo::getProjectId, mockInfo.getProjectId())
                 .and(i -> i.eq(TMockInfo::getMockName, dto.getMockName())
                         .or()
                         .eq(TMockInfo::getUrl, dto.getUrl()))
         );
-        if (Objects.nonNull(mockInfo)) {
+        if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST);
         }
 
