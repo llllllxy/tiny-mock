@@ -1,0 +1,160 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form" action="" lay-filter="search-form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">项目</label>
+                            <div class="layui-input-inline">
+                                <select name="projectId" lay-filter="projectId">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">接口名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="mockName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon layui-icon-search"></i>搜 索
+                            </button>
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                    lay-filter="data-reset-btn">
+                                <i class="layui-icon layui-icon-refresh"></i> 重 置
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+        <div class="layuimini-table">
+            <table class="layui-hide" id="statisticTableId" lay-filter="statisticTableFilter"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table', 'miniAjax'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            miniAjax = layui.miniAjax,
+            table = layui.table;
+
+        // 渲染项目下拉栏
+        var projectList = [];
+        miniAjax.get({
+            url: '/projectinfo/query',
+            success: function (res) {
+                if (res.code == '0') {
+                    projectList = res.data;
+                    // 动态渲染项目下拉栏
+                    $("[lay-filter='projectId']").append('<option value="">请选择</option>');
+                    for (let item of projectList) {
+                        $("[lay-filter='projectId']").append('<option value="' + item.id + '">' + item.projectName + '</option>');
+                    }
+                    form.render('select', 'search-form');
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            }
+        });
+
+        var statisticTable = table.render({
+            elem: '#statisticTableId',
+            url: '/statistic/query',
+            method: 'post',
+            contentType: 'application/json',
+            request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
+            },
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.totalCount,
+                    "data": res.data.records
+                };
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [[
+                {type: 'numbers', width: '5%', title: '序号', align: 'center'},
+                {field: 'mockName', width: '10%', title: '接口名称', align: 'center'},
+                {field: 'projectName', width: '10%', title: '项目名称', align: 'center'},
+                {field: 'url', title: 'URL', align: 'center'},
+                {field: 'accessTodayNumber', width: '8%', title: '今日访问量', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessTodayNumber}</span>`;
+                    }
+                },
+                {field: 'accessTodayIpNumber', width: '8%', title: '今日独立IP数', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessTodayIpNumber}</span>`;
+                    }
+                },
+                {field: 'accessYesterdayNumber', width: '8%', title: '昨日访问量', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessYesterdayNumber}</span>`;
+                    }
+                },
+                {field: 'accessYesterdayIpNumber', width: '8%', title: '昨日独立IP数', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessYesterdayIpNumber}</span>`;
+                    }
+                },
+                {field: 'accessMonthNumber', width: '8%', title: '当月访问量', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessMonthNumber}</span>`;
+                    }
+                },
+                {field: 'accessMonthIpNumber', width: '8%', title: '当月独立IP数', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessMonthIpNumber}</span>`;
+                    }
+                },
+                {field: 'accessTotalNumber', width: '8%', title: '总访问量', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessTotalNumber}</span>`;
+                    }
+                },
+                {field: 'accessTotalIpNumber', width: '8%', title: '总独立IP数', align: 'center', templet: function (d) {
+                        return `<span class="layui-badge layui-bg-blue">${d.accessTotalIpNumber}</span>`;
+                    }
+                },
+            ]],
+            autoSort: false,
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            // 执行搜索重载
+            table.reloadData('statisticTableId', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+            return false;
+        });
+
+        // 监听重置操作
+        form.on('submit(data-reset-btn)', function (data) {
+            form.val("search-form", {
+                "projectId": '',
+                "mockName": ''
+            });
+            // 执行搜索重载
+            table.reloadData('statisticTableId', {
+                page: {
+                    curr: 1
+                },
+                where: form.val("search-form")
+            });
+            return false;
+        });
+
+    });
+</script>

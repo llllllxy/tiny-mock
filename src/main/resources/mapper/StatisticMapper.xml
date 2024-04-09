@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tinycloud.tinymock.modules.mapper.StatisticMapper">
+    <select id="pageList" resultType="org.tinycloud.tinymock.modules.bean.vo.StatisticDataVo">
+        select
+        tmi.id,
+        tmi.tenant_id,
+        max(tpi.project_name) AS projectName,
+        max(tmi.mock_name) AS mockName,
+        max(tmi.url) url,
+        (SELECT count(id) FROM t_mock_access_log WHERE left(access_time, 10) = #{queryDto.today} AND mock_id = tmi.id) AS accessTodayNumber,
+        (SELECT count(distinct access_ip) FROM t_mock_access_log WHERE left(access_time, 10) = #{queryDto.today} AND mock_id = tmi.id) AS accessTodayIpNumber,
+        (SELECT count(id) FROM t_mock_access_log WHERE left(access_time, 10) = #{queryDto.yesterday} AND mock_id = tmi.id) AS accessYesterdayNumber,
+        (SELECT count(distinct access_ip) FROM t_mock_access_log WHERE left(access_time, 10) = #{queryDto.yesterday} AND mock_id = tmi.id) AS accessYesterdayIpNumber,
+        (SELECT count(id) FROM t_mock_access_log WHERE left(access_time, 7) = #{queryDto.month} AND mock_id = tmi.id) AS accessMonthNumber,
+        (SELECT count(distinct access_ip) FROM t_mock_access_log WHERE left(access_time, 7) = #{queryDto.month} AND mock_id = tmi.id) AS accessMonthIpNumber,
+        (SELECT count(id) FROM t_mock_access_log WHERE mock_id = tmi.id) AS accessTotalNumber,
+        (SELECT count(distinct access_ip) FROM t_mock_access_log WHERE mock_id = tmi.id) AS accessTotalIpNumber
+        from t_mock_info tmi
+        left join t_project_info tpi on tpi.id = tmi.project_id
+        where tmi.tenant_id = #{queryDto.tenantId}
+        <if test="queryDto.mockName != null and queryDto.mockName != ''">
+            and tmi.surl like CONCAT('%',#{queryDto.mockName},'%')
+        </if>
+        <if test="queryDto.projectId != null">
+            and tmi.project_id = #{queryDto.projectId}
+        </if>
+        group by
+        tmi.tenant_id, tmi.id
+        order by tmi.id desc
+    </select>
+</mapper>
