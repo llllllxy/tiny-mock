@@ -7,8 +7,6 @@
 <a href="https://github.com/llllllxy/tiny-mock/watchers"><img src="https://img.shields.io/github/watchers/llllllxy/tiny-mock?style=flat-square&logo=GitHub"></a>
 <a href="https://github.com/llllllxy/tiny-mock/issues"><img src="https://img.shields.io/github/issues/llllllxy/tiny-mock.svg?style=flat-square&logo=GitHub"></a>
 <a href="https://github.com/llllllxy/tiny-mock/blob/master/LICENSE"><img src="https://img.shields.io/github/license/llllllxy/tiny-mock.svg?style=flat-square"></a>
-<a href='https://gitee.com/leisureLXY/tiny-mock/stargazers'><img src='https://gitee.com/leisureLXY/tiny-mock/badge/star.svg?theme=dark' alt='star'></img></a>
-<a href='https://gitee.com/leisureLXY/tiny-mock/members'><img src='https://gitee.com/leisureLXY/tiny-mock/badge/fork.svg?theme=dark' alt='fork'></img></a>
 
 ## 功能特色
 - 快速生成演示数据，将请求根地址指向到模拟地址即可轻松实现接口模拟
