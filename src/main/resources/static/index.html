@@ -169,6 +169,9 @@
                             window.location = '/page/login.html';
                         });
                     }
+                },
+                error: function (error) {
+                    layer.msg(error, {time: 1000, icon: 2});
                 }
             });
         });
@@ -197,7 +200,6 @@
                 layer.msg(error, {time: 1000, icon: 2});
             }
         });
-
 
     });
 </script>

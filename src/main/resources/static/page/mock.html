@@ -448,6 +448,9 @@
                         } else {
                             layer.msg(res.msg, {time: 1000, icon: 2});
                         }
+                    },
+                    error: function (error) {
+                        layer.msg(error, {time: 1000, icon: 2});
                     }
                 });
             } else {
@@ -459,6 +462,9 @@
                         } else {
                             layer.msg(res.msg, {time: 1000, icon: 2});
                         }
+                    },
+                    error: function (error) {
+                        layer.msg(error, {time: 1000, icon: 2});
                     }
                 });
             }
@@ -512,6 +518,9 @@
                                     } else {
                                         layer.msg(res.msg, {time: 1000, icon: 2});
                                     }
+                                },
+                                error: function (error) {
+                                    layer.msg(error, {time: 1000, icon: 2});
                                 }
                             });
                             return false;
@@ -582,6 +591,9 @@
                                     } else {
                                         layer.msg(res.msg, {time: 1000, icon: 2});
                                     }
+                                },
+                                error: function (error) {
+                                    layer.msg(error, {time: 1000, icon: 2});
                                 }
                             });
                             return false;
@@ -612,6 +624,9 @@
                             } else {
                                 layer.msg(res.msg, {time: 1000, icon: 2});
                             }
+                        },
+                        error: function (error) {
+                            layer.msg(error, {time: 1000, icon: 2});
                         }
                     });
                 });

@@ -8,6 +8,10 @@ public enum TenantErrorCode {
     EMAILCODE_IS_MISMATCH(3005, "邮箱验证码错误或已过期！"),
 
     INVITATIONCODE_IS_NOT_EXIST(3006, "邀请码不正确或不存在！"),
+    TENANT_IS_NOT_EXIST(3006, "租户不存在！"),
+    TENANT_PASSWORD_IS_ENTERED_INCONSISTENTLY(3007, "新密码前后输入不一致，请检查！"),
+    TENANT_OLD_PASSWORD_IS_WRONG(3008, "旧密码不正确，请检查！"),
+
 
     TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST(3100, "项目名称或项目路径已存在，请修改！"),
     TENANT_MOCKINFO_IS_ENABLE(3101, "只可启用'停用'状态的接口！"),

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.tinycloud.tinymock.common.annotation.AccessLimit;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditDto;
+import org.tinycloud.tinymock.modules.bean.dto.TenantEditPasswordDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantLoginDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantRegisterDto;
 import org.tinycloud.tinymock.modules.bean.vo.TenantCaptchaCodeVo;
@@ -136,5 +137,10 @@ public class TenantAuthController {
     @GetMapping("/refreshInvitationCode")
     public ApiResult<String> refreshInvitationCode() {
         return ApiResult.success(tenantAuthService.refreshInvitationCode(), "重置邀请码成功！");
+    }
+
+    @PostMapping("/editPassword")
+    public ApiResult<Boolean> editPassword(@Validated @RequestBody TenantEditPasswordDto dto) {
+        return ApiResult.success(tenantAuthService.editPassword(dto), "修改密码成功，即将跳转到登录页！");
     }
 }
