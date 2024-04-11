@@ -70,6 +70,8 @@ layui.define(["jquery"], function (exports) {
                 if (settings.dataType !== "html" && settings.dataType !== "script") {
                     settings.url = baseURL + settings.url; // 修改url
                 }
+                // 设置全局超时时间为20秒
+                settings.timeout = 20000;
 
                 // 设置token
                 if (sessionStorage.getItem('token')) {
@@ -101,7 +103,7 @@ layui.define(["jquery"], function (exports) {
                 return false;
             }
             options.type = 'GET';
-            options.timeout = options.timeout || 5000; // 设置本地的请求超时时间（以毫秒计）
+            options.timeout = options.timeout || 20000; // 设置本地的请求超时时间（以毫秒计）
             options.async = options.async !== false; // 布尔值，表示请求是否异步处理。默认是 true
             options.cache = options.cache !== true; // 布尔值，表示浏览器是否缓存被请求页面，默认是false
             options.dataType = options.dataType || 'json';
@@ -133,7 +135,7 @@ layui.define(["jquery"], function (exports) {
                 return false;
             }
             options.type = 'POST';
-            options.timeout = options.timeout || 5000;
+            options.timeout = options.timeout || 20000;
             options.async = options.async !== false;
             options.cache = options.cache !== true;
             options.dataType = options.dataType || 'json';
@@ -169,7 +171,7 @@ layui.define(["jquery"], function (exports) {
                 return false;
             }
             options.type = 'POST';
-            options.timeout = options.timeout || 5000;
+            options.timeout = options.timeout || 20000;
             options.async = options.async !== false;
             options.cache = options.cache !== true;
             options.dataType = options.dataType || 'json';
@@ -204,7 +206,7 @@ layui.define(["jquery"], function (exports) {
                 return false;
             }
             options.type = 'POST';
-            options.timeout = options.timeout || 5000;
+            options.timeout = options.timeout || 20000;
             options.async = options.async !== false;
             options.cache = options.cache !== true;
             options.dataType = options.dataType || 'json';
