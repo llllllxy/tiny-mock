@@ -110,3 +110,36 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 项目成员协作功能 `待完成`
 - 导出项目，导入项目（项目级别的，方便数据备份和恢复） `已完成`
 - 自定义头像修改 `已完成`
+
+## 前后端分离部署（拿windows环境举例，linux下大同小异）
+#### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
+![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
+
+#### 2、按照 `nginx` 并更改配置
+```editorconfig
+    listen       8000;
+    server_name  localhost;
+    client_max_body_size 50M;
+
+    # 前端文件的实际路径部署，实际路径在D:\nginxplace\mock 
+    location / {
+      root   D:/nginxplace/mock;
+      index  index.html index.htm;
+    }
+
+     # 后端反向代理，其中 /back 和 miniAjax.js 里的 baseURL 属性对应
+    location /back/ {
+      proxy_pass  http://127.0.0.1:9019/;
+      proxy_redirect off;
+      # bForwarded-ForIP
+      proxy_set_header  Host  $host:$server_port;
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    }
+```
+
+#### 3、将 `/resources/static` 目录下的内容 全部复制到 `D:\nginxplace\mock` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
+![img.png](src/main/resources/static/images/readme/前后端分离部署_2.png)
+
+#### 4、刷新nginx配置 `nginx.exe -s reload`，即可访问 `http://localhost:8000/`
