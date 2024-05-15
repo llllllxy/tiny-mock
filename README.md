@@ -111,7 +111,7 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 导出项目，导入项目（项目级别的，方便数据备份和恢复） `已完成`
 - 自定义头像修改 `已完成`
 
-## 前后端分离部署（拿windows环境举例，linux下大同小异）
+## 前后端分离部署示例（拿windows环境举例，linux下大同小异）
 #### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
 ![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
 
