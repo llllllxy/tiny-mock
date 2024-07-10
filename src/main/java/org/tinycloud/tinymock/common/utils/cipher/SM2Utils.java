@@ -91,13 +91,13 @@ public class SM2Utils {
     /**
      * 私钥签名
      *
-     * @param privateKey 私钥
-     * @param content    待签名内容
-     * @return 签名
+     * @param privateKey 私钥，hex格式
+     * @param content    待签名内容，普通字符串
+     * @return 签名值，hex格式
      */
     public static String sign(String privateKey, String content) throws CryptoException {
         // 待签名内容转为字节数组
-        byte[] message = Hex.decode(content);
+        byte[] message = content.getBytes(StandardCharsets.UTF_8);
 
         // 获取一条SM2曲线参数
         X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
@@ -129,9 +129,9 @@ public class SM2Utils {
     /**
      * 公钥签名验证
      *
-     * @param publicKey 公钥
-     * @param content   待签名内容
-     * @param sign      签名值
+     * @param publicKey 公钥，hex格式
+     * @param content   待签名内容，普通字符串
+     * @param sign      签名值，hex格式
      * @return 验签结果: true or false
      */
     public static boolean verify(String publicKey, String content, String sign) {
@@ -141,7 +141,7 @@ public class SM2Utils {
         }
 
         // 待签名内容
-        byte[] message = Hex.decode(content);
+        byte[] message = content.getBytes(StandardCharsets.UTF_8);
         byte[] signData = Hex.decode(sign);
 
         // 获取一条SM2曲线参数
@@ -167,9 +167,9 @@ public class SM2Utils {
     /**
      * SM2加密算法（公钥加密）
      *
-     * @param publicKey 公钥
-     * @param data      待加密的数据
-     * @return 结果密文，BC库产生的密文带由04标识符，与非BC库对接时需要去掉开头的04
+     * @param publicKey 公钥，hex格式
+     * @param data      待加密的数据，普通字符串
+     * @return 结果密文，hex格式，BC库产生的密文带由04标识符，与非BC库对接时需要去掉开头的04
      */
     public static String encrypt(String publicKey, String data) {
         // 非压缩模式公钥对接放是128位HEX秘钥，需要为BC库加上“04”标记
@@ -205,9 +205,9 @@ public class SM2Utils {
     /**
      * SM2解密算法（私钥解密）
      *
-     * @param privateKey 私钥
-     * @param cipherData 密文数据
-     * @return 解密结果
+     * @param privateKey 私钥，hex格式
+     * @param cipherData 密文数据，hex格式
+     * @return 解密结果，普通字符串
      */
     public static String decrypt(String privateKey, String cipherData) {
         // 使用BC库加解密时密文以04开头，传入的密文前面没有04则补上
@@ -257,12 +257,12 @@ public class SM2Utils {
         // 1、签名验签测试
         String sign = "";
         try {
-            sign = sign(priKey, Hex.toHexString(text.getBytes()));
+            sign = sign(priKey, text);
         } catch (CryptoException e) {
             e.printStackTrace();
         }
         System.out.println("生成签名：" + sign);
-        boolean verify = verify(pubKey, Hex.toHexString(text.getBytes()), sign);
+        boolean verify = verify(pubKey, text, sign);
         System.out.println("验签结果：" + verify);
 
 
