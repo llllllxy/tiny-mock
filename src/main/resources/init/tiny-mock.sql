@@ -224,6 +224,20 @@ INSERT INTO `t_project_info` VALUES (1767820137268035585, 2212121, '测试项目
 INSERT INTO `t_project_info` VALUES (2024080000000001905, 2024080000000001698, '李四的项目', '', '/lisi', 0, 0, '2024-03-20 22:06:28', '2024-03-20 22:06:28', '');
 
 
+DROP TABLE IF EXISTS `t_project_member`;
+CREATE TABLE `t_project_member`  (
+ `id` bigint(20) NOT NULL COMMENT '主键id',
+ `tenant_id` bigint(20) NOT NULL COMMENT '协作租户ID',
+ `project_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目ID',
+ `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
+ `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
+ `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+ `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+ `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+ PRIMARY KEY (`id`) USING BTREE,
+ UNIQUE INDEX `t_project_member_unique_index`(`tenant_id`, `project_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '项目成员协作表' ROW_FORMAT = Dynamic;
+
 -- ----------------------------
 -- Table structure for t_tenant
 -- ----------------------------

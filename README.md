@@ -23,7 +23,7 @@
 
 | 依赖                | 说明             |
 |---------------------|--------------   |
-| SpringBoot 2.6.13   | 基础框架         |
+| SpringBoot 2.6.15   | 基础框架         |
 | Hikari              | 高性能数据库连接池 |
 | MyBatis-Plus 3.5.6  | MyBatis的增强ORM |
 | Redis               | 业务缓存、会话共享  |
@@ -110,6 +110,8 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 项目成员协作功能 `待完成`
 - 导出项目，导入项目（项目级别的，方便数据备份和恢复） `已完成`
 - 自定义头像修改 `已完成`
+- 接口分模块管理 `未完成`
+- 成员协作功能 `未完成`
 
 ## 前后端分离部署示例（拿windows环境举例，linux下大同小异）
 #### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
