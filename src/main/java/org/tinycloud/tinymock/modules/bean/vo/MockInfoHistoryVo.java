@@ -45,4 +45,8 @@ public class MockInfoHistoryVo implements Serializable {
     private Long delay;
 
     private Date createdAt;
+
+    private String operator;
+
+    private Long operatorId;
 }

@@ -73,7 +73,7 @@ mybatis-plus:
   type-aliases-package: org.tinycloud.tinymock.**.entity
   # 去除打印
   global-config:
-    banner: false
+    banner: true
   # 驼峰命名匹配
   configuration:
     map-underscore-to-camel-case: true
