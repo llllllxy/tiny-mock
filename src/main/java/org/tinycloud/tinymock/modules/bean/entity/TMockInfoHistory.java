@@ -12,6 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
+ *     mock数据历史记录表实体类
  * </p>
  *
  * @author liuxingyu01
@@ -34,6 +35,9 @@ public class TMockInfoHistory implements Serializable {
 
     @TableField("tenant_id")
     private Long tenantId;
+
+    @TableField("operator_id")
+    private Long operatorId;
 
     @TableField("project_id")
     private Long projectId;

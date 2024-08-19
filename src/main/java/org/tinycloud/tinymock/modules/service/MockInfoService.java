@@ -220,6 +220,7 @@ public class MockInfoService {
         TMockInfoHistory tMockInfoHistory = new TMockInfoHistory();
         tMockInfoHistory.setMockId(mockInfo.getId());
         tMockInfoHistory.setTenantId(mockInfo.getTenantId());
+        tMockInfoHistory.setOperatorId(TenantHolder.getTenantId());
         tMockInfoHistory.setProjectId(mockInfo.getProjectId());
         tMockInfoHistory.setVersion(version);
         tMockInfoHistory.setMockName(mockInfo.getMockName());
@@ -241,7 +242,7 @@ public class MockInfoService {
         String folderPath = UUID.randomUUID().toString().replace("-", "");
         // 根据folderPath创建文件夹
         Path folder = Paths.get(tempDirPath + folderPath);
-        log.info("export folder: {}", folder.toString());
+        log.info("export folder: {}", folder);
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             Files.createDirectories(folder);
             for (TMockInfo mockInfo : mockInfoList) {
