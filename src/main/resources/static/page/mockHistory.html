@@ -34,6 +34,7 @@
                 [
                     {field: 'version', title: '版本', align: 'center',},
                     {field: 'createdAt', title: '版本时间', align: 'center'},
+                    {field: 'operateTypeName', title: '类型', align: 'center'},
                     {field: 'operator', title: '操作人', align: 'center'},
                     {field: 'mockName', title: '接口名称', align: 'center'},
                     {field: 'method', title: '请求方式', align: 'center'},
@@ -71,7 +72,7 @@
                     shade: 0.2,
                     maxmin: true,
                     shadeClose: false,
-                    area: '780px', // 宽度580, 高度自适应
+                    area: ['780px', '500px'], // 宽度580, 高度自适应
                     content: $('#jsonDataDialog').html(),
                     success: function (layero, dIndex) {
                         layui.code({

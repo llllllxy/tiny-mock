@@ -25,6 +25,7 @@ import org.tinycloud.tinymock.modules.bean.dto.MockInfoEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoQueryDto;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfoHistory;
+import org.tinycloud.tinymock.modules.bean.enums.OperateTypeEnum;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
 import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
 import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
@@ -100,12 +101,23 @@ public class MockInfoService {
         return BeanConvertUtils.convertTo(mockInfo, MockInfoVo::new);
     }
 
+    @Transactional
     public Boolean delete(Long id) {
+        TMockInfo mockInfo = this.mockInfoMapper.selectOne(Wrappers.<TMockInfo>lambdaQuery()
+                .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
+                .eq(TMockInfo::getId, id));
+        if (Objects.isNull(mockInfo)) {
+            throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NOT_EXIST);
+        }
         // 逻辑删除
         LambdaUpdateWrapper<TMockInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TMockInfo::getId, id);
         wrapper.set(TMockInfo::getDelFlag, GlobalConstant.DELETED);
         int rows = this.mockInfoMapper.update(null, wrapper);
+
+        // 插入旧的数据到历史版本表中
+        this.saveHistory(mockInfo, OperateTypeEnum.DELETE.getCode());
+
         return rows > 0;
     }
 
@@ -144,6 +156,7 @@ public class MockInfoService {
         return rows > 0;
     }
 
+    @Transactional
     public Boolean add(MockInfoAddDto dto) {
         boolean exists = this.mockInfoMapper.exists(Wrappers.<TMockInfo>lambdaQuery()
                 .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
@@ -170,6 +183,10 @@ public class MockInfoService {
         tMockInfo.setMockjsFlag(dto.getMockjsFlag());
         tMockInfo.setHttpCode(dto.getHttpCode());
         int rows = this.mockInfoMapper.insert(tMockInfo);
+
+        // 插入旧的数据到历史版本表中
+        this.saveHistory(tMockInfo, OperateTypeEnum.ADD.getCode());
+
         return rows > 0;
     }
 
@@ -184,6 +201,7 @@ public class MockInfoService {
         boolean exists = this.mockInfoMapper.exists(Wrappers.<TMockInfo>lambdaQuery()
                 .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TMockInfo::getProjectId, mockInfo.getProjectId())
+                .ne(TMockInfo::getId, mockInfo.getId())
                 .and(i -> i.eq(TMockInfo::getMockName, dto.getMockName())
                         .or()
                         .eq(TMockInfo::getUrl, dto.getUrl()))
@@ -193,7 +211,7 @@ public class MockInfoService {
         }
 
         // 插入旧的数据到历史版本表中
-        this.saveHistory(mockInfo);
+        this.saveHistory(mockInfo, OperateTypeEnum.UPDATE.getCode());
 
         LambdaUpdateWrapper<TMockInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TMockInfo::getId, dto.getId());
@@ -210,7 +228,7 @@ public class MockInfoService {
         return rows > 0;
     }
 
-    public void saveHistory(TMockInfo mockInfo) {
+    public void saveHistory(TMockInfo mockInfo, Integer operateType) {
         Integer version = this.mockInfoHistoryMapper.selectVersion(mockInfo.getId(), mockInfo.getProjectId());
         if (Objects.isNull(version)) {
             version = 1;
@@ -221,6 +239,7 @@ public class MockInfoService {
         tMockInfoHistory.setMockId(mockInfo.getId());
         tMockInfoHistory.setTenantId(mockInfo.getTenantId());
         tMockInfoHistory.setOperatorId(TenantHolder.getTenantId());
+        tMockInfoHistory.setOperateType(operateType);
         tMockInfoHistory.setProjectId(mockInfo.getProjectId());
         tMockInfoHistory.setVersion(version);
         tMockInfoHistory.setMockName(mockInfo.getMockName());

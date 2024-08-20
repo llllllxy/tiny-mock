@@ -49,4 +49,8 @@ public class MockInfoHistoryVo implements Serializable {
     private String operator;
 
     private Long operatorId;
+
+    private String operateTypeName;
+
+    private Integer operateType;
 }

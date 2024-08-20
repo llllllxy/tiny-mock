@@ -15,6 +15,7 @@ import org.tinycloud.tinymock.modules.bean.dto.MockInfoHistoryQueryDto;
 import org.tinycloud.tinymock.modules.bean.entity.TMailConfig;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfoHistory;
 import org.tinycloud.tinymock.modules.bean.entity.TTenant;
+import org.tinycloud.tinymock.modules.bean.enums.OperateTypeEnum;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoHistoryVo;
 import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
 import org.tinycloud.tinymock.modules.mapper.TenantMapper;
@@ -69,6 +70,7 @@ public class MockInfoHistoryService {
                 MockInfoHistoryVo vo = new MockInfoHistoryVo();
                 BeanUtils.copyProperties(x, vo);
                 vo.setOperator(tenantMap.get(vo.getOperatorId()) == null ? "未知" : tenantMap.get(vo.getOperatorId()).getTenantAccount());
+                vo.setOperateTypeName(OperateTypeEnum.getDesc(vo.getOperateType()));
                 return vo;
             }).collect(Collectors.toList()));
         }

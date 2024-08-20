@@ -175,6 +175,7 @@ CREATE TABLE `t_mock_info_history`  (
   `version` int(11) NOT NULL COMMENT '历史版本号，从1开始，每次加1',
   `tenant_id` bigint(20) NOT NULL COMMENT '租户ID',
   `operator_id` bigint(20) NOT NULL COMMENT '操作人ID(有可能是协作者操作的)',
+  `operate_type` tinyint(4) NOT NULL COMMENT '操作类型(1-新增，2-更新，3-删除)',
   `project_id` bigint(20) NOT NULL COMMENT '项目ID',
   `mock_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '接口名称',
   `method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'GET,HEAD,POST,PUT, PATCH, DELETE,OPTIONS,TRACE;',
