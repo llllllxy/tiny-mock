@@ -73,7 +73,7 @@ public class TenantAuthController {
 
         Map<String, String> menuItem4 = new HashMap<>();
         menuItem4.put("title", "使用文档");
-        menuItem4.put("href", "page/doc.html");
+        menuItem4.put("href", "page/handbook.html");
         menuItem4.put("icon", "fa fa-navicon");
         menuItem4.put("target", "_self");
 
