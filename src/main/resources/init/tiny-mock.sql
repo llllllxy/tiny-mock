@@ -229,7 +229,8 @@ INSERT INTO `t_project_info` VALUES (2024080000000001905, 2024080000000001698, '
 DROP TABLE IF EXISTS `t_project_member`;
 CREATE TABLE `t_project_member`  (
  `id` bigint(20) NOT NULL COMMENT '主键id',
- `tenant_id` bigint(20) NOT NULL COMMENT '协作租户ID',
+ `create_tenant_id` bigint(20) NOT NULL COMMENT '拥有者租户ID',
+ `member_tenant_id` bigint(20) NOT NULL COMMENT '协作者租户ID',
  `project_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目ID',
  `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
  `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
