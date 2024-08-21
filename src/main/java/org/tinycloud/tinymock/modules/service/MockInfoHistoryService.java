@@ -62,7 +62,7 @@ public class MockInfoHistoryService {
             Map<Long, TTenant> tenantMap = tenantList.stream()
                     .collect(Collectors.toMap(TTenant::getId, tenant -> tenant));
             // 等价于下面这种写法
-            // Map<String, TTenant> tenantMap = tenantList.stream().collect(Collectors.toMap(person -> TTenant::getId, Function.identity()));
+            // Map<Long, TTenant> tenantMap = tenantList.stream().collect(Collectors.toMap(person -> person.getId(), Function.identity()));
 
             responsePage.setTotalPage(historyPage.getPages());
             responsePage.setTotalCount(historyPage.getTotal());

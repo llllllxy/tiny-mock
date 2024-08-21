@@ -231,7 +231,7 @@ CREATE TABLE `t_project_member`  (
  `id` bigint(20) NOT NULL COMMENT '主键id',
  `create_tenant_id` bigint(20) NOT NULL COMMENT '拥有者租户ID',
  `member_tenant_id` bigint(20) NOT NULL COMMENT '协作者租户ID',
- `project_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '项目ID',
+ `project_id` bigint(20) NOT NULL COMMENT '项目ID',
  `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
  `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

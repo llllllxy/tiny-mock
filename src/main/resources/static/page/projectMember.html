@@ -63,25 +63,19 @@
             elem: '#memberTableId',
             url: '/projectmember/list',
             contentType: 'application/json',
-            method: 'post', //如果无需自定义HTTP类型，可不加该参数
+            method: 'get', //如果无需自定义HTTP类型，可不加该参数
             where: {'projectId': projectId}, // 初始化时带的参数
             cols: [
                 [
-                    {field: 'version', title: '版本', align: 'center',},
-                    {field: 'createdAt', title: '版本时间', align: 'center'},
-                    {field: 'operateTypeName', title: '类型', align: 'center'},
-                    {field: 'operator', title: '操作人', align: 'center'},
-                    {field: 'mockName', title: '接口名称', align: 'center'},
-                    {field: 'method', title: '请求方式', align: 'center'},
-                    {field: 'url', title: '接口地址', align: 'center'},
-                    {field: 'delay', title: '延迟时间', align: "center"},
-                    {field: 'mockjsFlag', title: '开启Mock.js', align: "center"},
+                    {type: 'numbers', width: '5%', title: '#', align: 'center'},
+                    {field: 'memberTenantAccount', title: '版本', align: 'center',},
+                    {field: 'memberTenantName', title: '版本时间', align: 'center'},
+                    {field: 'createdAt', title: '类型', align: 'center'},
+                    {field: 'remark', title: '操作人', align: 'center'},
                     {
-                        field: 'jsonData',
-                        title: '接口数据',
+                        title: '操作',
                         align: 'center',
-                        expandedMode: 'tips',
-                        templet: '<div><a href="javascript:;" class="layuimini-link" lay-event="preview">{{= d.jsonData }}</a></div>'
+                        templet: '<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>'
                     }
                 ]
             ],
@@ -90,13 +84,10 @@
                 return {
                     "code": res.code,
                     "msg": res.msg,
-                    "count": res.data.totalCount,
-                    "data": res.data.records
+                    "data": res.data
                 };
             },
-            limits: [10, 15, 20, 25, 50, 100],
-            limit: 10,
-            page: true,
+            page: false,
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'
@@ -107,6 +98,8 @@
         table.on('tool(memberTableFilter)', function (obj) {
             var lineData = obj.data;
             if (obj.event === 'delete') {
+                console.log(JSON.stringify(lineData));
+
                 layer.confirm('确定删除此成员吗', function (index) {
                     layer.close(index);
                     miniAjax.get({
