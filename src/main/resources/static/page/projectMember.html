@@ -1,0 +1,162 @@
+<div class="layuimini-form">
+    <form class="layui-form" action="" lay-filter="member-form" id="member-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">协助成员</label>
+            <div class="layui-input-block">
+                <div id="helpMember" class="xm-select-demo"></div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit lay-filter="confirmAdd">确认添加</button>
+            </div>
+        </div>
+
+        <table class="layui-hide" id="memberTableId" lay-filter="memberTableFilter"></table>
+    </form>
+</div>
+
+<script>
+    layui.use(['form', 'table', 'layer', 'miniAjax'], function () {
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            miniAjax = layui.miniAjax,
+            table = layui.table;
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+        var projectId = sessionStorage.getItem("projectId");
+        console.log("projectId = " + projectId);
+
+        var helpMemberSelect = xmSelect.render({
+            el: '#helpMember',
+            tips: '请选择协助成员',
+            radio: true,
+            clickClose: true,
+            theme: {color: '#006ad4'},
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function (val, cb, show) {
+                miniAjax.postJSON({
+                    url: '/projectmember/search',
+                    data: JSON.stringify(Object.assign({}, {'keyword': val}, {'projectId': projectId})),
+                    success: function (res) {
+                        if (res.code === 0) {
+                            cb(res.data);
+                        } else {
+                            cb([]);
+                            layer.msg(res.msg, {time: 1000, icon: 2});
+                        }
+                    },
+                    error: function (error) {
+                        cb([]);
+                        layer.msg(error, {time: 1000, icon: 2});
+                    }
+                });
+            }
+        });
+
+
+        var memberTable = table.render({
+            elem: '#memberTableId',
+            url: '/projectmember/list',
+            contentType: 'application/json',
+            method: 'post', //如果无需自定义HTTP类型，可不加该参数
+            where: {'projectId': projectId}, // 初始化时带的参数
+            cols: [
+                [
+                    {field: 'version', title: '版本', align: 'center',},
+                    {field: 'createdAt', title: '版本时间', align: 'center'},
+                    {field: 'operateTypeName', title: '类型', align: 'center'},
+                    {field: 'operator', title: '操作人', align: 'center'},
+                    {field: 'mockName', title: '接口名称', align: 'center'},
+                    {field: 'method', title: '请求方式', align: 'center'},
+                    {field: 'url', title: '接口地址', align: 'center'},
+                    {field: 'delay', title: '延迟时间', align: "center"},
+                    {field: 'mockjsFlag', title: '开启Mock.js', align: "center"},
+                    {
+                        field: 'jsonData',
+                        title: '接口数据',
+                        align: 'center',
+                        expandedMode: 'tips',
+                        templet: '<div><a href="javascript:;" class="layuimini-link" lay-event="preview">{{= d.jsonData }}</a></div>'
+                    }
+                ]
+            ],
+            skin: 'line', // 行边框风格
+            parseData: function (res) {
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.totalCount,
+                    "data": res.data.records
+                };
+            },
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
+            }
+        });
+
+
+        table.on('tool(memberTableFilter)', function (obj) {
+            var lineData = obj.data;
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除此成员吗', function (index) {
+                    layer.close(index);
+                    miniAjax.get({
+                        url: '/projectmember/delete?id=' + lineData.id,
+                        success: function (res) {
+                            if (res.code === 0) {
+                                layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                                    // 重载表格，刷新数据
+                                    memberTable.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {time: 1000, icon: 2});
+                            }
+                        },
+                        error: function (error) {
+                            layer.msg(error, {time: 1000, icon: 2});
+                        }
+                    });
+                });
+
+            }
+        });
+
+        // 表单提交事件监听
+        form.on('submit(confirmAdd)', function (data) {
+            const helpMemberList = helpMemberSelect.getValue();
+            if (!helpMemberList || helpMemberList.length === 0) {
+                layer.msg('请选择协助成员', {time: 1000, icon: 2});
+                return false;
+            }
+            miniAjax.postJSON({
+                url: '/projectmember/add',
+                data: JSON.stringify(Object.assign({}, {'memberTenantId': helpMemberList[0]}, {'projectId': projectId})),
+                success: function (res) {
+                    if (res.code === 0) {
+                        layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                            // 重载表格，刷新数据
+                            memberTable.reload();
+                        })
+                    } else {
+                        layer.msg(res.msg, {time: 1000, icon: 2});
+                    }
+                },
+                error: function (error) {
+                    layer.msg(error, {time: 1000, icon: 2});
+                }
+            });
+
+            return false;
+        });
+    });
+
+</script>

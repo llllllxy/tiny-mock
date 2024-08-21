@@ -54,6 +54,9 @@
                         <button id="btn-import" lay-on="btnImport" class="layui-btn layui-btn-sm" lay-options="{accept: 'file', exts: 'zip|rar|7z'}">
                             <i class="layui-icon layui-icon-upload-circle"></i>导入项目
                         </button>
+                        <button id="btn-member" lay-on="btnMember" class="layui-btn layui-btn-sm">
+                            <i class="layui-icon layui-icon-user"></i>项目成员
+                        </button>
                     </div>
                 </div>
 
@@ -304,6 +307,7 @@
     </div>
 </script>
 
+
 <script>
     layui.use(['form', 'util', 'table', 'miniAjax', 'miniPage', 'dropdown', 'upload'], function () {
         var form = layui.form,
@@ -317,12 +321,12 @@
             util = layui.util;
 
         // 下面这两种方式都能获取到参数
-        console.log(sessionStorage.getItem("projectId"));
-        console.log(getUrlKeyValue("projectId"));
+        console.log('第一种：' + sessionStorage.getItem("projectId"));
+        console.log('第二种：' + getUrlKeyValue("projectId"));
         let projectId = isNotEmpty(getUrlKeyValue("projectId")) ? getUrlKeyValue("projectId") : sessionStorage.getItem("projectId");
 
         miniAjax.get({
-            url: "/projectinfo/detail?id=" + getUrlKeyValue("projectId"),
+            url: "/projectinfo/detail?id=" + projectId,
             success: function (res) {
                 if (res.code === 0) {
                     $("#headerProjectId").text(res.data.id);
@@ -352,6 +356,7 @@
 
         util.on('lay-on', {
             btnBack: function () {
+                sessionStorage.removeItem('projectId');
                 window.history.back();
             },
             btnExport: function () {
@@ -361,6 +366,30 @@
             },
             btnImport: function () {
 
+            },
+            btnMember: function () {
+                let content = miniPage.getHrefContent('page/projectMember.html');
+                let index = layer.open({
+                    title: '项目成员',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: '780px', // 宽度780, 高度自适应
+                    offset: '120px', // 手动设置垂直坐标
+                    content: content,
+                    success: function (layero, dIndex) {
+                    },
+                    end: function (index) {
+                    },
+                    full: function(layero, index, that) {
+                        // 这样做，是为了放大缩小时，表格可以自适应大小
+                        table.reload('memberTableId');
+                    },
+                    restore: function(layero, index, that) {
+                        table.reload('memberTableId');
+                    }
+                });
             }
         });
 
