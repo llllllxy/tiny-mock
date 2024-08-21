@@ -44,6 +44,70 @@
 3. 运行启动类`TinyMockApplication`，即可正常启动项目
 4. 管理后台登录地址：`http://localhost:9019`  账户密码 `zhangsan / 123456`
 
+## 项目结构
+
+```
+tiny-mock
+│
+├─resources 资源模块
+│  │
+│  ├─init  系统初始化脚本
+│  │  
+│  ├─mapper mybatis xml文件 
+│  │  
+│  └─static 静态资源
+│      │   
+│      ├─css 样式表资源
+│      │   
+│      ├─images 图片资源
+│      │   
+│      ├─js js公共文件封装
+│      │   
+│      ├─lib js公共库
+│      │   
+│      ├─page 页面资源
+│      │   
+│      └─index.html 系统入口页面
+│
+├─java 后台模块
+│  │
+│  ├─common  公共模块
+│  │   │   
+│  │   ├─annotation 公共注解
+│  │   │   
+│  │   ├─config 系统配置
+│  │   │   
+│  │   ├─constants 系统常量
+│  │   │   
+│  │   ├─enums 系统枚举 
+│  │   │   
+│  │   ├─exception 系统自定义异常
+│  │   │   
+│  │   ├─model 公共数据模型
+│  │   │   
+│  │   └─utils 工具类
+│  │
+│  └─modules  业务模块
+│      │   
+│      ├─bean bean对象 
+│      │    │      
+│      │    ├─dto 参数对象
+│      │    │      
+│      │    ├─vo 视图对象
+│      │    │      
+│      │    ├─enums 业务枚举
+│      │    │
+│      │    └─entity 实体类   
+│      │   
+│      ├─web 控制层
+│      │            
+│      ├─service 服务层
+│      │   
+│      └─mapper 持久层
+└─
+
+```
+
 ## 平台功能
 1、项目管理
 
