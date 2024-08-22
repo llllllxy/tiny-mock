@@ -3,7 +3,7 @@ package org.tinycloud.tinymock.common.utils.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinycloud.tinymock.common.utils.JsonUtils;
+import org.tinycloud.tinymock.common.utils.JacksonUtils;
 
 import javax.servlet.ServletResponse;
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class ResponseUtil {
 
     public static void sendJson(ServletResponse response, Object responseObject) {
         // 将实体对象转换为JSON Object转换
-        String jsonStr = JsonUtils.toJsonString(responseObject);
+        String jsonStr = JacksonUtils.toJsonString(responseObject);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         try (PrintWriter out = response.getWriter()) {

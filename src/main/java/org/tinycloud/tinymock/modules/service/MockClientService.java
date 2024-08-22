@@ -107,7 +107,7 @@ public class MockClientService {
             if (mockjsFlag == 0) {
                 map = DataMockUtils.mock(jsonData);
             } else {
-                map = JsonUtils.readMap(jsonData);
+                map = JacksonUtils.readMap(jsonData);
             }
             this.saveAccessLog(mockInfo, request);
 
@@ -140,7 +140,7 @@ public class MockClientService {
 
     private void saveAccessLog(TMockInfo mockInfo, HttpServletRequest request) {
         final String accessIp = IpGetUtils.getIpAddr(request);
-        final String accessUserAgent = JsonUtils.toJsonString(UserAgentUtils.getUserAgent(request));
+        final String accessUserAgent = JacksonUtils.toJsonString(UserAgentUtils.getUserAgent(request));
         this.threadPoolTaskExecutor.execute(() -> {
             // 插入访问日志
             TMockAccessLog tMockAccessLog = new TMockAccessLog();

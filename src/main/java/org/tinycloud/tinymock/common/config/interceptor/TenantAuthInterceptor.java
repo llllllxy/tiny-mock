@@ -11,7 +11,7 @@ import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
-import org.tinycloud.tinymock.common.utils.JsonUtils;
+import org.tinycloud.tinymock.common.utils.JacksonUtils;
 import org.tinycloud.tinymock.common.utils.StrUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +62,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         }
 
         // 再判断token是否合法
-        LoginTenant loginTenant = JsonUtils.readValue(tenantInfoString, LoginTenant.class);
+        LoginTenant loginTenant = JacksonUtils.readValue(tenantInfoString, LoginTenant.class);
         if (Objects.isNull(loginTenant)) {
             throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
         }

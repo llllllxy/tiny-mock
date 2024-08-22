@@ -20,7 +20,6 @@ import org.tinycloud.tinymock.common.utils.function.CheckedConsumer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -32,9 +31,9 @@ import java.util.*;
  * @author liuxingyu01
  * @since 2024-03-13 16:39
  */
-public class JsonUtils {
+public class JacksonUtils {
 
-    private JsonUtils() {
+    private JacksonUtils() {
     }
 
     /**

@@ -51,7 +51,7 @@ public class IpAddressUtils {
         }
         String url = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?resource_id=6006&format=json&query=" + ip;
         String result = getRestTemplate().getForObject(url, String.class);
-        Map resultMap = JsonUtils.readValue(result, Map.class);
+        Map resultMap = JacksonUtils.readValue(result, Map.class);
         String status = Optional.ofNullable(resultMap.get("status")).orElse("").toString();
         if (StringUtils.hasText(status) && status.equals("0")) {
             List resultList = (List) resultMap.get("data");

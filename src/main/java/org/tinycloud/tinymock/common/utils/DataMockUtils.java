@@ -64,14 +64,14 @@ public class DataMockUtils {
     public static Map<String, Object> mock(String template) throws ScriptException {
         String format = "mock(" + template + ")";
         String random = invoke(format);
-        return JsonUtils.readMap(random);
+        return JacksonUtils.readMap(random);
     }
 
     public static void main(String[] args) throws ScriptException, UnsupportedEncodingException {
 
         Map map = mock("{\"code\":\"0000\",\"data\":{\"list|20\":[{\"name\":\"@name\",\"age\":\"@integer(10, 30)\"}],\"url\":\"@email\"},\"desc\":\"成功\"}");
 
-        System.out.println(JsonUtils.toJsonString(map));
+        System.out.println(JacksonUtils.toJsonString(map));
 
     }
 }

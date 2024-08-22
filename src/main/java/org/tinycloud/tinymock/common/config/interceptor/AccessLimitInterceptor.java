@@ -14,7 +14,7 @@ import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.CommonCode;
 import org.tinycloud.tinymock.common.exception.BusinessException;
 import org.tinycloud.tinymock.common.utils.IpGetUtils;
-import org.tinycloud.tinymock.common.utils.JsonUtils;
+import org.tinycloud.tinymock.common.utils.JacksonUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +57,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
             String redisKey = GlobalConstant.LIMIT_REDIS_KEY + ip + ":" + method + ":" + requestURI;
             Object redisResult = redisTemplate.opsForValue().get(redisKey);
             // 获取当前访问次数
-            Integer count = JsonUtils.convertValue(redisResult, Integer.class);
+            Integer count = JacksonUtils.convertValue(redisResult, Integer.class);
             if (count == null) {
                 // 在规定周期内第一次访问，存入redis，次数+1
                 redisTemplate.opsForValue().increment(redisKey, 1);

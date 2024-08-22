@@ -138,7 +138,7 @@ public class TenantAuthService {
         long currentTime = System.currentTimeMillis();
         loginTenant.setLoginTime(currentTime);
         loginTenant.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JsonUtils.toJsonString(loginTenant), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(loginTenant), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
 
         return token;
     }
