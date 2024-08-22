@@ -1,20 +1,23 @@
-<div class="layuimini-form">
-    <form class="layui-form" action="" lay-filter="member-form" id="member-form">
-        <div class="layui-form-item">
-            <label class="layui-form-label required">协助成员</label>
-            <div class="layui-input-block">
-                <div id="helpMember" class="xm-select-demo"></div>
+<div >
+    <div class="layuimini-form">
+        <form class="layui-form" action="" lay-filter="member-form" id="member-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">协助成员</label>
+                <div class="layui-input-block">
+                    <div id="helpMember" class="xm-select-demo"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button type="submit" class="layui-btn" lay-submit lay-filter="confirmAdd">确认添加</button>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="confirmAdd">确认添加</button>
+                </div>
             </div>
-        </div>
-
-        <table class="layui-hide" id="memberTableId" lay-filter="memberTableFilter"></table>
-    </form>
+        </form>
+    </div>
+    <div style="padding: 20px 20px 20px 20px">
+        <table class="layui-hide" id="projectMemberTableId" lay-filter="projectMemberTableFilter"></table>
+    </div>
 </div>
 
 <script>
@@ -28,7 +31,7 @@
         // 当前弹出层，防止ID被覆盖
         var parentIndex = layer.index;
         var projectId = sessionStorage.getItem("projectId");
-        console.log("projectId = " + projectId);
+        console.log("member projectId = " + projectId);
 
         var helpMemberSelect = xmSelect.render({
             el: '#helpMember',
@@ -38,6 +41,10 @@
             theme: {color: '#006ad4'},
             filterable: true,
             remoteSearch: true,
+            prop: {
+                name: 'tenantAccount',
+                value: 'id',
+            },
             remoteMethod: function (val, cb, show) {
                 miniAjax.postJSON({
                     url: '/projectmember/search',
@@ -60,22 +67,35 @@
 
 
         var memberTable = table.render({
-            elem: '#memberTableId',
+            elem: '#projectMemberTableId',
             url: '/projectmember/list',
-            contentType: 'application/json',
+            //contentType: 'application/json',
             method: 'get', //如果无需自定义HTTP类型，可不加该参数
             where: {'projectId': projectId}, // 初始化时带的参数
             cols: [
                 [
                     {type: 'numbers', width: '5%', title: '#', align: 'center'},
-                    {field: 'memberTenantAccount', title: '版本', align: 'center',},
-                    {field: 'memberTenantName', title: '版本时间', align: 'center'},
-                    {field: 'createdAt', title: '类型', align: 'center'},
-                    {field: 'remark', title: '操作人', align: 'center'},
+                    {field: 'memberTenantAccount', title: '账户', align: 'center',},
+                    {field: 'memberTenantName', title: '名称', align: 'center'},
+                    {field: 'createdAt', title: '加入时间', align: 'center'},
+                    {field: 'remark', title: '备注', align: 'center', templet: function (d) {
+                            if (!d.id) {
+                                return '<span class="layui-badge layui-bg-blue">创建者</span>';
+                            } else {
+                                return d.remark;
+                            }
+                        }
+                    },
                     {
                         title: '操作',
                         align: 'center',
-                        templet: '<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>'
+                        templet: function (d) {
+                            if (d.id) {
+                                return '<button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>';
+                            } else {
+                                return '<button class="layui-btn layui-btn-xs layui-btn-danger layui-btn-disabled" lay-event="delete" disabled>删除</button>';
+                            }
+                        }
                     }
                 ]
             ],
@@ -95,7 +115,7 @@
         });
 
 
-        table.on('tool(memberTableFilter)', function (obj) {
+        table.on('tool(projectMemberTableFilter)', function (obj) {
             var lineData = obj.data;
             if (obj.event === 'delete') {
                 console.log(JSON.stringify(lineData));
@@ -132,7 +152,7 @@
             }
             miniAjax.postJSON({
                 url: '/projectmember/add',
-                data: JSON.stringify(Object.assign({}, {'memberTenantId': helpMemberList[0]}, {'projectId': projectId})),
+                data: JSON.stringify(Object.assign({}, {'memberTenantId': helpMemberList[0].id}, {'projectId': projectId})),
                 success: function (res) {
                     if (res.code === 0) {
                         layer.msg(res.msg, {time: 1000, icon: 1}, function () {
