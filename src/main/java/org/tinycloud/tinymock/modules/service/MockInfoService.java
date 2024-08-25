@@ -30,8 +30,8 @@ import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
 import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
 import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.tinycloud.tinymock.common.model.BasePageDto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**

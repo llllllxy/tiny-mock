@@ -6,7 +6,7 @@ import org.tinycloud.tinymock.common.utils.StrUtils;
 import org.tinycloud.tinymock.common.utils.web.CookieUtils;
 import org.tinycloud.tinymock.common.utils.web.ServletUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author liuxingyu01

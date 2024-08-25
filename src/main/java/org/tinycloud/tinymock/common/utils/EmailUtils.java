@@ -3,11 +3,11 @@ package org.tinycloud.tinymock.common.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.*;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.*;
 import java.io.File;
 import java.util.Date;
 import java.util.List;

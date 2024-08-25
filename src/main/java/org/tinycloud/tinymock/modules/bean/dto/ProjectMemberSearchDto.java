@@ -2,7 +2,7 @@ package org.tinycloud.tinymock.modules.bean.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**

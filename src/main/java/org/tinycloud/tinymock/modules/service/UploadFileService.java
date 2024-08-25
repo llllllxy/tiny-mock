@@ -16,8 +16,8 @@ import org.tinycloud.tinymock.modules.bean.entity.TUploadFile;
 import org.tinycloud.tinymock.modules.bean.vo.UploadFileVo;
 import org.tinycloud.tinymock.modules.mapper.UploadFileMapper;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;

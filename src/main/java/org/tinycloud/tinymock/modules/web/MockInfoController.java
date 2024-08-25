@@ -14,7 +14,7 @@ import org.tinycloud.tinymock.modules.service.MockAccessLogService;
 import org.tinycloud.tinymock.modules.service.MockInfoHistoryService;
 import org.tinycloud.tinymock.modules.service.MockInfoService;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>

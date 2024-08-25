@@ -15,7 +15,7 @@ import org.tinycloud.tinymock.modules.bean.vo.TenantCaptchaCodeVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoVo;
 import org.tinycloud.tinymock.modules.service.TenantAuthService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

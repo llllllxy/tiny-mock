@@ -30,7 +30,7 @@ import org.tinycloud.tinymock.modules.bean.vo.TenantInfoVo;
 import org.tinycloud.tinymock.modules.mapper.TenantMapper;
 
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
