@@ -22,19 +22,19 @@
 
 ## 主要技术选型
 
-| 依赖                | 说明             |
-|---------------------|--------------   |
-| SpringBoot 2.6.15   | 基础框架         |
-| Hikari              | 高性能数据库连接池 |
-| MyBatis-Plus 3.5.6  | MyBatis的增强ORM |
-| Redis               | 业务缓存、会话共享  |
-| MySQL5.7            | 关系型数据库       |
-| Layui               | 前端框架         |
-| layuimini           | 前端模板         |
+| 依赖                 | 说明             |
+|--------------------|--------------   |
+| SpringBoot 3.2.9   | 基础框架         |
+| Hikari             | 高性能数据库连接池 |
+| MyBatis-Plus 3.5.6 | MyBatis的增强ORM |
+| Redis              | 业务缓存、会话共享  |
+| MySQL5.7           | 关系型数据库       |
+| Layui              | 前端框架         |
+| layuimini          | 前端模板         |
 
 
 ## 运行环境
-- Jdk8
+- Jdk21
 - MySQL5.6+
 - Redis3.0+
 

@@ -87,7 +87,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 这里加这个配置是为了解决Jackson2ObjectMapperBuilderCustomizer自定义配置不生效的问题
-     * 参考自：https://www.jianshu.com/p/09169bd31f72
+     * 参考自：<a href="https://www.jianshu.com/p/09169bd31f72">...</a>
      */
     @Autowired(required = false)
     private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
@@ -96,9 +96,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
         if (Objects.isNull(mappingJackson2HttpMessageConverter)) {
-            converters.add(0, new MappingJackson2HttpMessageConverter());
+            converters.addFirst(new MappingJackson2HttpMessageConverter());
         } else {
-            converters.add(0, mappingJackson2HttpMessageConverter);
+            converters.addFirst(mappingJackson2HttpMessageConverter);
         }
     }
 }
