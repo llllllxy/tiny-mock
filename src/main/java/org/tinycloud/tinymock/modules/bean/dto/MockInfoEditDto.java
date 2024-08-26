@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +21,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class MockInfoEditDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @NotNull(message = "接口ID不能为空")

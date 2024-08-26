@@ -2,6 +2,7 @@ package org.tinycloud.tinymock.modules.bean.vo;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Data
 public class TenantCaptchaCodeVo implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String uuid;

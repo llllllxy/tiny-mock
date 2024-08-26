@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,6 +22,7 @@ import java.util.Date;
 @Setter
 @TableName("t_upload_file")
 public class TUploadFile implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1L;
 
     @TableId(type = IdType.ASSIGN_ID)

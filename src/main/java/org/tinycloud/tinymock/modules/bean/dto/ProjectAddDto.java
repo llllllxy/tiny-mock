@@ -5,11 +5,14 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotEmpty;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
 @Setter
 public class ProjectAddDto  implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @NotEmpty(message = "项目名称不能为空")

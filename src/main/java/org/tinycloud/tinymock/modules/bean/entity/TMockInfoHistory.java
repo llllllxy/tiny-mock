@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,6 +23,7 @@ import java.util.Date;
 @Setter
 @TableName("t_mock_info_history")
 public class TMockInfoHistory implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1L;
 
     @TableId(type = IdType.ASSIGN_ID)

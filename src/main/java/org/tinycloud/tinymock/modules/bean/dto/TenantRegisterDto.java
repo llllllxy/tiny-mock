@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.validation.constraints.NotEmpty;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -17,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class TenantRegisterDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1L;
 
     @NotEmpty(message = "邀请码不能为空")

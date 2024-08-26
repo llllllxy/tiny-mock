@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,6 +19,7 @@ import java.util.Date;
 @Setter
 @ToString
 public class UploadFileVo implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1L;
 
     private Long id;

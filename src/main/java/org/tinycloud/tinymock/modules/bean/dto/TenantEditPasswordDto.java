@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.validation.constraints.NotEmpty;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class TenantEditPasswordDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @NotEmpty(message = "旧的登录密码不能为空")

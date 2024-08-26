@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.tinycloud.tinymock.common.model.BasePageDto;
 
 import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -17,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class MockInfoHistoryQueryDto extends BasePageDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @NotNull(message = "接口id不能为空")

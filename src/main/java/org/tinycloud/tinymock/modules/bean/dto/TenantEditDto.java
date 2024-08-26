@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class TenantEditDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Length(max = 64, min = 0, message = "租户名称不能超过64个字符")
