@@ -1,5 +1,6 @@
 package org.tinycloud.tinymock.modules.service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
+import org.tinycloud.tinymock.common.enums.TenantErrorCode;
+import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
+import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberSearchDto;
+import org.tinycloud.tinymock.modules.bean.entity.TProjectInfo;
 import org.tinycloud.tinymock.modules.bean.entity.TProjectMember;
 import org.tinycloud.tinymock.modules.bean.entity.TTenant;
 import org.tinycloud.tinymock.modules.bean.vo.ProjectMemberVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoChooseVo;
+import org.tinycloud.tinymock.modules.mapper.ProjectInfoMapper;
 import org.tinycloud.tinymock.modules.mapper.ProjectMemberMapper;
 import org.tinycloud.tinymock.modules.mapper.TenantMapper;
 
@@ -39,6 +45,9 @@ public class ProjectMemberService {
 
     @Autowired
     private TenantMapper tenantMapper;
+
+    @Autowired
+    private ProjectInfoMapper projectInfoMapper;
 
 
     public List<ProjectMemberVo> list(Long projectId) {
@@ -83,7 +92,6 @@ public class ProjectMemberService {
         // 加上他自己
         memberIdList.add(TenantHolder.getTenantId());
 
-
         List<TTenant> tenantList = this.tenantMapper.selectList(Wrappers.<TTenant>lambdaQuery()
                 .select(TTenant::getId, TTenant::getTenantAccount, TTenant::getTenantName)
                 .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED)
@@ -93,5 +101,40 @@ public class ProjectMemberService {
                         .eq(TTenant::getTenantName, dto.getKeyword())));
 
         return BeanConvertUtils.convertListTo(tenantList, TenantInfoChooseVo::new);
+    }
+
+
+    public boolean delete(Long id) {
+        // 逻辑删除
+        LambdaUpdateWrapper<TProjectMember> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TProjectMember::getId, id);
+        wrapper.eq(TProjectMember::getCreateTenantId, TenantHolder.getTenantId());
+        wrapper.set(TProjectMember::getDelFlag, GlobalConstant.DELETED);
+        int rows = this.projectMemberMapper.update(null, wrapper);
+        if (rows > 0) {
+            return true;
+        } else {
+            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_MEMBER);
+        }
+    }
+
+
+    public boolean add(ProjectMemberAddDto dto) {
+        Long tenantId = TenantHolder.getTenantId();
+        boolean exist = this.projectInfoMapper.exists(Wrappers.<TProjectInfo>lambdaQuery()
+                .eq(TProjectInfo::getId, dto.getProjectId())
+                .eq(TProjectInfo::getTenantId, tenantId)
+                .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (!exist) {
+            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_ADD_MEMBER);
+        }
+        TProjectMember member = new TProjectMember();
+        member.setProjectId(dto.getProjectId());
+        member.setMemberTenantId(member.getMemberTenantId());
+        member.setCreateTenantId(tenantId);
+        member.setDelFlag(GlobalConstant.NOT_DELETED);
+        member.setStatus(GlobalConstant.ENABLED);
+        int rows = this.projectMemberMapper.insert(member);
+        return rows > 0;
     }
 }
