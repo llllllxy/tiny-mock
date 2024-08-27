@@ -237,8 +237,7 @@ CREATE TABLE `t_project_member`  (
  `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
  `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
- PRIMARY KEY (`id`) USING BTREE,
- UNIQUE INDEX `t_project_member_unique_index`(`member_tenant_id`, `project_id`) USING BTREE
+ PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '项目成员协作表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
