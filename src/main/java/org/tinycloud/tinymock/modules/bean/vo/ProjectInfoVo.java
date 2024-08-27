@@ -39,4 +39,6 @@ public class ProjectInfoVo implements Serializable {
     private Date updatedAt;
 
     private String remark;
+
+    private String mark;
 }

@@ -48,6 +48,7 @@
         var projectList = [];
         miniAjax.get({
             url: '/projectinfo/query',
+            async: false,
             success: function (res) {
                 if (res.code == '0') {
                     projectList = res.data;

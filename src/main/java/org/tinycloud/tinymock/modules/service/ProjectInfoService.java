@@ -2,8 +2,10 @@ package org.tinycloud.tinymock.modules.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
@@ -12,11 +14,14 @@ import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectEditDto;
 import org.tinycloud.tinymock.modules.bean.entity.TProjectInfo;
+import org.tinycloud.tinymock.modules.bean.entity.TProjectMember;
 import org.tinycloud.tinymock.modules.bean.vo.ProjectInfoVo;
 import org.tinycloud.tinymock.modules.mapper.ProjectInfoMapper;
+import org.tinycloud.tinymock.modules.mapper.ProjectMemberMapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -31,16 +36,51 @@ public class ProjectInfoService {
     @Autowired
     private ProjectInfoMapper projectInfoMapper;
 
+    @Autowired
+    private ProjectMemberMapper projectMemberMapper;
+
     public List<ProjectInfoVo> query() {
-        List<TProjectInfo> projectInfos = this.projectInfoMapper.selectList(
-                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
+        List<ProjectInfoVo> resultList = new ArrayList<>();
+
+        Long tenantId = TenantHolder.getTenantId();
+        List<TProjectInfo> ownProjectInfos = this.projectInfoMapper.selectList(
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getTenantId, tenantId)
                         .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
-        return BeanConvertUtils.convertListTo(projectInfos, ProjectInfoVo::new);
+        ownProjectInfos.forEach(x -> {
+            ProjectInfoVo vo = new ProjectInfoVo();
+            BeanUtils.copyProperties(x, vo);
+            vo.setMark("私有");
+            vo.setRemark(vo.getRemark() == null ? "" : vo.getRemark());
+            resultList.add(vo);
+        });
+        List<TProjectMember> memberInfos = this.projectMemberMapper.selectList(
+                Wrappers.<TProjectMember>lambdaQuery().eq(TProjectMember::getMemberTenantId, tenantId)
+                        .eq(TProjectMember::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (CollectionUtils.isEmpty(memberInfos)) {
+            return resultList;
+        }
+
+        List<Long> cooperateProjectIdList = memberInfos.stream().map(TProjectMember::getProjectId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<TProjectInfo> cooperateProjectInfos = this.projectInfoMapper.selectList(
+                Wrappers.<TProjectInfo>lambdaQuery().in(TProjectInfo::getId, cooperateProjectIdList)
+                        .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (!CollectionUtils.isEmpty(cooperateProjectInfos)) {
+            cooperateProjectInfos.forEach(x -> {
+                ProjectInfoVo vo = new ProjectInfoVo();
+                BeanUtils.copyProperties(x, vo);
+                vo.setMark("协作");
+                vo.setRemark(vo.getRemark() == null ? "" : vo.getRemark());
+                resultList.add(vo);
+            });
+        }
+        return resultList;
     }
 
     public ProjectInfoVo detail(Long id) {
         TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
-                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
+                Wrappers.<TProjectInfo>lambdaQuery()
                         .eq(TProjectInfo::getId, id)
                         .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
         return BeanConvertUtils.convertTo(projectInfo, ProjectInfoVo::new);
@@ -57,7 +97,6 @@ public class ProjectInfoService {
         if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST);
         }
-
         TProjectInfo projectInfo = new TProjectInfo();
         projectInfo.setProjectName(dto.getProjectName());
         projectInfo.setPath(dto.getPath());
@@ -71,9 +110,16 @@ public class ProjectInfoService {
     }
 
     public Boolean edit(ProjectEditDto dto) {
+        TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, dto.getId())
+                        .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (projectInfo == null || !projectInfo.getTenantId().equals(TenantHolder.getTenantId())) {
+            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_EDIT_PROJECT);
+        }
         boolean exists = this.projectInfoMapper.exists(Wrappers.<TProjectInfo>lambdaQuery()
                 .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED)
                 .eq(TProjectInfo::getTenantId, TenantHolder.getTenantId())
+                .ne(TProjectInfo::getId, dto.getId())
                 .and(i -> i.eq(TProjectInfo::getProjectName, dto.getProjectName())
                         .or()
                         .eq(TProjectInfo::getPath, dto.getPath()))
@@ -92,9 +138,16 @@ public class ProjectInfoService {
     }
 
     public Boolean delete(Long id) {
+        TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, id)
+                        .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (projectInfo == null || !projectInfo.getTenantId().equals(TenantHolder.getTenantId())) {
+            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_PROJECT);
+        }
         // 逻辑删除
         LambdaUpdateWrapper<TProjectInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TProjectInfo::getId, id);
+        wrapper.eq(TProjectInfo::getTenantId, TenantHolder.getTenantId());
         wrapper.set(TProjectInfo::getDelFlag, GlobalConstant.DELETED);
         int rows = this.projectInfoMapper.update(null, wrapper);
         return rows > 0;

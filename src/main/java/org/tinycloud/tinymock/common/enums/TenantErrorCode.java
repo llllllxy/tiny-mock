@@ -28,6 +28,8 @@ public enum TenantErrorCode {
     ONLY_PROJECT_CREATE_TENANT_CAN_ADD_MEMBER(3202, "只有项目创建者才可以添加协助者！"),
     PROJECT_CREATOR_CAN_NOT_BE_DELETED(3203, "项目创建者无法被删除！"),
 
+    ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_PROJECT(3204, "只有项目创建者才可以删除！"),
+    ONLY_PROJECT_CREATE_TENANT_CAN_EDIT_PROJECT(3205, "只有项目创建者才可以修改！"),
     ;
 
     private Integer code;

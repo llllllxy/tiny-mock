@@ -5,8 +5,7 @@
     <delete id="deleteByProjectAndTenant">
         delete
         from t_mock_info
-        where tenant_id = #{tenantId}
-          and project_id = #{projectId}
+        where project_id = #{projectId}
     </delete>
 
     <insert id="commonInsert" parameterType="string">

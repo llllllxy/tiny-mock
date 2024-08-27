@@ -16,5 +16,5 @@ import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
 public interface MockInfoMapper extends BaseMapper<TMockInfo> {
     int commonInsert(String value);
 
-    int deleteByProjectAndTenant(@Param("tenantId") Long tenantId, @Param("projectId") Long projectId);
+    int deleteByProjectAndTenant(@Param("projectId") Long projectId);
 }

@@ -31,7 +31,6 @@ public class MockAccessLogService {
     public PageModel<MockAccessLogVo> query(MockAccessLogQueryDto queryParam) {
         PageModel<MockAccessLogVo> responsePage = new PageModel<>(queryParam.getPageNo(), queryParam.getPageSize());
         LambdaQueryWrapper<TMockAccessLog> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(TMockAccessLog::getTenantId, TenantHolder.getTenantId());
         queryWrapper.eq(TMockAccessLog::getMockId, queryParam.getMockId());
 
         Page<TMockAccessLog> logPage = this.mockAccessLogMapper.selectPage(Page.of(queryParam.getPageNo(), queryParam.getPageSize()), queryWrapper);

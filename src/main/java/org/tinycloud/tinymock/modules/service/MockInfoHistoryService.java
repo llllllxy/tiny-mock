@@ -44,7 +44,6 @@ public class MockInfoHistoryService {
     public PageModel<MockInfoHistoryVo> query(MockInfoHistoryQueryDto queryParam) {
         PageModel<MockInfoHistoryVo> responsePage = new PageModel<>(queryParam.getPageNo(), queryParam.getPageSize());
         LambdaQueryWrapper<TMockInfoHistory> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(TMockInfoHistory::getTenantId, TenantHolder.getTenantId());
         queryWrapper.eq(TMockInfoHistory::getMockId, queryParam.getMockId());
 
         Page<TMockInfoHistory> historyPage = this.mockInfoHistoryMapper.selectPage(Page.of(queryParam.getPageNo(), queryParam.getPageSize()), queryWrapper);

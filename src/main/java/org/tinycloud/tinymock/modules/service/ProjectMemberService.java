@@ -52,19 +52,24 @@ public class ProjectMemberService {
 
 
     public List<ProjectMemberVo> list(Long projectId) {
-        List<TProjectMember> memberInfos = this.projectMemberMapper.selectList(
-                Wrappers.<TProjectMember>lambdaQuery().eq(TProjectMember::getProjectId, projectId)
-                        .eq(TProjectMember::getDelFlag, GlobalConstant.NOT_DELETED));
+        List<ProjectMemberVo> finallyList = new ArrayList<>();
+
         TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
                 Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId)
                         .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
-
-        List<ProjectMemberVo> finallyList = new ArrayList<>();
+        TTenant tenant = this.tenantMapper.selectOne(Wrappers.<TTenant>lambdaQuery()
+                .select(TTenant::getId, TTenant::getTenantAccount, TTenant::getTenantName)
+                .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED)
+                .in(TTenant::getId, projectInfo.getTenantId()));
         ProjectMemberVo myself = new ProjectMemberVo();
-        myself.setMemberTenantAccount(TenantHolder.getTenantAccount());
-        myself.setMemberTenantName(TenantHolder.getTenant().getTenantName());
+        myself.setMemberTenantAccount(tenant.getTenantAccount());
+        myself.setMemberTenantName(tenant.getTenantName());
         myself.setCreatedAt(projectInfo.getCreatedAt());
         finallyList.add(0, myself);
+
+        List<TProjectMember> memberInfos = this.projectMemberMapper.selectList(
+                Wrappers.<TProjectMember>lambdaQuery().eq(TProjectMember::getProjectId, projectId)
+                        .eq(TProjectMember::getDelFlag, GlobalConstant.NOT_DELETED));
         if (CollectionUtils.isEmpty(memberInfos)) {
             return finallyList;
         }
@@ -110,23 +115,24 @@ public class ProjectMemberService {
                 .and(i -> i.eq(TTenant::getTenantAccount, dto.getKeyword())
                         .or()
                         .eq(TTenant::getTenantName, dto.getKeyword())));
-
         return BeanConvertUtils.convertListTo(tenantList, TenantInfoChooseVo::new);
     }
 
 
     public boolean delete(Long id) {
+        TProjectMember memberInfo = this.projectMemberMapper.selectOne(
+                Wrappers.<TProjectMember>lambdaQuery().eq(TProjectMember::getId, id)
+                        .eq(TProjectMember::getDelFlag, GlobalConstant.NOT_DELETED));
+        if (memberInfo == null || !memberInfo.getCreateTenantId().equals(TenantHolder.getTenantId())) {
+            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_MEMBER);
+        }
         // 逻辑删除
         LambdaUpdateWrapper<TProjectMember> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TProjectMember::getId, id);
         wrapper.eq(TProjectMember::getCreateTenantId, TenantHolder.getTenantId());
         wrapper.set(TProjectMember::getDelFlag, GlobalConstant.DELETED);
         int rows = this.projectMemberMapper.update(null, wrapper);
-        if (rows > 0) {
-            return true;
-        } else {
-            throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_MEMBER);
-        }
+        return rows > 0;
     }
 
 

@@ -9,7 +9,7 @@
     }
 
     .panel-body {
-        padding: 10px
+        padding: 10px 10px 0 10px;
     }
 
     .panel-title {
@@ -34,8 +34,11 @@
         white-space: nowrap;
         vertical-align: baseline;
         border-radius: .25em;
-        margin-top: .3em;
         cursor: pointer;
+    }
+
+    .pull-right {
+        float: right;
     }
 
     .layui-red {
@@ -55,7 +58,7 @@
     }
 
     .item {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
 
     .right-bottom-btn {
@@ -233,8 +236,9 @@
                         + '<h2>' + item.projectName + '</h2>'
                         + '</div>'
                         + '<div class="panel-content">'
+                        + '<div class="text item"><span>类型：</span>' + '<span class="layui-badge-rim">' + item.mark + '</span>' + '</div>'
                         + '<div class="text item"><span>路径：' + item.path + '</span></div>'
-                        + '<div class="text item"><span>描述：' + item.path + '</span></div>'
+                        + '<div class="text item"><span>描述：' + item.introduce + '</span></div>'
                         + '<div class="text item">'
                         + '<span>操作：</span>'
                         + '<span class="layui-badge layui-bg-blue" style="cursor: pointer;" edit-id="' + item.id + '">编辑</span>'

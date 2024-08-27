@@ -32,6 +32,7 @@ import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
+
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +76,6 @@ public class MockInfoService {
 
         LambdaQueryWrapper<TMockInfo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED);
-        queryWrapper.eq(TMockInfo::getTenantId, TenantHolder.getTenantId());
         queryWrapper.eq(TMockInfo::getProjectId, queryParam.getProjectId());
         queryWrapper.like(StringUtils.hasLength(queryParam.getUrl()), TMockInfo::getUrl, queryParam.getUrl());
         queryWrapper.like(StringUtils.hasLength(queryParam.getMockName()), TMockInfo::getMockName, queryParam.getMockName());
@@ -95,7 +95,7 @@ public class MockInfoService {
 
     public MockInfoVo detail(Long id) {
         TMockInfo mockInfo = this.mockInfoMapper.selectOne(
-                Wrappers.<TMockInfo>lambdaQuery().eq(TMockInfo::getTenantId, TenantHolder.getTenantId())
+                Wrappers.<TMockInfo>lambdaQuery()
                         .eq(TMockInfo::getId, id)
                         .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED));
         return BeanConvertUtils.convertTo(mockInfo, MockInfoVo::new);
@@ -168,7 +168,6 @@ public class MockInfoService {
         if (exists) {
             throw new TenantException(TenantErrorCode.TENANT_MOCKINFO_NAME_OR_URL_ALREADY_EXIST);
         }
-
         TMockInfo tMockInfo = new TMockInfo();
         tMockInfo.setTenantId(TenantHolder.getTenantId());
         tMockInfo.setDelFlag(GlobalConstant.NOT_DELETED);
@@ -186,7 +185,6 @@ public class MockInfoService {
 
         // 插入旧的数据到历史版本表中
         this.saveHistory(tMockInfo, OperateTypeEnum.ADD.getCode());
-
         return rows > 0;
     }
 
@@ -256,7 +254,6 @@ public class MockInfoService {
 
     public void export(Long projectId, HttpServletResponse response) {
         List<TMockInfo> mockInfoList = this.mockInfoMapper.selectList(Wrappers.<TMockInfo>lambdaQuery()
-                .eq(TMockInfo::getTenantId, TenantHolder.getTenantId())
                 .eq(TMockInfo::getProjectId, projectId));
         String folderPath = UUID.randomUUID().toString().replace("-", "");
         // 根据folderPath创建文件夹
@@ -335,7 +332,7 @@ public class MockInfoService {
             // 解密文件数据
             backContent = SM4Utils.decrypt(applicationConfig.getProjectExportDek(), backContent);
 
-            this.mockInfoMapper.deleteByProjectAndTenant(TenantHolder.getTenantId(), projectId);
+            this.mockInfoMapper.deleteByProjectAndTenant(projectId);
             this.mockInfoMapper.commonInsert(backContent);
         } catch (Exception e) {
             log.error("importZip error: ", e);
