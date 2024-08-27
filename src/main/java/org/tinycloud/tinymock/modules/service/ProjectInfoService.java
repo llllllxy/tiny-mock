@@ -49,7 +49,7 @@ public class ProjectInfoService {
         ownProjectInfos.forEach(x -> {
             ProjectInfoVo vo = new ProjectInfoVo();
             BeanUtils.copyProperties(x, vo);
-            vo.setMark("私有");
+            vo.setMark("创建者");
             vo.setRemark(vo.getRemark() == null ? "" : vo.getRemark());
             resultList.add(vo);
         });
@@ -70,7 +70,7 @@ public class ProjectInfoService {
             cooperateProjectInfos.forEach(x -> {
                 ProjectInfoVo vo = new ProjectInfoVo();
                 BeanUtils.copyProperties(x, vo);
-                vo.setMark("协作");
+                vo.setMark("协作者");
                 vo.setRemark(vo.getRemark() == null ? "" : vo.getRemark());
                 resultList.add(vo);
             });

@@ -86,8 +86,8 @@
                 return {
                     "code": res.code,
                     "msg": res.msg,
-                    "count": res.data.totalCount,
-                    "data": res.data.records
+                    "count": res.data ? res.data.totalCount: 0,
+                    "data": res.data ? res.data.records: []
                 };
             },
             toolbar: '#toolbarDemo',
