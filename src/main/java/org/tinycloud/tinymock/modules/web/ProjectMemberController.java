@@ -57,7 +57,7 @@ public class ProjectMemberController {
      * 新增协作人
      *
      */
-    @GetMapping("/delete")
+    @PostMapping("/add")
     public ApiResult<Boolean> add(@Validated @RequestBody ProjectMemberAddDto dto) {
         return ApiResult.success(projectMemberService.add(dto), "新增成功");
     }

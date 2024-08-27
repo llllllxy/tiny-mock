@@ -16,13 +16,15 @@ import org.tinycloud.tinymock.common.utils.StrUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 租户会话拦截器
+ *
  * @author liuxingyu01
- * @date 2022-03-26 20:48
- * @description 租户会话拦截器
+ * @since 2022-03-26 20:48
  **/
 @Slf4j
 @Component
@@ -73,7 +75,6 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
             loginTenant.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
             redisTemplate.expire(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
         }
-
         TenantHolder.setTenant(loginTenant);
 
         // 合格不需要拦截，放行
@@ -92,7 +93,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
      * 视图渲染之后的操作
      */
     @Override
-    public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) throws Exception {
         TenantHolder.clearTenant();
     }
 

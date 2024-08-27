@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
@@ -54,6 +55,19 @@ public class ProjectMemberService {
         List<TProjectMember> memberInfos = this.projectMemberMapper.selectList(
                 Wrappers.<TProjectMember>lambdaQuery().eq(TProjectMember::getProjectId, projectId)
                         .eq(TProjectMember::getDelFlag, GlobalConstant.NOT_DELETED));
+        TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId)
+                        .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+
+        List<ProjectMemberVo> finallyList = new ArrayList<>();
+        ProjectMemberVo myself = new ProjectMemberVo();
+        myself.setMemberTenantAccount(TenantHolder.getTenantAccount());
+        myself.setMemberTenantName(TenantHolder.getTenant().getTenantName());
+        myself.setCreatedAt(projectInfo.getCreatedAt());
+        finallyList.add(0, myself);
+        if (CollectionUtils.isEmpty(memberInfos)) {
+            return finallyList;
+        }
 
         List<Long> memberIdList = memberInfos.stream().map(TProjectMember::getMemberTenantId)
                 .distinct()
@@ -68,14 +82,11 @@ public class ProjectMemberService {
             BeanUtils.copyProperties(x, vo);
             vo.setMemberTenantAccount(tenantMap.get(vo.getMemberTenantId()).getTenantAccount());
             vo.setMemberTenantName(tenantMap.get(vo.getMemberTenantId()).getTenantName());
+            vo.setRemark(vo.getRemark() == null ? "" : vo.getRemark());
             return vo;
         }).collect(Collectors.toList());
-
-        ProjectMemberVo myself = new ProjectMemberVo();
-        myself.setMemberTenantAccount(TenantHolder.getTenantAccount());
-        myself.setMemberTenantName(TenantHolder.getTenant().getTenantName());
-        list.add(0, myself);
-        return list;
+        finallyList.addAll(list);
+        return finallyList;
     }
 
 
@@ -130,7 +141,7 @@ public class ProjectMemberService {
         }
         TProjectMember member = new TProjectMember();
         member.setProjectId(dto.getProjectId());
-        member.setMemberTenantId(member.getMemberTenantId());
+        member.setMemberTenantId(dto.getMemberTenantId());
         member.setCreateTenantId(tenantId);
         member.setDelFlag(GlobalConstant.NOT_DELETED);
         member.setStatus(GlobalConstant.ENABLED);

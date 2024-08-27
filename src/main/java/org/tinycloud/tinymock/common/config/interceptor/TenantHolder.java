@@ -12,7 +12,6 @@ import java.util.Objects;
  * @since 2023-12-2023/12/3 21:20
  */
 public class TenantHolder {
-
     private final static ThreadLocal<LoginTenant> tenant = new ThreadLocal<>();
 
     public static LoginTenant getTenant() {
