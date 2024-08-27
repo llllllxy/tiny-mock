@@ -53,7 +53,7 @@
                 if (res.code == '0') {
                     projectList = res.data;
                     // 动态渲染项目下拉栏
-                    $("[lay-filter='projectId']").append('<option value="">请选择</option>');
+                    // $("[lay-filter='projectId']").append('<option value="">请选择</option>');
                     for (let item of projectList) {
                         $("[lay-filter='projectId']").append('<option value="' + item.id + '">' + item.projectName + '</option>');
                     }
@@ -67,11 +67,17 @@
             }
         });
 
+        var whereParam = {};
+        if (projectList && projectList.length > 0) {
+            whereParam.projectId = projectList[0].id;
+        }
+
         var statisticTable = table.render({
             elem: '#statisticTableId',
             url: '/statistic/query',
             method: 'post',
             contentType: 'application/json',
+            where: whereParam, // 初始化时带的参数
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'

@@ -18,12 +18,9 @@
         (SELECT count(distinct access_ip) FROM t_mock_access_log WHERE mock_id = tmi.id) AS accessTotalIpNumber
         from t_mock_info tmi
         left join t_project_info tpi on tpi.id = tmi.project_id
-        where tmi.tenant_id = #{queryDto.tenantId}
+        where tmi.project_id = #{queryDto.projectId}
         <if test="queryDto.mockName != null and queryDto.mockName != ''">
             and tmi.mock_name like CONCAT('%',#{queryDto.mockName},'%')
-        </if>
-        <if test="queryDto.projectId != null">
-            and tmi.project_id = #{queryDto.projectId}
         </if>
         group by
         tmi.tenant_id, tmi.id

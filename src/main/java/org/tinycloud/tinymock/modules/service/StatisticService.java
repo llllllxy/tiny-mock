@@ -29,7 +29,6 @@ public class StatisticService {
 
     public PageModel<StatisticDataVo> query(StatisticQueryDto dto) {
         PageModel<StatisticDataVo> responsePage = new PageModel<>(dto.getPageNo(), dto.getPageSize());
-        dto.setTenantId(TenantHolder.getTenantId());
         dto.setToday(DateUtils.today());
         dto.setYesterday(DateUtils.getYesterday());
         dto.setMonth(DateUtils.format(new Date(), "yyyy-MM"));

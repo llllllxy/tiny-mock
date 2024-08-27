@@ -1,5 +1,6 @@
 package org.tinycloud.tinymock.modules.bean.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.tinycloud.tinymock.common.model.BasePageDto;
@@ -22,9 +23,8 @@ public class StatisticQueryDto extends BasePageDto implements Serializable {
 
     private String mockName;
 
+    @NotNull(message = "项目ID不能为空！")
     private Long projectId;
-
-    private Long tenantId;
 
     private String today;
 
