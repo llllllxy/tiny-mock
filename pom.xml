@@ -62,12 +62,6 @@
             <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- 邮件发送工具包 -->
         <dependency>
             <groupId>org.eclipse.angus</groupId>
@@ -103,6 +97,11 @@
             <artifactId>nashorn-core</artifactId>
             <version>15.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.2.1-jre</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -112,17 +111,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
                     <source>17</source>
                     <target>17</target>
                     <encoding>UTF-8</encoding>
-                    <!--保留参数原名，否则springmvc参数注解不配置名称时无法正常运行-->
-                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
@@ -131,6 +122,12 @@
                 <version>3.2.9</version>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
