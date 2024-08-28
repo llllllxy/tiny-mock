@@ -25,9 +25,6 @@ server:
 spring:
   application:
     name: tiny-mock
-  threads:
-    virtual:
-      enabled: true
   mvc:
     throw-exception-if-no-handler-found: true
   # 设置上传文件大小

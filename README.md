@@ -1,7 +1,7 @@
 # Tiny Mock
 # 一个基于SpringBoot开发的轻量级在线数据Mock平台
 
-![SpringBoot](https://img.shields.io/badge/springboot-2.6.13-green.svg?style=flat-square)
+![SpringBoot](https://img.shields.io/badge/springboot-3.2.9-green.svg?style=flat-square)
 <a href="https://github.com/llllllxy/tiny-mock/stargazers"><img src="https://img.shields.io/github/stars/llllllxy/tiny-mock?style=flat-square&logo=GitHub"></a>
 <a href="https://github.com/llllllxy/tiny-mock/network/members"><img src="https://img.shields.io/github/forks/llllllxy/tiny-mock?style=flat-square&logo=GitHub"></a>
 <a href="https://github.com/llllllxy/tiny-mock/watchers"><img src="https://img.shields.io/github/watchers/llllllxy/tiny-mock?style=flat-square&logo=GitHub"></a>
@@ -34,7 +34,7 @@
 
 
 ## 运行环境
-- Jdk21
+- Jdk17
 - MySQL5.6+
 - Redis3.0+
 

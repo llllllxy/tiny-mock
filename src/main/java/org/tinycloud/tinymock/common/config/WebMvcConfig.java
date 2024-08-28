@@ -96,9 +96,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
         if (Objects.isNull(mappingJackson2HttpMessageConverter)) {
-            converters.addFirst(new MappingJackson2HttpMessageConverter());
+            converters.add(0, new MappingJackson2HttpMessageConverter());
         } else {
-            converters.addFirst(mappingJackson2HttpMessageConverter);
+            converters.add(0, mappingJackson2HttpMessageConverter);
         }
     }
 }
