@@ -1,5 +1,6 @@
 package org.tinycloud.tinymock.common.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -12,7 +13,6 @@ import org.tinycloud.tinymock.common.config.interceptor.TenantAuthInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>
@@ -22,6 +22,7 @@ import java.util.Objects;
  * @author liuxingyu01
  * @since 2023-05-30 13:02
  */
+@Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -84,21 +85,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-
     /**
-     * 这里加这个配置是为了解决Jackson2ObjectMapperBuilderCustomizer自定义配置不生效的问题
-     * 参考自：<a href="https://www.jianshu.com/p/09169bd31f72">...</a>
+     * 扩展消息转换器
+     * @param converters HttpMessageConverter
      */
-    @Autowired(required = false)
-    private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
-
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
-        if (Objects.isNull(mappingJackson2HttpMessageConverter)) {
-            converters.add(0, new MappingJackson2HttpMessageConverter());
-        } else {
-            converters.add(0, mappingJackson2HttpMessageConverter);
-        }
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        // 将java对象序列化为json数据，为消息转换器设置序列转换器
+        converter.setObjectMapper(new JacksonObjectMapper());
+        // 将自定义的消息转换器加入容器中
+        converters.add(0, converter);
     }
 }
