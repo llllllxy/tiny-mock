@@ -33,7 +33,7 @@ public class MockClientController {
      * @param request HttpServletRequest
      * @return mock后的数据
      */
-    @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public Object mock(HttpServletRequest request, HttpServletResponse response) {
         return mockClientService.mock(request, response);
     }
