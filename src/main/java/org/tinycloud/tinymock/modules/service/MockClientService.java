@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.tinycloud.tinymock.common.constant.BusinessConstant;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.CoreErrorCode;
 import org.tinycloud.tinymock.common.exception.CoreException;
@@ -19,12 +22,15 @@ import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
 import org.tinycloud.tinymock.modules.mapper.ProjectInfoMapper;
 
 import javax.script.ScriptException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -45,6 +51,9 @@ public class MockClientService {
 
     @Autowired
     private ProjectInfoMapper projectInfoMapper;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Qualifier("asyncServiceExecutor")
     @Autowired
@@ -77,21 +86,11 @@ public class MockClientService {
             }
 
             // 校验projectId和projectPath是否匹配
-            TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
-                    Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId).eq(TProjectInfo::getPath, projectPath)
-                            .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
-            if (Objects.isNull(projectInfo)) {
-                throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
-            }
+            this.checkProjectInfo(projectId, projectPath);
 
             // 然后校验url是否存在
-            TMockInfo mockInfo = this.mockInfoMapper.selectOne(
-                    Wrappers.<TMockInfo>lambdaQuery().eq(TMockInfo::getProjectId, projectId)
-                            .eq(TMockInfo::getUrl, url)
-                            .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED));
-            if (Objects.isNull(mockInfo)) {
-                throw new CoreException(CoreErrorCode.MOCK_URL_IS_NOT_EXIST);
-            }
+            TMockInfo mockInfo = this.getMockInfo(projectId, url);
+
             // 判断 请求类型是否相同，如果不同，则返回错误
             String mockMethod = mockInfo.getMethod();
             if (!mockMethod.equals(method)) {
@@ -136,6 +135,49 @@ public class MockClientService {
                 throw new CoreException(CoreErrorCode.MOCK_ADDRESS_RESOLUTION_ERROR);
             }
         }
+    }
+
+    private void checkProjectInfo(String projectId, String projectPath) {
+        String projectInfoString = this.redisTemplate.opsForValue().get(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId);
+        if (StringUtils.hasText(projectInfoString)) {
+            TProjectInfo projectInfo = JacksonUtils.readValue(projectInfoString, TProjectInfo.class);
+            if (!projectPath.equals(projectInfo.getPath())) {
+                throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
+            }
+        } else {
+            TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+                    Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId).eq(TProjectInfo::getPath, projectPath)
+                            .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+            if (Objects.isNull(projectInfo)) {
+                throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
+            }
+            this.redisTemplate.opsForValue().set(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId, JacksonUtils.toJsonString(projectInfo), BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
+        }
+    }
+
+    private TMockInfo getMockInfo(String projectId, String url) {
+        String urlKey = url.replace("/", "_");
+        String mockInfoString = this.redisTemplate.opsForValue().get(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey);
+        TMockInfo mockInfo;
+        if (StringUtils.hasText(mockInfoString)) {
+            mockInfo = JacksonUtils.readValue(mockInfoString, TMockInfo.class);
+        } else {
+            mockInfo = this.mockInfoMapper.selectOne(
+                    Wrappers.<TMockInfo>lambdaQuery().eq(TMockInfo::getProjectId, projectId)
+                            .eq(TMockInfo::getUrl, url)
+                            .eq(TMockInfo::getDelFlag, GlobalConstant.NOT_DELETED));
+            if (Objects.isNull(mockInfo)) {
+                throw new CoreException(CoreErrorCode.MOCK_URL_IS_NOT_EXIST);
+            }
+            this.redisTemplate.opsForValue().set(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey, JacksonUtils.toJsonString(mockInfo), BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
+        }
+        if (Objects.isNull(mockInfo)) {
+            throw new CoreException(CoreErrorCode.MOCK_URL_IS_NOT_EXIST);
+        }
+        if (GlobalConstant.DISABLED.equals(mockInfo.getStatus())) {
+            throw new CoreException(CoreErrorCode.MOCK_URL_IS_DISABLED);
+        }
+        return mockInfo;
     }
 
     private void saveAccessLog(TMockInfo mockInfo, HttpServletRequest request) {

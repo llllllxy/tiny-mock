@@ -7,6 +7,8 @@ public enum CoreErrorCode {
     MOCK_METHOD_IS_NOT_MATCHED(1004, "HTTP Method不匹配！"),
     MOCKJS_PARSING_ERROR(1005, "Mock.js解析错误！"),
 
+    MOCK_URL_IS_DISABLED(1006, "Mock地址已禁用！"),
+
     FILE_UPLOAD_FAILED(2001, "文件上传失败，请联系系统管理员！"),
     FILE_NOT_EXIST(2002, "文件不存在！"),
     FILE_DOWNLOAD_FAILED(2003, "文件下载失败，请联系系统管理员！"),

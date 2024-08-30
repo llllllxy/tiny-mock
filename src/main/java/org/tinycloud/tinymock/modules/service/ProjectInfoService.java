@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
+import org.tinycloud.tinymock.common.constant.BusinessConstant;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
@@ -38,6 +40,9 @@ public class ProjectInfoService {
 
     @Autowired
     private ProjectMemberMapper projectMemberMapper;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     public List<ProjectInfoVo> query() {
         List<ProjectInfoVo> resultList = new ArrayList<>();
@@ -133,7 +138,9 @@ public class ProjectInfoService {
         wrapper.set(TProjectInfo::getRemark, dto.getRemark());
         wrapper.set(TProjectInfo::getPath, dto.getPath());
         wrapper.set(TProjectInfo::getIntroduce, dto.getIntroduce());
-        int rows = this.projectInfoMapper.update(null, wrapper);
+        int rows = this.projectInfoMapper.update(wrapper);
+        // 刷新缓存
+        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + dto.getId());
         return rows > 0;
     }
 
@@ -149,7 +156,9 @@ public class ProjectInfoService {
         wrapper.eq(TProjectInfo::getId, id);
         wrapper.eq(TProjectInfo::getTenantId, TenantHolder.getTenantId());
         wrapper.set(TProjectInfo::getDelFlag, GlobalConstant.DELETED);
-        int rows = this.projectInfoMapper.update(null, wrapper);
+        int rows = this.projectInfoMapper.update(wrapper);
+        // 刷新缓存
+        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + id);
         return rows > 0;
     }
 }

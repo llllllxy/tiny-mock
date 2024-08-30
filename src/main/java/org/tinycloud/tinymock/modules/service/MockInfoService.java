@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -13,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
+import org.tinycloud.tinymock.common.constant.BusinessConstant;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
@@ -61,6 +63,9 @@ public class MockInfoService {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private ApplicationConfig applicationConfig;
@@ -117,7 +122,8 @@ public class MockInfoService {
 
         // 插入旧的数据到历史版本表中
         this.saveHistory(mockInfo, OperateTypeEnum.DELETE.getCode());
-
+        // 刷新接口缓存
+        this.refreshTable(mockInfo);
         return rows > 0;
     }
 
@@ -136,6 +142,8 @@ public class MockInfoService {
         wrapper.eq(TMockInfo::getId, id);
         wrapper.set(TMockInfo::getStatus, GlobalConstant.ENABLED);
         int rows = this.mockInfoMapper.update(null, wrapper);
+        // 刷新接口缓存
+        this.refreshTable(mockInfo);
         return rows > 0;
     }
 
@@ -153,6 +161,8 @@ public class MockInfoService {
         wrapper.eq(TMockInfo::getId, id);
         wrapper.set(TMockInfo::getStatus, GlobalConstant.DISABLED);
         int rows = this.mockInfoMapper.update(null, wrapper);
+        // 刷新接口缓存
+        this.refreshTable(mockInfo);
         return rows > 0;
     }
 
@@ -223,9 +233,17 @@ public class MockInfoService {
         wrapper.set(TMockInfo::getMockjsFlag, dto.getMockjsFlag());
 
         int rows = this.mockInfoMapper.update(null, wrapper);
+        // 刷新接口缓存
+        this.refreshTable(mockInfo);
         return rows > 0;
     }
 
+    /**
+     * 保存接口变更的历史数据
+     *
+     * @param mockInfo    TMockInfo
+     * @param operateType 操作类型（新增/修改/删除）
+     */
     public void saveHistory(TMockInfo mockInfo, Integer operateType) {
         Integer version = this.mockInfoHistoryMapper.selectVersion(mockInfo.getId(), mockInfo.getProjectId());
         if (Objects.isNull(version)) {
@@ -424,5 +442,16 @@ public class MockInfoService {
             log.error("generateInsertTableSQL Exception: ", e);
         }
         return sql.toString();
+    }
+
+    /**
+     * 刷新接口缓存
+     *
+     * @param mockInfo TMockInfo
+     */
+    private void refreshTable(TMockInfo mockInfo) {
+        // 刷新缓存
+        String urlKey = mockInfo.getUrl().replace("/", "_");
+        this.redisTemplate.delete(BusinessConstant.TENANT_MOCK_REDIS_KEY + mockInfo.getProjectId() + urlKey);
     }
 }
