@@ -139,19 +139,23 @@ public class MockClientService {
 
     private void checkProjectInfo(String projectId, String projectPath) {
         String projectInfoString = this.redisTemplate.opsForValue().get(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId);
+        TProjectInfo projectInfo;
         if (StringUtils.hasText(projectInfoString)) {
-            TProjectInfo projectInfo = JacksonUtils.readValue(projectInfoString, TProjectInfo.class);
-            if (!projectPath.equals(projectInfo.getPath())) {
-                throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
-            }
+            projectInfo = JacksonUtils.readValue(projectInfoString, TProjectInfo.class);
         } else {
-            TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
+            projectInfo = this.projectInfoMapper.selectOne(
                     Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId).eq(TProjectInfo::getPath, projectPath)
                             .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
             if (Objects.isNull(projectInfo)) {
                 throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
             }
             this.redisTemplate.opsForValue().set(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId, JacksonUtils.toJsonString(projectInfo), BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
+        }
+        if (Objects.isNull(projectInfo)) {
+            throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
+        }
+        if (!projectPath.equals(projectInfo.getPath())) {
+            throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
         }
     }
 
