@@ -73,7 +73,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
             // 刷新会话缓存时长
             loginTenant.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-            redisTemplate.expire(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(loginTenant) ,applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
         }
         TenantHolder.setTenant(loginTenant);
 
