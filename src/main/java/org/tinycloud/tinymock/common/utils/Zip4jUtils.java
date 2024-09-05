@@ -9,6 +9,7 @@ import net.lingala.zip4j.model.enums.CompressionMethod;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -29,32 +30,38 @@ public class Zip4jUtils {
      * @param srcFilePath 要压缩的源目录或源文件-绝对路径 /opt/server/xxx
      * @param dest        生成的压缩包的目录和名字，例如： /opt/server/xxx/xxx.zip
      * @param passwd      密码 不是必填
-     * @throws ZipException 异常
      */
-    public static void zip(String srcFilePath, String dest, String passwd) throws ZipException {
+    public static void zip(String srcFilePath, String dest, String passwd) {
         File srcFile = new File(srcFilePath);
 
         ZipParameters par = new ZipParameters();
         par.setCompressionMethod(CompressionMethod.DEFLATE);
+        // 设置压缩水平
         par.setCompressionLevel(CompressionLevel.NORMAL);
         // 可以设置压缩包内是否包含根路径，即位是否包xxx那一级目录
         par.setIncludeRootFolder(false);
-
-        if (passwd != null) {
+        if (passwd != null && !passwd.isEmpty()) {
             par.setEncryptFiles(true);
             par.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
-        }
-        ZipFile zipfile;
-        if (passwd != null && !passwd.isEmpty()) {
-            zipfile = new ZipFile(dest, passwd.toCharArray());
+            try (ZipFile zipfile = new ZipFile(dest, passwd.toCharArray())) {
+                if (srcFile.isDirectory()) {
+                    zipfile.addFolder(srcFile, par);
+                } else {
+                    zipfile.addFile(srcFile, par);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            zipfile = new ZipFile(dest);
-        }
-
-        if (srcFile.isDirectory()) {
-            zipfile.addFolder(srcFile, par);
-        } else {
-            zipfile.addFile(srcFile, par);
+            try (ZipFile zipfile = new ZipFile(dest)) {
+                if (srcFile.isDirectory()) {
+                    zipfile.addFolder(srcFile, par);
+                } else {
+                    zipfile.addFile(srcFile, par);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -65,34 +72,36 @@ public class Zip4jUtils {
      * @param zipFilePath 压缩包zip文件-绝对路径
      * @param dest        目标文件夹（要解压到哪个文件夹）-绝对路径
      * @param passwd      密码（有的话就传）
-     * @throws ZipException 抛出异常
      */
-    public static void unZip(String zipFilePath, String dest, String passwd) throws ZipException {
-        ZipFile zFile = new ZipFile(zipFilePath);
-        // 解决文件名中文乱码的问题
-        zFile.setCharset(Charset.forName(getEncoding(zipFilePath)));
-        if (!zFile.isValidZipFile()) {
-            throw new ZipException("压缩文件不合法！");
+    public static void unZip(String zipFilePath, String dest, String passwd) {
+        try (ZipFile zFile = new ZipFile(zipFilePath)) {
+            // 解决文件名中文乱码的问题
+            zFile.setCharset(Charset.forName(getEncoding(zFile)));
+            if (!zFile.isValidZipFile()) {
+                throw new ZipException("压缩文件不合法！");
+            }
+            File file = new File(dest);
+            if (file.isDirectory() && !file.exists()) {
+                file.mkdirs();
+            }
+            if (zFile.isEncrypted() && passwd != null && !passwd.isEmpty()) {
+                zFile.setPassword(passwd.toCharArray());
+            }
+            zFile.extractAll(dest);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        File file = new File(dest);
-        if (file.isDirectory() && !file.exists()) {
-            file.mkdirs();
-        }
-        if (zFile.isEncrypted() && passwd != null && !"".equals(passwd)) {
-            zFile.setPassword(passwd.toCharArray());
-        }
-        zFile.extractAll(dest);
     }
 
     /**
      * 获取压缩文件的编码格式
-     * @param path 压缩包路径
+     *
+     * @param zipFile 压缩包路径
      * @return 编码类型
      * @throws ZipException 抛出异常
      */
-    private static String getEncoding(String path) throws ZipException {
+    private static String getEncoding(ZipFile zipFile) throws ZipException {
         String encoding = "GBK";
-        ZipFile zipFile = new ZipFile(path);
         zipFile.setCharset(Charset.forName(encoding));
         List<FileHeader> list = zipFile.getFileHeaders();
         for (int i = 0; i < list.size(); i++) {
@@ -122,13 +131,9 @@ public class Zip4jUtils {
 
     public static void main(String[] args) {
         String passwd = "123456";
-        try {
-            // 测试压缩
-            Zip4jUtils.zip("D:/opt/coolcars/logs", "D:/opt/coolcars/logs/logs2.zip", passwd);
-            // 测试解压
-            //Zip4jUtils.unZip("D:/opt/coolcars/logs2.zip", "D:/opt/csp-app-server/dest", passwd);
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+        // 测试压缩
+        Zip4jUtils.zip("D:/opt/coolcars/logs", "D:/opt/coolcars/logs/logs2.zip", passwd);
+        // 测试解压
+        //Zip4jUtils.unZip("D:/opt/coolcars/logs2.zip", "D:/opt/csp-app-server/dest", passwd);
     }
 }
