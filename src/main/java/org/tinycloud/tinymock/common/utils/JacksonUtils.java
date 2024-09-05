@@ -12,6 +12,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.exception.BusinessException;
@@ -19,8 +26,13 @@ import org.tinycloud.tinymock.common.utils.function.CheckedConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -727,13 +739,18 @@ public class JacksonUtils {
     }
 
     private static class JacksonObjectMapper extends ObjectMapper {
+        @Serial
         private static final long serialVersionUID = 1L;
         private static final Locale CHINA = Locale.CHINA;
+        private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+        private static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+        private static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+
 
         JacksonObjectMapper() {
             super(jsonFactory());
             super.setLocale(CHINA);
-            super.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", CHINA));
+            super.setDateFormat(new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT, CHINA));
             // 单引号
             super.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
             // 忽略json字符串中不识别的属性
@@ -743,6 +760,16 @@ public class JacksonUtils {
             super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
             // 默认不输出null
             super.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+            JavaTimeModule jsonTimeModule = new JavaTimeModule();
+            jsonTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT)));
+            jsonTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)));
+            jsonTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT)));
+            jsonTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT)));
+            jsonTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)));
+            jsonTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT)));
+            super.registerModule(jsonTimeModule);
+
             super.findAndRegisterModules();
         }
 
