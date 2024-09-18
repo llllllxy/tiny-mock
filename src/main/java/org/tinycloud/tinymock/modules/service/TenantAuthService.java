@@ -9,8 +9,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
-import org.tinycloud.tinymock.common.config.interceptor.LoginTenant;
-import org.tinycloud.tinymock.common.config.interceptor.TenantAuthUtil;
+import org.tinycloud.tinymock.common.config.interceptor.TenantAuthCache;
+import org.tinycloud.tinymock.common.config.interceptor.TenantTokenUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
@@ -127,24 +127,24 @@ public class TenantAuthService {
 
         // 构建会话token进行返回
         String token = "tinymock_" + UUID.randomUUID().toString().trim().replaceAll("-", "");
-        LoginTenant loginTenant = BeanConvertUtils.convertTo(entity, LoginTenant::new);
-        loginTenant.setToken(token);
+        TenantAuthCache tenantAuthCache = BeanConvertUtils.convertTo(entity, TenantAuthCache::new);
+        tenantAuthCache.setToken(token);
         UserAgent userAgent = UserAgentUtils.getUserAgent(request);
-        loginTenant.setBrowser(userAgent.getBrowser().getName());
-        loginTenant.setOs(userAgent.getOperatingSystem().getName());
+        tenantAuthCache.setBrowser(userAgent.getBrowser().getName());
+        tenantAuthCache.setOs(userAgent.getOperatingSystem().getName());
         String ip = IpGetUtils.getIpAddr(request);
-        loginTenant.setIpAddress(ip);
-        loginTenant.setIpLocation(IpAddressUtils.getAddressByIP(ip));
+        tenantAuthCache.setIpAddress(ip);
+        tenantAuthCache.setIpLocation(IpAddressUtils.getAddressByIP(ip));
         long currentTime = System.currentTimeMillis();
-        loginTenant.setLoginTime(currentTime);
-        loginTenant.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(loginTenant), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+        tenantAuthCache.setLoginTime(currentTime);
+        tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
+        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
 
         return token;
     }
 
     public Boolean logout(HttpServletRequest request) {
-        String token = TenantAuthUtil.getToken(request);
+        String token = TenantTokenUtils.getToken(request);
         this.stringRedisTemplate.delete(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
         return true;
     }

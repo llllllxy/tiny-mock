@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @date 2022-09-06 10:27
  * @description 租户会话工具类
  **/
-public class TenantAuthUtil {
+public class TenantTokenUtils {
 
 
     /**

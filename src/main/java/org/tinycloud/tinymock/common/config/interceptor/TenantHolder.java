@@ -12,14 +12,14 @@ import java.util.Objects;
  * @since 2023-12-2023/12/3 21:20
  */
 public class TenantHolder {
-    private final static ThreadLocal<LoginTenant> tenant = new ThreadLocal<>();
+    private final static ThreadLocal<TenantAuthCache> tenant = new ThreadLocal<>();
 
-    public static LoginTenant getTenant() {
+    public static TenantAuthCache getTenant() {
         return tenant.get();
     }
 
     public static Long getTenantId() {
-        LoginTenant tenant = getTenant();
+        TenantAuthCache tenant = getTenant();
         if (Objects.isNull(tenant)) {
             return null;
         } else {
@@ -28,7 +28,7 @@ public class TenantHolder {
     }
 
     public static String getTenantAccount() {
-        LoginTenant tenant = getTenant();
+        TenantAuthCache tenant = getTenant();
         if (Objects.isNull(tenant)) {
             return "";
         } else {
@@ -36,7 +36,7 @@ public class TenantHolder {
         }
     }
 
-    public static void setTenant(LoginTenant t) {
+    public static void setTenant(TenantAuthCache t) {
         tenant.set(t);
     }
 

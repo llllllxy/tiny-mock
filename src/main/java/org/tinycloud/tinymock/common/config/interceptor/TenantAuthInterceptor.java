@@ -53,7 +53,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         }
 
         // 先判断token是否为空
-        String token = TenantAuthUtil.getToken(request);
+        String token = TenantTokenUtils.getToken(request);
         if (StrUtils.isBlank(token)) {
             throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
         }
@@ -64,18 +64,18 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         }
 
         // 再判断token是否合法
-        LoginTenant loginTenant = JacksonUtils.readValue(tenantInfoString, LoginTenant.class);
-        if (Objects.isNull(loginTenant)) {
+        TenantAuthCache tenantAuthCache = JacksonUtils.readValue(tenantInfoString, TenantAuthCache.class);
+        if (Objects.isNull(tenantAuthCache)) {
             throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
         }
-        long expireTime = loginTenant.getLoginExpireTime();
+        long expireTime = tenantAuthCache.getLoginExpireTime();
         long currentTime = System.currentTimeMillis();
         if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
             // 刷新会话缓存时长
-            loginTenant.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(loginTenant) ,applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
+            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache) ,applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
         }
-        TenantHolder.setTenant(loginTenant);
+        TenantHolder.setTenant(tenantAuthCache);
 
         // 合格不需要拦截，放行
         return true;
