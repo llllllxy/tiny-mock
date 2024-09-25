@@ -186,7 +186,7 @@
             miniAjax.get({
                 url: "/auth/getCode",
                 success: function (res) {
-                    $("#captcha").prop("src", "data:image/png;base64," + res.data.img);
+                    $("#captcha").prop("src", "data:image/gif;base64," + res.data.img);
                     verifyKey = res.data.uuid;
                     publicKey = res.data.publicKey;
                 },
