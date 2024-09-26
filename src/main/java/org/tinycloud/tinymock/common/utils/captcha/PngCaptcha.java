@@ -50,6 +50,11 @@ public class PngCaptcha {
     private BufferedImage buffImg = null;
 
     /**
+     * graphics2D
+     */
+    private Graphics2D graphics2D = null;
+
+    /**
      * 随机数生成器
      * SecureRandom使用更复杂的算法和更安全的随机数生成方法，因此它生成的随机数比Random更难以预测和猜测
      * 但同时带来的问题是性能要慢一点
@@ -150,16 +155,15 @@ public class PngCaptcha {
 
         // 图像buffer
         this.buffImg = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = (Graphics2D) this.buffImg.getGraphics();
-        // Graphics2D g = buffImg.createGraphics();
+        graphics2D = (Graphics2D) this.buffImg.getGraphics();
         // 设置背景色
-        g.setColor(getRandColor(200, 250));
-        g.fillRect(0, 0, this.width, this.height);
+        graphics2D.setColor(getRandColor(200, 250));
+        graphics2D.fillRect(0, 0, this.width, this.height);
 
         // 设置字体
-        // Font font1 = getFont(fontHeight);
+        // Font font1 = getFont(fontHeight); // 获取随机字体
         Font font = new Font("Arial", Font.BOLD, fontHeight);
-        g.setFont(font);
+        graphics2D.setFont(font);
 
         // 设置干扰线
         for (int i = 0; i < this.lineCount; i++) {
@@ -167,8 +171,8 @@ public class PngCaptcha {
             int ys = this.random.nextInt(this.height);
             int xe = xs + this.random.nextInt(this.width);
             int ye = ys + this.random.nextInt(this.height);
-            g.setColor(getRandColor(1, 255));
-            g.drawLine(xs, ys, xe, ye);
+            graphics2D.setColor(getRandColor(1, 255));
+            graphics2D.drawLine(xs, ys, xe, ye);
         }
 
         // 添加噪点 噪声率
@@ -183,10 +187,10 @@ public class PngCaptcha {
         this.code = code;
         for (int i = 0; i < code.length(); i++) {
             String strRand = code.substring(i, i + 1);
-            g.setColor(getRandColor(1, 255));
+            graphics2D.setColor(getRandColor(1, 255));
             // g.drawString(a,x,y);
             // a为要画出来的东西，x和y表示要画的东西最左侧字符的基线位于此图形上下文坐标系的 (x, y) 位置处
-            g.drawString(strRand, i * fontWidth + 3, codeY);
+            graphics2D.drawString(strRand, i * fontWidth + 3, codeY);
         }
     }
 
@@ -302,7 +306,6 @@ public class PngCaptcha {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             ImageIO.write(this.buffImg, "png", outputStream);
-            this.buffImg.flush();
             String base64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
             // 删除 \r\n
             base64 = base64.trim();
@@ -312,8 +315,8 @@ public class PngCaptcha {
             return null;
         } finally {
             // 释放内存，防止内存溢出的问题
+            this.graphics2D.dispose();
             this.buffImg.flush();
-            this.buffImg.getGraphics().dispose();
             this.buffImg = null;
         }
     }
@@ -337,8 +340,8 @@ public class PngCaptcha {
             return null;
         } finally {
             // 释放内存，防止内存溢出的问题
+            this.graphics2D.dispose();
             this.buffImg.flush();
-            this.buffImg.getGraphics().dispose();
             this.buffImg = null;
         }
     }
