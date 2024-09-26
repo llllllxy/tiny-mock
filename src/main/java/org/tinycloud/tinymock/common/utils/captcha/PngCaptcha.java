@@ -1,4 +1,4 @@
-package org.tinycloud.tinymock.common.utils;
+package org.tinycloud.tinymock.common.utils.captcha;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,7 +13,7 @@ import java.util.Base64;
  * @author liuxingyu01
  * @since 2022-08-27 9:43
  **/
-public class CaptchaCodeGen {
+public class PngCaptcha {
     /**
      * 随机字符
      */
@@ -59,7 +59,7 @@ public class CaptchaCodeGen {
     /**
      * 构造方法，全部使用默认值
      */
-    public CaptchaCodeGen() {
+    public PngCaptcha() {
         this.creatImage();
     }
 
@@ -69,7 +69,7 @@ public class CaptchaCodeGen {
      * @param width  图片的宽度
      * @param height 图片的高度
      */
-    public CaptchaCodeGen(int width, int height) {
+    public PngCaptcha(int width, int height) {
         this.width = width;
         this.height = height;
         this.creatImage();
@@ -82,7 +82,7 @@ public class CaptchaCodeGen {
      * @param height    图片的高度
      * @param codeCount 字符的数量
      */
-    public CaptchaCodeGen(int width, int height, int codeCount) {
+    public PngCaptcha(int width, int height, int codeCount) {
         this.width = width;
         this.height = height;
         this.codeCount = codeCount;
@@ -97,7 +97,7 @@ public class CaptchaCodeGen {
      * @param codeCount 字符的数量
      * @param lineCount 干扰线的数量
      */
-    public CaptchaCodeGen(int width, int height, int codeCount, int lineCount) {
+    public PngCaptcha(int width, int height, int codeCount, int lineCount) {
         this.width = width;
         this.height = height;
         this.codeCount = codeCount;
@@ -114,7 +114,7 @@ public class CaptchaCodeGen {
      * @param lineCount 干扰线的数量
      * @param code      验证码随机字符
      */
-    public CaptchaCodeGen(int width, int height, int codeCount, int lineCount, String code) {
+    public PngCaptcha(int width, int height, int codeCount, int lineCount, String code) {
         this.width = width;
         this.height = height;
         this.codeCount = codeCount;
