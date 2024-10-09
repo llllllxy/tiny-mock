@@ -1,5 +1,7 @@
 package org.tinycloud.tinymock.common.config.interceptor;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,9 +16,6 @@ import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.JacksonUtils;
 import org.tinycloud.tinymock.common.utils.StrUtils;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TenantAuthInterceptor implements HandlerInterceptor {
 
-    private static final Long MILLIS_MINUTE_TEN = 20 * 60 * 1000L;
+    private static final Long MILLIS_MINUTE_TEN = 10 * 60 * 1000L;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -73,7 +72,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
             // 刷新会话缓存时长
             tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache) ,applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
         }
         TenantHolder.setTenant(tenantAuthCache);
 
