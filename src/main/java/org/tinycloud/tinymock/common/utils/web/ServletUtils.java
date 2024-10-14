@@ -138,10 +138,9 @@ public class ServletUtils {
             } else {
                 returnStr = objectMapper.writeValueAsString(resultMap);
             }
-        } catch (IOException var3) {
+        } catch (IOException ignored) {
 
         }
-
         return returnStr;
     }
 
@@ -193,7 +192,7 @@ public class ServletUtils {
             } else {
                 returnStr = objectMapper.writeValueAsString(object);
             }
-        } catch (IOException var3) {
+        } catch (IOException ignored) {
 
         }
         return returnStr;
@@ -275,7 +274,7 @@ public class ServletUtils {
         }
         while (paramNames != null && paramNames.hasMoreElements()) {
             String paramName = (String) paramNames.nextElement();
-            if ("".equals(pre) || paramName.startsWith(pre)) {
+            if (pre.isEmpty() || paramName.startsWith(pre)) {
                 String unprefixed = paramName.substring(pre.length());
                 String[] values = request.getParameterValues(paramName);
                 if (values == null || values.length == 0) {
@@ -319,6 +318,7 @@ public class ServletUtils {
      * @param request 请求对象
      * @return 返回Map对象
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> getExtParams(ServletRequest request) {
         Map<String, Object> paramMap = null;
         String params = request.getParameter(DEFAULT_PARAMS_PARAM) == null ? null
