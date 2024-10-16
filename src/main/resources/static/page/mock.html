@@ -330,7 +330,10 @@
         let projectId = isNotEmpty(getUrlKeyValue("projectId")) ? getUrlKeyValue("projectId") : sessionStorage.getItem("projectId");
 
         miniAjax.get({
-            url: "/projectinfo/detail?id=" + projectId,
+            url: "/projectinfo/detail",
+            data: { // 参数
+                id: projectId
+            },
             success: function (res) {
                 if (res.code === 0) {
                     $("#headerProjectId").text(res.data.id);

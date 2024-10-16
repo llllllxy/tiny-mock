@@ -109,6 +109,7 @@ layui.define(["jquery"], function (exports) {
             options.dataType = options.dataType || 'json';
             $.ajax({
                 url: options.url,
+                data: options.data,
                 type: options.type,
                 timeout: options.timeout,
                 async: options.async,
