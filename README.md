@@ -23,16 +23,15 @@
 
 ## 主要技术选型
 
-| 依赖                 | 说明             |
-|--------------------|--------------   |
-| SpringBoot 3.2.9   | 基础框架         |
-| Hikari             | 高性能数据库连接池 |
-| MyBatis-Plus 3.5.6 | MyBatis的增强ORM |
-| Redis              | 业务缓存、会话共享  |
-| MySQL5.7           | 关系型数据库       |
-| Layui              | 前端框架         |
-| layuimini          | 前端模板         |
-
+| 依赖                 | 说明            |
+|--------------------|---------------|
+| SpringBoot 3.2.10  | 基础框架          |
+| Hikari             | 高性能数据库连接池     |
+| MyBatis-Plus 3.5.8 | MyBatis的增强ORM |
+| Redis              | 业务缓存、会话共享     |
+| MySQL 5.7          | 关系型数据库        |
+| Layui 2.9.15       | 前端框架和模板       |
+| Mock.js 1.0.0      | 数据mock引擎      |
 
 ## 运行环境
 - Jdk17
@@ -168,11 +167,11 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 接口分模块管理 `未完成`
 - 成员协作功能 `已完成`
 
-## 前后端分离部署示例（拿windows环境举例，linux下大同小异）
+## 前后端分离部署示例（以windows环境举例，linux下大同小异）
 #### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
 ![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
 
-#### 2、按照 `nginx` 并更改配置
+#### 2、安装 `nginx` 并更改配置 `nginx.conf`
 ```editorconfig
     listen       8000;
     server_name  localhost;
