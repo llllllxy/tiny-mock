@@ -8,7 +8,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.tinycloud.tinymock.common.utils.LocalHostUtils;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Slf4j
