@@ -310,12 +310,19 @@
 
         $('#content').on('click', '[del-id]', function () {
             var id = $(this).attr('del-id');
-            layer.confirm('确定删除此项目吗', function (index) {
-                layer.close(index);
-                miniAjax.get({
-                    url: '/projectinfo/delete?id=' + id,
+
+            layer.prompt({title: '确定删除此项目吗，此操作无法撤消', placeholder: '请输入项目名称以进行确认'}, function(value, dIndex, elem){
+                if(value === '') {
+                    return elem.focus();
+                }
+                let projectName = util.escape(value);
+                miniAjax.postJSON({
+                    url: '/projectinfo/delete',
+                    data: JSON.stringify({id: id, projectName: projectName}),
                     success: function (res) {
                         if (res.code === 0) {
+                            // 关闭 prompt
+                            layer.close(dIndex);
                             layer.msg(res.msg, {time: 1000, icon: 1}, function () {
                                 // 重载表格，刷新数据
                                 queryProject();

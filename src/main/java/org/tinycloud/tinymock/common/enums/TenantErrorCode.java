@@ -30,6 +30,9 @@ public enum TenantErrorCode {
 
     ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_PROJECT(3204, "只有项目创建者才可以删除！"),
     ONLY_PROJECT_CREATE_TENANT_CAN_EDIT_PROJECT(3205, "只有项目创建者才可以修改！"),
+
+    PROJECT_NAME_NOT_MATCH_CANT_DELETE_PROJECT(3206, "项目名称不匹配，无法删除！"),
+
     ;
 
     private Integer code;

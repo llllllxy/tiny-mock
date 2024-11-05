@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectAddDto;
+import org.tinycloud.tinymock.modules.bean.dto.ProjectDeleteDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectEditDto;
 import org.tinycloud.tinymock.modules.bean.vo.ProjectInfoVo;
 import org.tinycloud.tinymock.modules.service.ProjectInfoService;
@@ -71,8 +72,8 @@ public class ProjectInfoController {
      *
      * @return
      */
-    @GetMapping("/delete")
-    public ApiResult<?> delete(@RequestParam("id") Long id) {
-        return ApiResult.success(projectInfoService.delete(id), "删除成功!");
+    @PostMapping("/delete")
+    public ApiResult<Boolean> delete(@Validated @RequestBody ProjectDeleteDto dto) {
+        return ApiResult.success(projectInfoService.delete(dto), "删除成功!");
     }
 }

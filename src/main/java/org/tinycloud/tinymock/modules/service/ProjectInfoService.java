@@ -14,10 +14,15 @@ import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectAddDto;
+import org.tinycloud.tinymock.modules.bean.dto.ProjectDeleteDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectEditDto;
+import org.tinycloud.tinymock.modules.bean.entity.TMockInfo;
+import org.tinycloud.tinymock.modules.bean.entity.TMockInfoHistory;
 import org.tinycloud.tinymock.modules.bean.entity.TProjectInfo;
 import org.tinycloud.tinymock.modules.bean.entity.TProjectMember;
 import org.tinycloud.tinymock.modules.bean.vo.ProjectInfoVo;
+import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
+import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
 import org.tinycloud.tinymock.modules.mapper.ProjectInfoMapper;
 import org.tinycloud.tinymock.modules.mapper.ProjectMemberMapper;
 
@@ -40,6 +45,12 @@ public class ProjectInfoService {
 
     @Autowired
     private ProjectMemberMapper projectMemberMapper;
+
+    @Autowired
+    private MockInfoMapper mockInfoMapper;
+
+    @Autowired
+    private MockInfoHistoryMapper mockInfoHistoryMapper;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -144,21 +155,40 @@ public class ProjectInfoService {
         return rows > 0;
     }
 
-    public Boolean delete(Long id) {
+    public Boolean delete(ProjectDeleteDto dto) {
         TProjectInfo projectInfo = this.projectInfoMapper.selectOne(
-                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, id)
+                Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, dto.getId())
                         .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
         if (projectInfo == null || !projectInfo.getTenantId().equals(TenantHolder.getTenantId())) {
             throw new TenantException(TenantErrorCode.ONLY_PROJECT_CREATE_TENANT_CAN_DELETE_PROJECT);
         }
+        if (!dto.getProjectName().equals(projectInfo.getProjectName())) {
+            throw new TenantException(TenantErrorCode.PROJECT_NAME_NOT_MATCH_CANT_DELETE_PROJECT);
+        }
+
         // 逻辑删除
-        LambdaUpdateWrapper<TProjectInfo> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(TProjectInfo::getId, id);
-        wrapper.eq(TProjectInfo::getTenantId, TenantHolder.getTenantId());
-        wrapper.set(TProjectInfo::getDelFlag, GlobalConstant.DELETED);
-        int rows = this.projectInfoMapper.update(wrapper);
+        LambdaUpdateWrapper<TProjectInfo> wrapper1 = new LambdaUpdateWrapper<>();
+        wrapper1.eq(TProjectInfo::getId, projectInfo.getId());
+        wrapper1.eq(TProjectInfo::getTenantId, TenantHolder.getTenantId());
+        wrapper1.set(TProjectInfo::getDelFlag, GlobalConstant.DELETED);
+        int rows = this.projectInfoMapper.update(wrapper1);
+
+        LambdaUpdateWrapper<TProjectMember> wrapper2 = new LambdaUpdateWrapper<>();
+        wrapper2.eq(TProjectMember::getProjectId, projectInfo.getId());
+        wrapper2.set(TProjectMember::getDelFlag, GlobalConstant.DELETED);
+        this.projectMemberMapper.update(null, wrapper2);
+
+        LambdaUpdateWrapper<TMockInfo> wrapper3 = new LambdaUpdateWrapper<>();
+        wrapper3.eq(TMockInfo::getProjectId, projectInfo.getId());
+        wrapper3.set(TMockInfo::getDelFlag, GlobalConstant.DELETED);
+        this.mockInfoMapper.update(null, wrapper3);
+
+        LambdaUpdateWrapper<TMockInfoHistory> wrapper4 = new LambdaUpdateWrapper<>();
+        wrapper4.eq(TMockInfoHistory::getProjectId, projectInfo.getId());
+        this.mockInfoHistoryMapper.delete(wrapper4);
+
         // 刷新缓存
-        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + id);
+        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectInfo.getId());
         return rows > 0;
     }
 }
