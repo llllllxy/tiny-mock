@@ -5,13 +5,19 @@ tinymock:
   # 版本
   version: 1.0.0
   # 数据库类型
-  db-type: mysql
+  dbType: mysql
   # 文件存放位置，示例（ Windows配置D:/data/tinymock，Linux配置 /home/data/tinymock）
-  upload-path: D:/data/tinymock
+  uploadPath: D:/data/tinymock
   # 会话控制(时间类的单位都是秒)
-  tenant-auth-timeout: 1800
+  tenantAuthTimeout: 1800
   # 项目导出备份加密密钥（sm4）
-  project-export-dek: Sq91g702s71/q6yUaAsgTw==
+  projectExportDek: Sq91g702s71/q6yUaAsgTw==
+  storageType: local
+  minio:
+    endpoint: http://127.0.0.1:9000
+    accessKey: minioadmin
+    secretKey: 123654
+    bucket: tinymock
 
 server:
   port: 9019

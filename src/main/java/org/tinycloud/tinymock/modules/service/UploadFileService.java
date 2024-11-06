@@ -1,32 +1,31 @@
 package org.tinycloud.tinymock.modules.service;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.enums.CoreErrorCode;
 import org.tinycloud.tinymock.common.exception.CoreException;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
-import org.tinycloud.tinymock.common.utils.DateUtils;
 import org.tinycloud.tinymock.common.utils.FileTools;
 import org.tinycloud.tinymock.modules.bean.entity.TUploadFile;
 import org.tinycloud.tinymock.modules.bean.vo.UploadFileVo;
+import org.tinycloud.tinymock.modules.helper.storage.api.StorageService;
+import org.tinycloud.tinymock.modules.helper.storage.model.StorageFile;
+import org.tinycloud.tinymock.modules.helper.storage.model.StorageStreamFile;
 import org.tinycloud.tinymock.modules.mapper.UploadFileMapper;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * <p>
@@ -43,7 +42,7 @@ public class UploadFileService {
     private static final int WITH_HEAD = 2;
 
     @Autowired
-    private ApplicationConfig applicationConfig;
+    private StorageService storageService;
 
     @Autowired
     private UploadFileMapper uploadFileMapper;
@@ -55,14 +54,15 @@ public class UploadFileService {
         if (Objects.isNull(uploadFile)) {
             throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
         }
-        // 获取文件路径
-        String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
-        Path filePath = Paths.get(realpath);
-        try {
+        StorageStreamFile storageStreamFile = storageService.findById(uploadFile.getFilePath());
+        if (storageStreamFile == null) {
+            throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
+        }
+        try (InputStream inputStream = storageStreamFile.getInputStream()) {
             if (uploadFile.getFileSuffix().equals("jpg")) {
                 uploadFile.setFileSuffix("jpeg");
             }
-            return "data:image/" + uploadFile.getFileSuffix() + ";base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(filePath));
+            return "data:image/" + uploadFile.getFileSuffix() + ";base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
             log.error("获取fileId为: " + id + " 的文件出现异常", e);
             throw new CoreException(CoreErrorCode.FILE_DOWNLOAD_FAILED);
@@ -77,44 +77,20 @@ public class UploadFileService {
         } else {
             oldName = multipartFile.getOriginalFilename();
         }
-        // 文件后缀
-        String extension = FileTools.getFileExtension(multipartFile.getOriginalFilename());
-        // 新文件名
-        String newName = UUID.randomUUID().toString().replace("-", "") + "." + extension;
-        // 文件大小（单位B）
-        long fileSize = multipartFile.getSize();
-
         // 文件类型
         String contentType = multipartFile.getContentType();
-        String md5 = FileTools.getFileMD5(multipartFile);
-        String sha1 = FileTools.getFileSHA1(multipartFile);
-
-        // 在 basePath 文件夹中通过日期对上传的文件归类保存
-        // 比如：/2019/06/06/cf13891e4b95400081ebb6d70ae44930.png
-        String datePath = DateUtils.today("/yyyy/MM/dd/");
-        String folderPath = applicationConfig.getUploadPath() + datePath;
-        // 根据folderPath创建文件夹
-        Path folder = Paths.get(folderPath);
-        try {
-            Files.createDirectories(folder);
-            // 文件保存到指定位置
-            multipartFile.transferTo(folder.resolve(newName));
-
-            // 上传文件的详细路径(不带basePath)
-            String filePath = datePath + newName;
-
+        try (InputStream inputStream = multipartFile.getInputStream()){
+            StorageFile storageFile = storageService.store(inputStream, oldName, contentType);
             // 保存文件信息到数据库
             TUploadFile uploadFile = new TUploadFile();
             uploadFile.setFileNameOld(oldName);
-            uploadFile.setFileNameNew(newName);
-            uploadFile.setFileSize((fileSize));
-            uploadFile.setFileSizeStr(FileTools.formatFileSize(fileSize));
-            uploadFile.setFileSuffix(extension);
-            uploadFile.setFilePath(filePath);
-            uploadFile.setFileMd5(md5);
-            uploadFile.setFileSha1(sha1);
-
-            // 将文件数据存入数据库
+            uploadFile.setFileNameNew(storageFile.getFileNameNew());
+            uploadFile.setFileSize(storageFile.getLength());
+            uploadFile.setFileSizeStr(FileTools.formatFileSize(storageFile.getLength()));
+            uploadFile.setFileSuffix(FileTools.getFileExtension(oldName));
+            uploadFile.setFilePath(storageFile.getFileId());
+            uploadFile.setFileMd5(storageFile.getMd5());
+            uploadFile.setFileSha1(storageFile.getSha1());
             this.uploadFileMapper.insert(uploadFile);
             return BeanConvertUtils.convertTo(uploadFile, UploadFileVo::new);
         } catch (IOException e) {
@@ -129,44 +105,20 @@ public class UploadFileService {
         if (tempFileArr.length == WITH_HEAD) {
             base64Str = tempFileArr[1];
         }
-        // 文件原名称，要求传的文件名必须带有后缀扩展名
-        String oldName = fileName;
-        // 文件后缀
-        String extension = FileTools.getFileExtension(fileName);
-        // 新文件名
-        String newName = UUID.randomUUID().toString().replace("-", "") + "." + extension;
-
-        // 在 basePath 文件夹中通过日期对上传的文件归类保存
-        // 比如：/2022/12/14/cf13891e4b95400081ebb6d70ae44930.png
-        String datePath = DateUtils.today("/yyyy/MM/dd/");
-        String folderPath = applicationConfig.getUploadPath() + datePath;
-        // 根据folderPath创建文件夹
-        Path folder = Paths.get(folderPath);
-        try {
-            byte[] byteArr = Base64.getDecoder().decode(base64Str);
-            String md5 = FileTools.getFileMD5(byteArr);
-            String sha1 = FileTools.getFileSHA1(byteArr);
-            long fileSize = byteArr.length;
-            Files.createDirectories(folder);
-            // 文件保存到指定位置
-            Files.write(folder.resolve(newName), byteArr);
-
-            // 上传文件的详细路径(不带basePath)
-            String filePath = datePath + newName;
+        byte[] byteArr = Base64.getDecoder().decode(base64Str);
+        try (InputStream inputStream = new ByteArrayInputStream(byteArr)){
+            StorageFile storageFile = storageService.store(inputStream, fileName);
             // 保存文件信息到数据库
             TUploadFile uploadFile = new TUploadFile();
-            uploadFile.setFileNameOld(oldName);
-            uploadFile.setFileNameNew(newName);
-            uploadFile.setFileSize(fileSize);
-            uploadFile.setFileSizeStr(FileTools.formatFileSize(fileSize));
-            uploadFile.setFileSuffix(extension);
-            uploadFile.setFilePath(filePath);
-            uploadFile.setFileMd5(md5);
-            uploadFile.setFileSha1(sha1);
-
-            // 将文件存入数据库
+            uploadFile.setFileNameOld(fileName);
+            uploadFile.setFileNameNew(storageFile.getFileNameNew());
+            uploadFile.setFileSize(storageFile.getLength());
+            uploadFile.setFileSizeStr(FileTools.formatFileSize(storageFile.getLength()));
+            uploadFile.setFileSuffix(FileTools.getFileExtension(fileName));
+            uploadFile.setFilePath(storageFile.getFileId());
+            uploadFile.setFileMd5(storageFile.getMd5());
+            uploadFile.setFileSha1(storageFile.getSha1());
             this.uploadFileMapper.insert(uploadFile);
-
             return BeanConvertUtils.convertTo(uploadFile, UploadFileVo::new);
         } catch (IOException e) {
             log.error("UploadFileService -- putBase64 -- IOException = {e}", e);
@@ -181,15 +133,17 @@ public class UploadFileService {
         if (Objects.isNull(uploadFile)) {
             throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
         }
-        try (ServletOutputStream outputStream = response.getOutputStream()) {
-            // 获取文件路径
-            String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
-            Path filePath = Paths.get(realpath);
+        StorageStreamFile storageStreamFile = storageService.findById(uploadFile.getFilePath());
+        if (storageStreamFile == null) {
+            throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
+        }
+        try (ServletOutputStream outputStream = response.getOutputStream();
+             InputStream inputStream = storageStreamFile.getInputStream()) {
             // 设置文件下载方式：附件下载
             response.setHeader("content-disposition", "attachment;fileName=" + URLEncoder.encode(uploadFile.getFileNameOld(), "UTF-8"));
             response.setContentLengthLong(uploadFile.getFileSize());
             // 下载文件
-            Files.copy(filePath, outputStream);
+            IOUtils.copy(inputStream, outputStream);
         } catch (Exception e) {
             log.error("下载fileId为: " + id + " 的文件出现异常", e);
             throw new CoreException(CoreErrorCode.FILE_DOWNLOAD_FAILED);
@@ -203,10 +157,8 @@ public class UploadFileService {
         if (Objects.isNull(uploadFile)) {
             throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
         }
-        // 获取文件路径
-        String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
         try {
-            Files.deleteIfExists(Paths.get(realpath));
+            storageService.deleteById(uploadFile.getFilePath());
             // 删除数据库信息
             int num = this.uploadFileMapper.deleteById(id);
             return num > 0;
@@ -230,10 +182,11 @@ public class UploadFileService {
         if (Objects.isNull(uploadFile)) {
             throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
         }
-        // 获取文件路径
-        String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
-        Path filePath = Paths.get(realpath);
-        try (InputStream inputStream = Files.newInputStream(filePath);
+        StorageStreamFile storageStreamFile = storageService.findById(uploadFile.getFilePath());
+        if (storageStreamFile == null) {
+            throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
+        }
+        try (InputStream inputStream = storageStreamFile.getInputStream();
              ServletOutputStream outputStream = response.getOutputStream()) {
 
             // 设置文件下载方式：附件下载
@@ -250,7 +203,7 @@ public class UploadFileService {
                         .toOutputStream(outputStream);
             } else {
                 // 下载文件
-                Files.copy(filePath, outputStream);
+                IOUtils.copy(inputStream, outputStream);
             }
         } catch (Exception e) {
             log.error("下载fileId为: " + id + " 的文件出现异常", e);
@@ -272,10 +225,11 @@ public class UploadFileService {
         if (Objects.isNull(uploadFile)) {
             throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
         }
-        // 获取文件路径
-        String realpath = applicationConfig.getUploadPath() + uploadFile.getFilePath();
-        Path filePath = Paths.get(realpath);
-        try (InputStream inputStream = Files.newInputStream(filePath);
+        StorageStreamFile storageStreamFile = storageService.findById(uploadFile.getFilePath());
+        if (storageStreamFile == null) {
+            throw new CoreException(CoreErrorCode.FILE_NOT_EXIST);
+        }
+        try (InputStream inputStream = storageStreamFile.getInputStream();
              ServletOutputStream outputStream = response.getOutputStream()) {
 
             // 设置文件为预览
@@ -291,7 +245,7 @@ public class UploadFileService {
                         .toOutputStream(outputStream);
             } else {
                 // 下载文件
-                Files.copy(filePath, outputStream);
+                IOUtils.copy(inputStream, outputStream);
             }
         } catch (Exception e) {
             log.error("下载fileId为: " + id + " 的文件出现异常", e);

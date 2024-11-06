@@ -2,7 +2,6 @@ package org.tinycloud.tinymock.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -126,25 +125,6 @@ public class FileTools {
         return bimage;
     }
 
-
-    /**
-     * 获取文件的MD5值
-     *
-     * @param file MultipartFile
-     * @return 字符串
-     */
-    public static String getFileMD5(MultipartFile file) {
-        String fileMd5 = "";
-        try {
-            //获取文件的byte信息
-            byte[] uploadBytes = file.getBytes();
-            fileMd5 = DigestUtils.md5Hex(uploadBytes);
-        } catch (Exception e) {
-            fileMd5 = UUID.randomUUID().toString().replace("-", "");
-        }
-        return fileMd5;
-    }
-
     /**
      * 获取文件的MD5值
      *
@@ -155,24 +135,6 @@ public class FileTools {
         String fileMd5 = "";
         try {
             fileMd5 = DigestUtils.md5Hex(uploadBytes);
-        } catch (Exception e) {
-            fileMd5 = UUID.randomUUID().toString().replace("-", "");
-        }
-        return fileMd5;
-    }
-
-    /**
-     * 获取文件的SHA1值
-     *
-     * @param file MultipartFile
-     * @return 字符串
-     */
-    public static String getFileSHA1(MultipartFile file) {
-        String fileMd5 = "";
-        try {
-            //获取文件的byte信息
-            byte[] uploadBytes = file.getBytes();
-            fileMd5 = DigestUtils.sha1Hex(uploadBytes);
         } catch (Exception e) {
             fileMd5 = UUID.randomUUID().toString().replace("-", "");
         }
@@ -234,9 +196,14 @@ public class FileTools {
      * @param size 限制大小
      * @param unit 限制单位（B,K,M,G）
      */
-    public static boolean fileSizeCheck(MultipartFile file, int size, String unit) {
+    public static boolean fileSizeCheck(InputStream file, int size, String unit) {
         // 获取文件实际大小
-        long len = file.getSize();
+        long len = 0;
+        try {
+            len = file.available();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         double fileSize = 0;
         if ("B".equalsIgnoreCase(unit)) {
             fileSize = (double) len;

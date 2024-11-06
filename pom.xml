@@ -90,6 +90,12 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
+        <!-- minio对象存储工具包-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.13</version>
+        </dependency>
         <!-- zip4j压缩工具包 -->
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
@@ -100,11 +106,6 @@
             <groupId>org.openjdk.nashorn</groupId>
             <artifactId>nashorn-core</artifactId>
             <version>15.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.2.1-jre</version>
         </dependency>
     </dependencies>
 
