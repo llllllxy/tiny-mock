@@ -1,4 +1,4 @@
-package org.tinycloud.tinymock.common.utils;
+package org.tinycloud.tinymock.common.utils.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -25,6 +25,9 @@ public class IpGetUtils {
      * @return
      */
     public static String getIpAddr(HttpServletRequest request) {
+        if (request == null) {
+            return "unknown";
+        }
         String ip = request.getHeader("X-Real-IP");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("x-forwarded-for");
@@ -54,10 +57,29 @@ public class IpGetUtils {
                 }
             }
         }
-        return StrUtils.substringBefore(ip, ",");
+        return getMultistageReverseProxyIp(ip);
     }
 
 
+    /**
+     * 从多级反向代理中获得第一个非unknown IP地址
+     *
+     * @param ip 获得的IP地址
+     * @return 第一个非unknown IP地址
+     */
+    public static String getMultistageReverseProxyIp(String ip) {
+        // 多级反向代理检测
+        if (ip != null && ip.indexOf(",") > 0) {
+            String[] ips = ip.trim().split(",");
+            for (String subIp : ips) {
+                if (!(subIp == null || subIp.isEmpty() || "unknown".equalsIgnoreCase(subIp))) {
+                    ip = subIp;
+                    break;
+                }
+            }
+        }
+        return ip == null ? null : ip.substring(0, Math.min(255, ip.length()));
+    }
 
     /**
      * 校验ip是否合法，不合法的返回false
