@@ -3,6 +3,7 @@ package org.tinycloud.tinymock.common.utils.web;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinycloud.tinymock.common.utils.StrUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -57,29 +58,10 @@ public class IpGetUtils {
                 }
             }
         }
-        return getMultistageReverseProxyIp(ip);
+        return StrUtils.substringBefore(ip, ",");
     }
 
 
-    /**
-     * 从多级反向代理中获得第一个非unknown IP地址
-     *
-     * @param ip 获得的IP地址
-     * @return 第一个非unknown IP地址
-     */
-    public static String getMultistageReverseProxyIp(String ip) {
-        // 多级反向代理检测
-        if (ip != null && ip.indexOf(",") > 0) {
-            String[] ips = ip.trim().split(",");
-            for (String subIp : ips) {
-                if (!(subIp == null || subIp.isEmpty() || "unknown".equalsIgnoreCase(subIp))) {
-                    ip = subIp;
-                    break;
-                }
-            }
-        }
-        return ip == null ? null : ip.substring(0, Math.min(255, ip.length()));
-    }
 
     /**
      * 校验ip是否合法，不合法的返回false

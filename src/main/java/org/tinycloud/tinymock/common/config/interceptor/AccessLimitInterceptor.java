@@ -13,8 +13,8 @@ import org.tinycloud.tinymock.common.annotation.AccessLimit;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.CommonCode;
 import org.tinycloud.tinymock.common.exception.BusinessException;
-import org.tinycloud.tinymock.common.utils.IpGetUtils;
 import org.tinycloud.tinymock.common.utils.JacksonUtils;
+import org.tinycloud.tinymock.common.utils.web.IpGetUtils;
 
 import java.util.concurrent.TimeUnit;
 

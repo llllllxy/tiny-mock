@@ -3,6 +3,7 @@ package org.tinycloud.tinymock.modules.service;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import eu.bitwalker.useragentutils.UserAgent;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -10,15 +11,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantAuthCache;
-import org.tinycloud.tinymock.common.config.interceptor.TenantTokenUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
+import org.tinycloud.tinymock.common.config.interceptor.TenantTokenUtils;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
-import org.tinycloud.tinymock.common.utils.*;
+import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
+import org.tinycloud.tinymock.common.utils.EmailUtils;
+import org.tinycloud.tinymock.common.utils.JacksonUtils;
+import org.tinycloud.tinymock.common.utils.StrUtils;
 import org.tinycloud.tinymock.common.utils.captcha.GifCaptcha;
 import org.tinycloud.tinymock.common.utils.cipher.SM2Utils;
 import org.tinycloud.tinymock.common.utils.cipher.SM3Utils;
+import org.tinycloud.tinymock.common.utils.web.IpAddressUtils;
+import org.tinycloud.tinymock.common.utils.web.IpGetUtils;
 import org.tinycloud.tinymock.common.utils.web.UserAgentUtils;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditPasswordDto;
@@ -30,10 +36,10 @@ import org.tinycloud.tinymock.modules.bean.vo.TenantCaptchaCodeVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoVo;
 import org.tinycloud.tinymock.modules.mapper.TenantMapper;
 
-
-import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
