@@ -219,11 +219,14 @@ public class StrUtils {
      * @return 输出字符串
      */
     public static String substringBefore(String str, String separator) {
-        if (isEmpty(str) && separator != null) {
+        if (!isEmpty(str) && separator != null) {
             if (separator.isEmpty()) {
                 return "";
             } else {
                 int pos = str.indexOf(separator);
+
+                System.out.println(pos);
+
                 return pos == -1 ? str : str.substring(0, pos);
             }
         } else {
