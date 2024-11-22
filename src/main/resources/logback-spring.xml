@@ -27,13 +27,13 @@
             <fileNamePattern>${LOG_PATH}/application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>7</maxHistory><!-- 保存7天  -->
             <maxFileSize>50MB</maxFileSize><!-- 日志文件过大会使的编辑器打开非常慢，因此设置日志最大50MB -->
-            <totalSizeCap>20GB</totalSizeCap><!-- 总日志大小 -->
+            <totalSizeCap>5GB</totalSizeCap><!-- 总日志大小 -->
         </rollingPolicy>
     </appender>
 
     <!--全局应用该日志配置-->
     <root level="INFO">
-        <appender-ref ref = "CONSOLE"/>
-        <appender-ref ref = "APPLICATION"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="APPLICATION"/>
     </root>
 </configuration>
