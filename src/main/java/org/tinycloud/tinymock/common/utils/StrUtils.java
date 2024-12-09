@@ -224,9 +224,6 @@ public class StrUtils {
                 return "";
             } else {
                 int pos = str.indexOf(separator);
-
-                System.out.println(pos);
-
                 return pos == -1 ? str : str.substring(0, pos);
             }
         } else {
