@@ -48,7 +48,10 @@ public class ApplicationConfig {
      * 租户系统会话时长
      */
     @Value("${tinymock.tenantAuthTimeout:1800}")
-    private Integer tenantAuthTimeout = 1800;
+    private Integer tenantAuthTimeout;
+
+    @Value("${tinymock.maximumConcurrentLogins:2}")
+    private Integer maximumConcurrentLogins;
 
     /**
      * 项目导出备份加密密钥（sm4）
@@ -136,5 +139,13 @@ public class ApplicationConfig {
 
     public void setJwtSecret(String jwtSecret) {
         this.jwtSecret = jwtSecret;
+    }
+
+    public Integer getMaximumConcurrentLogins() {
+        return maximumConcurrentLogins;
+    }
+
+    public void setMaximumConcurrentLogins(Integer maximumConcurrentLogins) {
+        this.maximumConcurrentLogins = maximumConcurrentLogins;
     }
 }
