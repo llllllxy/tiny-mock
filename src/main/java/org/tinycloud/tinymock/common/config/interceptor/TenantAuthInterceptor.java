@@ -14,8 +14,10 @@ import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.JacksonUtils;
+import org.tinycloud.tinymock.common.utils.JwtUtils;
 import org.tinycloud.tinymock.common.utils.StrUtils;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -51,11 +53,26 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 先判断token是否为空
+        // 第1步：先判断token是否为空
         String token = TenantTokenUtils.getToken(request);
         if (StrUtils.isBlank(token)) {
             throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
         }
+        // 第2步：校验token的格式是否正确
+        if (token.startsWith(GlobalConstant.TOKEN_PREFIX)) {
+            // 去除TOKEN_PREFIX
+            token = token.replace(GlobalConstant.TOKEN_PREFIX, "");
+        } else { // token不是以TOKEN_PREFIX开头的，不合格
+            throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
+        }
+        // 第3步：校验token是不是伪造的
+        Map<String, String> claims = JwtUtils.getClaims(applicationConfig.getJwtSecret(), token);
+        if (Objects.isNull(claims)) {
+            throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
+        }
+        // 从jwt的Payload里获取auth_token，这是会话的redis-key，它在redis里面存着用户信息，包括userId，username等
+        token = claims.get("token");
+
         // 再判断token是否存在
         String tenantInfoString = redisTemplate.opsForValue().get(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
         if (StrUtils.isBlank(tenantInfoString)) {

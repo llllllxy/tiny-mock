@@ -57,6 +57,12 @@ public class ApplicationConfig {
     private String projectExportDek;
 
     /**
+     * jwt密钥
+     */
+    @Value("${tinymock.jwtSecret}")
+    private String jwtSecret;
+
+    /**
      * minio-地址
      */
     @Value("${tinymock.minio.endpoint}")
@@ -122,5 +128,13 @@ public class ApplicationConfig {
 
     public String getMinioBucket() {
         return minioBucket;
+    }
+
+    public String getJwtSecret() {
+        return jwtSecret;
+    }
+
+    public void setJwtSecret(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
     }
 }

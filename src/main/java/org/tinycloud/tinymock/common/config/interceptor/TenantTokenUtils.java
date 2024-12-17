@@ -27,9 +27,9 @@ public class TenantTokenUtils {
         String token = "";
         if (request != null) {
             // 从请求中获取token，先从Header里取，取不到的话再从cookie里取（适配前后端分离的模式）
-            token = request.getHeader(GlobalConstant.TENANT_TOKEN_KEY);
+            token = request.getHeader(GlobalConstant.TENANT_TOKEN_HEADER_KEY);
             if (StrUtils.isBlank(token)) {
-                token = CookieUtils.getCookie(request, GlobalConstant.TENANT_TOKEN_KEY);
+                token = CookieUtils.getCookie(request, GlobalConstant.TENANT_TOKEN_HEADER_KEY);
             }
         }
         return token;
@@ -45,9 +45,9 @@ public class TenantTokenUtils {
         String token = "";
         if (request != null) {
             // 从请求中获取token，先从Header里取，取不到的话再从cookie里取（适配前后端分离的模式）
-            token = request.getHeader(GlobalConstant.TENANT_TOKEN_KEY);
+            token = request.getHeader(GlobalConstant.TENANT_TOKEN_HEADER_KEY);
             if (StrUtils.isBlank(token)) {
-                token = CookieUtils.getCookie(request, GlobalConstant.TENANT_TOKEN_KEY);
+                token = CookieUtils.getCookie(request, GlobalConstant.TENANT_TOKEN_HEADER_KEY);
             }
         }
         return token;

@@ -12,6 +12,7 @@ tinymock:
   tenantAuthTimeout: 1800
   # 项目导出备份加密密钥（sm4）
   projectExportDek: Sq91g702s71/q6yUaAsgTw==
+  JwtSecret: K$N)A3*sGGf<wo*22*%&(DF
   storageType: local
   minio:
     endpoint: http://127.0.0.1:9000

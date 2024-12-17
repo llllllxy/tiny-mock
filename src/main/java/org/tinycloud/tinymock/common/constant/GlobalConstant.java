@@ -53,6 +53,17 @@ public class GlobalConstant {
     /**
      * 租户token key
      */
-    public static final String TENANT_TOKEN_KEY = "token";
+    public static final String TENANT_TOKEN_HEADER_KEY = "Authorization";
+
+    /**
+     * 租户token  令牌前缀
+     */
+    public static final String TOKEN_PREFIX = "Bearer ";
+
+
+    /**
+     * 租户登陆记录缓存 redis key
+     */
+    public static final String TENANT_NAME_REDIS_KEY = "tinymock:tenant:name:";
 
 }

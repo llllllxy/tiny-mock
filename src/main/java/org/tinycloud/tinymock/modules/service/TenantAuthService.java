@@ -16,10 +16,7 @@ import org.tinycloud.tinymock.common.config.interceptor.TenantTokenUtils;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
-import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
-import org.tinycloud.tinymock.common.utils.EmailUtils;
-import org.tinycloud.tinymock.common.utils.JacksonUtils;
-import org.tinycloud.tinymock.common.utils.StrUtils;
+import org.tinycloud.tinymock.common.utils.*;
 import org.tinycloud.tinymock.common.utils.captcha.GifCaptcha;
 import org.tinycloud.tinymock.common.utils.cipher.SM2Utils;
 import org.tinycloud.tinymock.common.utils.cipher.SM3Utils;
@@ -134,9 +131,12 @@ public class TenantAuthService {
         }
 
         // 构建会话token进行返回
-        String token = "tinymock_" + UUID.randomUUID().toString().trim().replaceAll("-", "");
+        Map<String, String> payload = new HashMap<>();
+        payload.put("token", UUID.randomUUID().toString().trim().replaceAll("-", ""));
+        String jwtToken = JwtUtils.sign(applicationConfig.getJwtSecret(), applicationConfig.getName(), payload);
+
         TenantAuthCache tenantAuthCache = BeanConvertUtils.convertTo(entity, TenantAuthCache::new);
-        tenantAuthCache.setToken(token);
+        tenantAuthCache.setToken(jwtToken);
         UserAgent userAgent = UserAgentUtils.getUserAgent(request);
         tenantAuthCache.setBrowser(userAgent.getBrowser().getName());
         tenantAuthCache.setOs(userAgent.getOperatingSystem().getName());
@@ -146,9 +146,8 @@ public class TenantAuthService {
         long currentTime = System.currentTimeMillis();
         tenantAuthCache.setLoginTime(currentTime);
         tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
-
-        return token;
+        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + jwtToken, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+        return GlobalConstant.TOKEN_PREFIX + jwtToken;
     }
 
     public Boolean logout(HttpServletRequest request) {
