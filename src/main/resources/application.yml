@@ -14,7 +14,7 @@ tinymock:
   maximumConcurrentLogins: 2
   # 项目导出备份加密密钥（sm4）
   projectExportDek: Sq91g702s71/q6yUaAsgTw==
-  JwtSecret: K$N)A3*sGGf<wo*22*%&(DF
+  jwtSecret: K$N)A3*sGGf<wo*22*%&(DF
   storageType: local
   minio:
     endpoint: http://127.0.0.1:9000
@@ -104,3 +104,38 @@ async:
       max-pool-size: 10 #配置最大线程数
       name-prefix: async-service- #配置线程池中的线程的名称前缀
       queue-capacity: 100 #配置队列大小
+
+
+# 1、redisson单机模式配置
+redisson:
+  mode: single
+  address: redis://127.0.0.1:6379
+  password: 123654
+  timeout: 5000
+  connectTimeout: 5000
+  connectionPoolSize: 64
+  connectionMinimumIdleSize: 10
+
+
+# 2、redisson哨兵模式配置
+# redisson:
+#  mode: sentinel
+#  masterName: mymaster
+#  sentinelAddresses: redis://127.0.0.1:6379,redis://127.0.0.1:6380,redis://127.0.0.1:6381
+#  password: 123654
+#  connectTimeout: 5000
+#  timeout: 5000
+#  connectionMinimumIdleSize: 10
+#  slaveConnectionPoolSize: 64
+#  masterConnectionPoolSize: 64
+
+# 3、redisson集群模式配置
+# redisson:
+#  mode: cluster
+#  nodes: redis://127.0.0.1:6379,redis://127.0.0.1:6380,redis://127.0.0.1:6381,redis://127.0.0.1:6382,
+#  password: 123654
+#  connectTimeout: 5000
+#  timeout: 5000
+#  connectionMinimumIdleSize: 10
+#  slaveConnectionPoolSize: 64
+#  masterConnectionPoolSize: 64

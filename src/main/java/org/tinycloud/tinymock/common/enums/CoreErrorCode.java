@@ -13,6 +13,8 @@ public enum CoreErrorCode {
     FILE_NOT_EXIST(2002, "文件不存在！"),
     FILE_DOWNLOAD_FAILED(2003, "文件下载失败，请联系系统管理员！"),
     FILE_DELETE_FAILED(2004, "文件删除失败，请联系系统管理员！"),
+
+    GET_REDISSON_LOCK_FAILED(2005, "获取同步锁失败，请稍后再试！"),
     ;
 
     private Integer code;

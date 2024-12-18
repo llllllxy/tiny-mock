@@ -13,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantAuthCache;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
-import org.tinycloud.tinymock.common.config.interceptor.TenantTokenUtils;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
@@ -129,36 +128,38 @@ public class TenantAuthService {
             throw new TenantException(TenantErrorCode.TENANT_USERNAME_OR_PASSWORD_MISMATCH);
         }
 
-        // 到此，密码已校验成功，开始校验最大并发登录数量
-        List<String> tokenList = this.clearNotExistsToken(username);
-        if (tokenList.size() >= applicationConfig.getMaximumConcurrentLogins()) {
-            throw new TenantException(TenantErrorCode.MAXIMUM_LOGIN_CONCURRENCY_HAS_EXCEEDED_THE_LIMIT);
-        }
+        // 到此，密码已校验成功，开始校验最大并发登录数量，此处加分布式锁控制，防止同时登陆同一账号时出现问题，概率很小
+        return GetRedissonLock.execute(() -> {
+            List<String> tokenList = this.clearNotExistsToken(username);
+            if (tokenList.size() >= applicationConfig.getMaximumConcurrentLogins()) {
+                throw new TenantException(TenantErrorCode.MAXIMUM_LOGIN_CONCURRENCY_HAS_EXCEEDED_THE_LIMIT);
+            }
 
-        // 构建会话token进行返回
-        Map<String, String> payload = new HashMap<>();
-        String token = UUID.randomUUID().toString().trim().replaceAll("-", "");
-        payload.put("token", token);
-        String jwtToken = JwtUtils.sign(applicationConfig.getJwtSecret(), applicationConfig.getName(), payload);
+            // 构建会话token进行返回
+            Map<String, String> payload = new HashMap<>();
+            String token = UUID.randomUUID().toString().trim().replaceAll("-", "");
+            payload.put("token", token);
+            String jwtToken = JwtUtils.sign(applicationConfig.getJwtSecret(), applicationConfig.getName(), payload);
 
-        TenantAuthCache tenantAuthCache = BeanConvertUtils.convertTo(entity, TenantAuthCache::new);
-        tenantAuthCache.setToken(token);
-        UserAgent userAgent = UserAgentUtils.getUserAgent(request);
-        tenantAuthCache.setBrowser(userAgent.getBrowser().getName());
-        tenantAuthCache.setOs(userAgent.getOperatingSystem().getName());
-        String ip = IpGetUtils.getIpAddr(request);
-        tenantAuthCache.setIpAddress(ip);
-        tenantAuthCache.setIpLocation(IpAddressUtils.getAddressByIP(ip));
-        long currentTime = System.currentTimeMillis();
-        tenantAuthCache.setLoginTime(currentTime);
-        tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + jwtToken, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            TenantAuthCache tenantAuthCache = BeanConvertUtils.convertTo(entity, TenantAuthCache::new);
+            tenantAuthCache.setToken(token);
+            UserAgent userAgent = UserAgentUtils.getUserAgent(request);
+            tenantAuthCache.setBrowser(userAgent.getBrowser().getName());
+            tenantAuthCache.setOs(userAgent.getOperatingSystem().getName());
+            String ip = IpGetUtils.getIpAddr(request);
+            tenantAuthCache.setIpAddress(ip);
+            tenantAuthCache.setIpLocation(IpAddressUtils.getAddressByIP(ip));
+            long currentTime = System.currentTimeMillis();
+            tenantAuthCache.setLoginTime(currentTime);
+            tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
+            this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
 
-        // 记录此账号同时在线记录
-        tokenList.add(token);
-        this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + username, JacksonUtils.toJsonString(tokenList));
+            // 记录此账号同时在线记录
+            tokenList.add(token);
+            this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + username, JacksonUtils.toJsonString(tokenList));
 
-        return GlobalConstant.TOKEN_PREFIX + jwtToken;
+            return GlobalConstant.TOKEN_PREFIX + jwtToken;
+        }, "LOGIN_LOCK_KEY_" + username, 3, 10);
     }
 
 
@@ -173,17 +174,12 @@ public class TenantAuthService {
         if (StrUtils.isNotEmpty(tokenListStr)) {
             tokenList = JacksonUtils.readList(tokenListStr, String.class);
             if (!CollectionUtils.isEmpty(tokenList)) {
-                for (String token : tokenList) {
-                    // 如果已经不存在了，那么清除
-                    if (Boolean.FALSE.equals(this.stringRedisTemplate.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token))) {
-                        tokenList.removeIf(s -> s.equals(token));
-                    }
-                }
-                if (CollectionUtils.isEmpty(tokenList)) {
-                    this.stringRedisTemplate.delete(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
-                } else {
-                    this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, JacksonUtils.toJsonString(tokenList));
-                }
+                tokenList.removeIf(token -> Boolean.FALSE.equals(this.stringRedisTemplate.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token)));
+            }
+            if (CollectionUtils.isEmpty(tokenList)) {
+                this.stringRedisTemplate.delete(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
+            } else {
+                this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, JacksonUtils.toJsonString(tokenList));
             }
         }
         if (CollectionUtils.isEmpty(tokenList)) {
