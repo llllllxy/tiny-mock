@@ -19,11 +19,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.tinycloud.tinymock.common.annotation.OperLog;
+import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.OperResultCode;
 import org.tinycloud.tinymock.common.enums.OperatorType;
+import org.tinycloud.tinymock.common.utils.DateUtils;
 import org.tinycloud.tinymock.common.utils.JacksonUtils;
+import org.tinycloud.tinymock.common.utils.cipher.SM3Utils;
 import org.tinycloud.tinymock.common.utils.web.IpAddressUtils;
 import org.tinycloud.tinymock.common.utils.web.IpGetUtils;
 import org.tinycloud.tinymock.common.utils.web.ServletUtils;
@@ -60,6 +63,9 @@ public class OperLogAspect {
 
     @Autowired
     private OperateLogService operateLogService;
+
+    @Autowired
+    private ApplicationConfig applicationConfig;
 
     /**
      * 处理请求前执行
@@ -118,7 +124,9 @@ public class OperLogAspect {
             this.getControllerMethodDescription(joinPoint, controllerOperLog, tOperateLog, jsonResult);
             // 设置消耗时间
             tOperateLog.setCostTime(System.currentTimeMillis() - TIME_THREADLOCAL.get());
-            tOperateLog.setOperateAt(new Date(TIME_THREADLOCAL.get()));
+            tOperateLog.setOperateAt(DateUtils.format(new Date(TIME_THREADLOCAL.get()), DateUtils.DATE_TIME_MILLIS_PATTERN));
+            // 计算审计哈希值
+            this.calculateHash(tOperateLog);
             // 保存操作日志到数据库
             this.operateLogService.insert(tOperateLog);
         } catch (Exception exp) {
@@ -238,4 +246,21 @@ public class OperLogAspect {
                 || o instanceof BindingResult;
     }
 
+
+    private void calculateHash(TOperateLog tOperateLog) {
+        String macKey = applicationConfig.getProjectExportDek();
+        StringBuilder sb = new StringBuilder();
+        sb.append(tOperateLog.getCode());
+        sb.append(tOperateLog.getTitle());
+        sb.append(tOperateLog.getOperateAt());
+        sb.append(tOperateLog.getOperator());
+        sb.append(tOperateLog.getOperIp());
+        sb.append(tOperateLog.getOperUrl());
+        sb.append(tOperateLog.getMethod());
+        sb.append(tOperateLog.getOperParam());
+        sb.append(tOperateLog.getOperResult());
+        sb.append(tOperateLog.getErrorMsg());
+        sb.append(tOperateLog.getJsonResult());
+        tOperateLog.setAuditHash(SM3Utils.hmac(macKey, sb.toString()));
+    }
 }

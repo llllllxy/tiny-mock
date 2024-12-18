@@ -19,13 +19,15 @@ import java.util.Date;
 public class DateUtils {
 
     // 用来全局控制 上一周，本周，下一周的周数变化
-    private static int weeks = 0;
+    private static final int weeks = 0;
 
     public static final String DATE_PATTERN = "yyyy-MM-dd";
 
     public static final String TIME_PATTERN = "HH:mm:ss";
 
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    public static final String DATE_TIME_MILLIS_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
     /**
      * 获取当前日期 默认得时间格式 yyyy-MM-dd

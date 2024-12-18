@@ -297,8 +297,8 @@ INSERT INTO `t_upload_file` VALUES (2024085000000005822, 'questionMark.png', 'e2
 DROP TABLE IF EXISTS `t_operate_log`;
 CREATE TABLE `t_operate_log`  (
                                   `id` bigint(20) NOT NULL COMMENT '业务主键',
-                                  `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '租户账号',
-                                  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '租户密码',
+                                  `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '业务码',
+                                  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '业务名称',
                                   `method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '请求方法名称',
                                   `request_method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '请求方式',
                                   `oper_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '请求url',
@@ -308,13 +308,14 @@ CREATE TABLE `t_operate_log`  (
                                   `cost_time` bigint(20) NULL DEFAULT NULL COMMENT '花费时间',
                                   `business_type` tinyint(4) NOT NULL COMMENT '业务类型（0=其它,1=新增,2=修改,3=删除,4=授权,5=导出,6=导入,7=强退,8=生成代码,9=清空数据）',
                                   `operator_type` tinyint(4) NOT NULL COMMENT '操作类别（0其它 1管理端用户 2租户端用户）',
-                                  `operate_at` datetime(0) NOT NULL COMMENT '操作时间',
+                                  `operate_at` char(23) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '操作时间',
                                   `error_msg` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '错误消息',
                                   `oper_param` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '请求参数',
                                   `json_result` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '返回结果',
                                   `operator` bigint(20) NULL DEFAULT NULL COMMENT '操作人员',
                                   `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                   `del_flag` tinyint(4) NOT NULL COMMENT '删除标志（0--未删除1--已删除）',
+                                  `audit_hash` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '审计HASH值',
                                   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志表' ROW_FORMAT = Dynamic;
 

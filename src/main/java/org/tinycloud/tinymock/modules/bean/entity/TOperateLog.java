@@ -120,7 +120,7 @@ public class TOperateLog implements Serializable {
      * 操作时间
      */
     @TableField(value = "operate_at")
-    private Date operateAt;
+    private String operateAt;
 
     /**
      * 消耗时间
@@ -136,4 +136,10 @@ public class TOperateLog implements Serializable {
 
     @TableField("del_flag")
     private Integer delFlag;
+
+    /**
+     * 审计哈希
+     */
+    @TableField(value = "audit_hash")
+    private String auditHash;
 }

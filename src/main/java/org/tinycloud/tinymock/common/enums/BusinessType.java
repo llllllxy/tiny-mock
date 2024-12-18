@@ -57,7 +57,19 @@ public enum BusinessType {
     /**
      * 清空数据
      */
-    CLEAN(9);
+    CLEAN(9),
+
+    /**
+     * 清空数据
+     */
+    ENABLE(10),
+
+    /**
+     * 清空数据
+     */
+    DISABLE(11),
+
+    ;
 
     private Integer code;
 

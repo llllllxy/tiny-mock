@@ -3,6 +3,9 @@ package org.tinycloud.tinymock.modules.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.tinycloud.tinymock.common.annotation.OperLog;
+import org.tinycloud.tinymock.common.enums.BusinessType;
+import org.tinycloud.tinymock.common.enums.OperatorType;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectDeleteDto;
@@ -51,6 +54,7 @@ public class ProjectInfoController {
      *
      * @return
      */
+    @OperLog(title = "新增项目", code = "10001", operatorType = OperatorType.TENANT, businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public ApiResult<Boolean> add(@Validated @RequestBody ProjectAddDto dto) {
         return ApiResult.success(projectInfoService.add(dto), "新增成功!");
@@ -62,6 +66,7 @@ public class ProjectInfoController {
      *
      * @return
      */
+    @OperLog(title = "修改项目", code = "10002", operatorType = OperatorType.TENANT, businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     public ApiResult<Boolean> edit(@Validated @RequestBody ProjectEditDto dto) {
         return ApiResult.success(projectInfoService.edit(dto), "修改成功!");
@@ -72,6 +77,7 @@ public class ProjectInfoController {
      *
      * @return
      */
+    @OperLog(title = "删除项目", code = "10003", operatorType = OperatorType.TENANT, businessType = BusinessType.DELETE)
     @PostMapping("/delete")
     public ApiResult<Boolean> delete(@Validated @RequestBody ProjectDeleteDto dto) {
         return ApiResult.success(projectInfoService.delete(dto), "删除成功!");
