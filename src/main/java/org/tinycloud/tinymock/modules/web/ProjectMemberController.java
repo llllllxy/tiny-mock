@@ -3,6 +3,9 @@ package org.tinycloud.tinymock.modules.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.tinycloud.tinymock.common.annotation.OperLog;
+import org.tinycloud.tinymock.common.enums.BusinessType;
+import org.tinycloud.tinymock.common.enums.OperatorType;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberSearchDto;
@@ -28,7 +31,6 @@ public class ProjectMemberController {
 
     /**
      * 协作人列表
-     *
      */
     @GetMapping("/list")
     public ApiResult<List<ProjectMemberVo>> list(@RequestParam("projectId") Long projectId) {
@@ -37,7 +39,6 @@ public class ProjectMemberController {
 
     /**
      * 查询未绑定的协作人
-     *
      */
     @PostMapping("/search")
     public ApiResult<List<TenantInfoChooseVo>> search(@Validated @RequestBody ProjectMemberSearchDto dto) {
@@ -46,8 +47,8 @@ public class ProjectMemberController {
 
     /**
      * 删除协作人
-     *
      */
+    @OperLog(title = "删除协作人", code = "10021", operatorType = OperatorType.TENANT, businessType = BusinessType.DELETE)
     @GetMapping("/delete")
     public ApiResult<Boolean> delete(@RequestParam("id") Long id) {
         return ApiResult.success(projectMemberService.delete(id), "删除成功");
@@ -55,8 +56,8 @@ public class ProjectMemberController {
 
     /**
      * 新增协作人
-     *
      */
+    @OperLog(title = "新增协作人", code = "10022", operatorType = OperatorType.TENANT, businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public ApiResult<Boolean> add(@Validated @RequestBody ProjectMemberAddDto dto) {
         return ApiResult.success(projectMemberService.add(dto), "新增成功");

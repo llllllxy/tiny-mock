@@ -1,15 +1,16 @@
 package org.tinycloud.tinymock.modules.web;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.tinycloud.tinymock.common.annotation.OperLog;
+import org.tinycloud.tinymock.common.enums.BusinessType;
+import org.tinycloud.tinymock.common.enums.OperatorType;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.vo.UploadFileVo;
 import org.tinycloud.tinymock.modules.service.UploadFileService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -27,6 +28,7 @@ public class UploadFileController {
     @Autowired
     private UploadFileService uploadService;
 
+    @OperLog(title = "上次文件", code = "20021", operatorType = OperatorType.MANAGE, businessType = BusinessType.INSERT)
     @PostMapping("/put")
     public ApiResult<UploadFileVo> put(@RequestParam("file") MultipartFile multipartFile,
                                        @RequestParam(value = "fileName", required = false) String fileName) {

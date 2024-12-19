@@ -1,11 +1,15 @@
 package org.tinycloud.tinymock.modules.web;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tinycloud.tinymock.common.annotation.AccessLimit;
+import org.tinycloud.tinymock.common.annotation.OperLog;
+import org.tinycloud.tinymock.common.enums.BusinessType;
+import org.tinycloud.tinymock.common.enums.OperatorType;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditPasswordDto;
@@ -15,7 +19,6 @@ import org.tinycloud.tinymock.modules.bean.vo.TenantCaptchaCodeVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoVo;
 import org.tinycloud.tinymock.modules.service.TenantAuthService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,11 +47,13 @@ public class TenantAuthController {
         return ApiResult.success(tenantAuthService.getCode(), "获取验证码成功");
     }
 
+    @OperLog(title = "租户登录", code = "20001", operatorType = OperatorType.MANAGE, businessType = BusinessType.OTHER)
     @PostMapping("/login")
     public ApiResult<String> login(@Validated @RequestBody TenantLoginDto dto, HttpServletRequest request) {
         return ApiResult.success(tenantAuthService.login(dto, request), "登录成功，欢迎回来！");
     }
 
+    @OperLog(title = "租户退出登录", code = "20002", operatorType = OperatorType.TENANT, businessType = BusinessType.OTHER)
     @GetMapping("/logout")
     public ApiResult<Boolean> logout(HttpServletRequest request) {
         return ApiResult.success(tenantAuthService.logout(request), "退出登录成功！");
@@ -118,27 +123,32 @@ public class TenantAuthController {
         return ApiResult.success(tenantAuthService.getTenantInfo(), "获取租户信息成功，欢迎回来！");
     }
 
+    @OperLog(title = "租户修改信息", code = "20003", operatorType = OperatorType.TENANT, businessType = BusinessType.UPDATE)
     @PostMapping("/editTenantInfo")
     public ApiResult<Boolean> editTenantInfo(@Validated @RequestBody TenantEditDto dto) {
         return ApiResult.success(tenantAuthService.editTenantInfo(dto), "修改租户信息成功！");
     }
 
+    @OperLog(title = "租户发送邮箱验证码", code = "20004", operatorType = OperatorType.TENANT, businessType = BusinessType.OTHER)
     @GetMapping("/sendEmail")
     public ApiResult<Map<String, String>> sendEmail(@RequestParam(value = "receiveEmail") String receiveEmail) {
         return ApiResult.success(tenantAuthService.sendEmail(receiveEmail), "邮件发送成功！");
     }
 
+    @OperLog(title = "注册租户", code = "20005", operatorType = OperatorType.MANAGE, businessType = BusinessType.INSERT)
     @AccessLimit(seconds = 300, maxCount = 3, msg = "5分钟内只能注册三次，请稍后再试")
     @PostMapping("/register")
     public ApiResult<Boolean> register(@Validated @RequestBody TenantRegisterDto dto) {
         return ApiResult.success(tenantAuthService.register(dto), "注册成功！");
     }
 
+    @OperLog(title = "租户重置邀请码", code = "20006", operatorType = OperatorType.TENANT, businessType = BusinessType.UPDATE)
     @GetMapping("/refreshInvitationCode")
     public ApiResult<String> refreshInvitationCode() {
         return ApiResult.success(tenantAuthService.refreshInvitationCode(), "重置邀请码成功！");
     }
 
+    @OperLog(title = "租户修改密码", code = "20007", operatorType = OperatorType.TENANT, businessType = BusinessType.UPDATE)
     @PostMapping("/editPassword")
     public ApiResult<Boolean> editPassword(@Validated @RequestBody TenantEditPasswordDto dto) {
         return ApiResult.success(tenantAuthService.editPassword(dto), "修改密码成功，即将跳转到登录页！");

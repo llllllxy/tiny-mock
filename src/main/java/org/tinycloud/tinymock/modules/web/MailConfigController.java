@@ -24,7 +24,7 @@ public class MailConfigController {
         return ApiResult.success(mailConfigService.detail(), "获取成功");
     }
 
-    @OperLog(title = "修改邮箱配置", code = "20001", operatorType = OperatorType.MANAGE, businessType = BusinessType.INSERT)
+    @OperLog(title = "修改邮箱配置", code = "20011", operatorType = OperatorType.MANAGE, businessType = BusinessType.INSERT)
     @PostMapping("/edit")
     public ApiResult<Boolean> edit(@Validated @RequestBody MailConfigEditDto dto) {
         return ApiResult.success(mailConfigService.edit(dto), "修改成功");
