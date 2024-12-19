@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.8.2</version>
+            <version>3.19.4</version>
         </dependency>
         <!--分布式redis锁-->
         <dependency>
