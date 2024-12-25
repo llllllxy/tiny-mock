@@ -3,8 +3,6 @@ package org.tinycloud.tinymock.common.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -83,18 +81,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
-
-    /**
-     * 扩展消息转换器
-     * @param converters HttpMessageConverter
-     */
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        // 将java对象序列化为json数据，为消息转换器设置序列转换器
-        converter.setObjectMapper(new JacksonObjectMapper());
-        // 将自定义的消息转换器加入容器中
-        converters.add(0, converter);
     }
 }

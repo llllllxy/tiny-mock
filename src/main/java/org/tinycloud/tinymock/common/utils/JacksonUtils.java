@@ -755,7 +755,7 @@ public class JacksonUtils {
             super.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
             // 忽略json字符串中不识别的属性
             super.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            // 忽略无法转换的对象
+            // 忽略空对象，直接序列化为空的 {}
             super.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
             // 默认不输出null
