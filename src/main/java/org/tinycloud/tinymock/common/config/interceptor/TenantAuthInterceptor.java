@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,8 +12,8 @@ import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
-import org.tinycloud.tinymock.common.utils.JacksonUtils;
 import org.tinycloud.tinymock.common.utils.JwtUtils;
+import org.tinycloud.tinymock.common.utils.RedisUtils;
 import org.tinycloud.tinymock.common.utils.StrUtils;
 
 import java.util.Map;
@@ -34,7 +33,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
     private static final Long MILLIS_MINUTE_TEN = 10 * 60 * 1000L;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     @Autowired
     private ApplicationConfig applicationConfig;
@@ -74,13 +73,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         token = claims.get("token");
 
         // 再判断token是否存在
-        String tenantInfoString = redisTemplate.opsForValue().get(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
-        if (StrUtils.isBlank(tenantInfoString)) {
-            throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
-        }
-
-        // 再判断token是否合法
-        TenantAuthCache tenantAuthCache = JacksonUtils.readValue(tenantInfoString, TenantAuthCache.class);
+        TenantAuthCache tenantAuthCache = (TenantAuthCache) redisUtils.get(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
         if (Objects.isNull(tenantAuthCache)) {
             throw new TenantException(TenantErrorCode.TENANT_NOT_LOGIN);
         }
@@ -89,7 +82,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
             // 刷新会话缓存时长
             tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-            redisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            redisUtils.set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, (tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
         }
         TenantHolder.setTenant(tenantAuthCache);
 

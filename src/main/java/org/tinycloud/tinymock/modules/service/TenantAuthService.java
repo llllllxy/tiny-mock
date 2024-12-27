@@ -6,7 +6,6 @@ import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -49,7 +48,7 @@ import java.util.stream.Collectors;
 public class TenantAuthService {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisUtils redisUtils;
 
     @Autowired
     private ApplicationConfig applicationConfig;
@@ -83,7 +82,7 @@ public class TenantAuthService {
         String privateKey = rsaKey.get("priKey");
 
         // 将验证码和私钥，存入redis 60秒
-        this.stringRedisTemplate.opsForValue().set(codeRedisKey, String.join("&", code, privateKey), 60, TimeUnit.SECONDS);
+        this.redisUtils.set(codeRedisKey, String.join("&", code, privateKey), 60, TimeUnit.SECONDS);
 
         // 验证码图片的bae64和rsa公钥返回给前端
         TenantCaptchaCodeVo vo = new TenantCaptchaCodeVo();
@@ -101,7 +100,7 @@ public class TenantAuthService {
         String uuid = dto.getUuid();
 
         String codeRedisKey = GlobalConstant.TENANT_CAPTCHA_CODE_REDIS_KEY + uuid;
-        String redisCache = this.stringRedisTemplate.opsForValue().get(codeRedisKey);
+        String redisCache = (String) this.redisUtils.get(codeRedisKey);
         if (StrUtils.isEmpty(redisCache)) {
             throw new TenantException(TenantErrorCode.CAPTCHA_IS_MISMATCH);
         }
@@ -152,11 +151,11 @@ public class TenantAuthService {
             long currentTime = System.currentTimeMillis();
             tenantAuthCache.setLoginTime(currentTime);
             tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
-            this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, JacksonUtils.toJsonString(tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
+            this.redisUtils.set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, (tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
 
             // 记录此账号同时在线记录
             tokenList.add(token);
-            this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + username, JacksonUtils.toJsonString(tokenList));
+            this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + username, (tokenList));
 
             return GlobalConstant.TOKEN_PREFIX + jwtToken;
         }, "LOGIN_LOCK_KEY_" + username, 3, 10);
@@ -169,19 +168,16 @@ public class TenantAuthService {
      * @param tenantAccount 用户名
      */
     private List<String> clearNotExistsToken(String tenantAccount) {
-        String tokenListStr = this.stringRedisTemplate.opsForValue().get(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
-        List<String> tokenList = null;
-        if (StrUtils.isNotEmpty(tokenListStr)) {
-            tokenList = JacksonUtils.readList(tokenListStr, String.class);
-            if (!CollectionUtils.isEmpty(tokenList)) {
-                tokenList.removeIf(token -> Boolean.FALSE.equals(this.stringRedisTemplate.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token)));
-            }
-            if (CollectionUtils.isEmpty(tokenList)) {
-                this.stringRedisTemplate.delete(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
-            } else {
-                this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, JacksonUtils.toJsonString(tokenList));
-            }
+        List<String> tokenList = (List) this.redisUtils.get(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
+        if (!CollectionUtils.isEmpty(tokenList)) {
+            tokenList.removeIf(token -> Boolean.FALSE.equals(this.redisUtils.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token)));
         }
+        if (CollectionUtils.isEmpty(tokenList)) {
+            this.redisUtils.del(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
+        } else {
+            this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, (tokenList));
+        }
+
         if (CollectionUtils.isEmpty(tokenList)) {
             tokenList = new ArrayList<>();
         }
@@ -191,18 +187,17 @@ public class TenantAuthService {
     public Boolean logout(HttpServletRequest request) {
         String token = TenantHolder.getTenant().getToken();
         // 先清除token
-        this.stringRedisTemplate.delete(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
+        this.redisUtils.del(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
         // 再清除登录记录
-        String tokenListStr = this.stringRedisTemplate.opsForValue().get(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
-        if (StrUtils.isNotEmpty(tokenListStr)) {
-            List<String> tokenList = JacksonUtils.readList(tokenListStr, String.class);
+        List<String> tokenList = (List) this.redisUtils.get(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
+        if (!CollectionUtils.isEmpty(tokenList)) {
             tokenList = tokenList.stream()
                     .filter(s -> !s.equals(token))
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(tokenList)) {
-                this.stringRedisTemplate.delete(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
+                this.redisUtils.del(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
             } else {
-                this.stringRedisTemplate.opsForValue().set(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount(), JacksonUtils.toJsonString(tokenList));
+                this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount(), (tokenList));
             }
         }
         return true;
@@ -261,7 +256,7 @@ public class TenantAuthService {
                 new String[]{receiveEmail}, emailTitle, emailMsg);
 
         // 将验证码和私钥，存入redis 60秒
-        this.stringRedisTemplate.opsForValue().set(codeRedisKey, String.join("&", randomCode, privateKey), 60, TimeUnit.SECONDS);
+        this.redisUtils.set(codeRedisKey, String.join("&", randomCode, privateKey), 60, TimeUnit.SECONDS);
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("publicKey", publicKey);
         result.put("uuid", uuid);
@@ -279,7 +274,7 @@ public class TenantAuthService {
         String emailCode = dto.getEmailCode();
 
         String codeRedisKey = GlobalConstant.TENANT_EMAIL_CODE_REDIS_KEY + uuid;
-        String redisCache = this.stringRedisTemplate.opsForValue().get(codeRedisKey);
+        String redisCache = (String) this.redisUtils.get(codeRedisKey);
         if (StrUtils.isEmpty(redisCache)) {
             throw new TenantException(TenantErrorCode.EMAILCODE_IS_MISMATCH);
         }
@@ -336,7 +331,7 @@ public class TenantAuthService {
         String uuid = dto.getUuid();
 
         String codeRedisKey = GlobalConstant.TENANT_CAPTCHA_CODE_REDIS_KEY + uuid;
-        String redisCache = this.stringRedisTemplate.opsForValue().get(codeRedisKey);
+        String redisCache = (String) this.redisUtils.get(codeRedisKey);
         if (StrUtils.isEmpty(redisCache)) {
             throw new TenantException(TenantErrorCode.CAPTCHA_IS_MISMATCH);
         }
