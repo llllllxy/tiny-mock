@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +21,7 @@ import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.model.PageModel;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
+import org.tinycloud.tinymock.common.utils.RedisUtils;
 import org.tinycloud.tinymock.common.utils.Zip4jUtils;
 import org.tinycloud.tinymock.common.utils.cipher.SM4Utils;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoAddDto;
@@ -31,9 +33,6 @@ import org.tinycloud.tinymock.modules.bean.enums.OperateTypeEnum;
 import org.tinycloud.tinymock.modules.bean.vo.MockInfoVo;
 import org.tinycloud.tinymock.modules.mapper.MockInfoHistoryMapper;
 import org.tinycloud.tinymock.modules.mapper.MockInfoMapper;
-
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -65,7 +64,7 @@ public class MockInfoService {
     private DataSource dataSource;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     @Autowired
     private ApplicationConfig applicationConfig;
@@ -452,6 +451,6 @@ public class MockInfoService {
     private void refreshTable(TMockInfo mockInfo) {
         // 刷新缓存
         String urlKey = mockInfo.getUrl().replace("/", "_");
-        this.redisTemplate.delete(BusinessConstant.TENANT_MOCK_REDIS_KEY + mockInfo.getProjectId() + urlKey);
+        this.redisUtils.del(BusinessConstant.TENANT_MOCK_REDIS_KEY + mockInfo.getProjectId() + urlKey);
     }
 }

@@ -6,18 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.constant.BusinessConstant;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.CoreErrorCode;
 import org.tinycloud.tinymock.common.exception.CoreException;
-import org.tinycloud.tinymock.common.utils.DataMockUtils;
-import org.tinycloud.tinymock.common.utils.JacksonUtils;
-import org.tinycloud.tinymock.common.utils.StrUtils;
-import org.tinycloud.tinymock.common.utils.ThreadUtils;
+import org.tinycloud.tinymock.common.utils.*;
 import org.tinycloud.tinymock.common.utils.web.IpAddressUtils;
 import org.tinycloud.tinymock.common.utils.web.IpGetUtils;
 import org.tinycloud.tinymock.common.utils.web.UserAgentUtils;
@@ -56,7 +51,7 @@ public class MockClientService {
     private ProjectInfoMapper projectInfoMapper;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     @Qualifier("asyncServiceExecutor")
     @Autowired
@@ -132,6 +127,7 @@ public class MockClientService {
         } catch (ScriptException e) {
             throw new CoreException(CoreErrorCode.MOCKJS_PARSING_ERROR);
         } catch (Exception e2) {
+            log.error("MockClientService mock error", e2);
             if (e2 instanceof CoreException) {
                 throw new CoreException(((CoreException) e2).getCode(), e2.getMessage());
             } else {
@@ -141,21 +137,15 @@ public class MockClientService {
     }
 
     private void checkProjectInfo(String projectId, String projectPath) {
-        String projectInfoString = this.redisTemplate.opsForValue().get(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId);
-        TProjectInfo projectInfo;
-        if (StringUtils.hasText(projectInfoString)) {
-            projectInfo = JacksonUtils.readValue(projectInfoString, TProjectInfo.class);
-        } else {
+        TProjectInfo projectInfo = (TProjectInfo) this.redisUtils.get(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId);
+        if (Objects.isNull(projectInfo)) {
             projectInfo = this.projectInfoMapper.selectOne(
                     Wrappers.<TProjectInfo>lambdaQuery().eq(TProjectInfo::getId, projectId).eq(TProjectInfo::getPath, projectPath)
                             .eq(TProjectInfo::getDelFlag, GlobalConstant.NOT_DELETED));
             if (Objects.isNull(projectInfo)) {
                 throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
             }
-            this.redisTemplate.opsForValue().set(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId, JacksonUtils.toJsonString(projectInfo), BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
-        }
-        if (Objects.isNull(projectInfo)) {
-            throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
+            this.redisUtils.set(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectId, projectInfo, BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
         }
         if (!projectPath.equals(projectInfo.getPath())) {
             throw new CoreException(CoreErrorCode.MOCK_PROJECT_PATH_IS_NOT_EXIST);
@@ -164,11 +154,8 @@ public class MockClientService {
 
     private TMockInfo getMockInfo(String projectId, String url) {
         String urlKey = url.replace("/", "_");
-        String mockInfoString = this.redisTemplate.opsForValue().get(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey);
-        TMockInfo mockInfo;
-        if (StringUtils.hasText(mockInfoString)) {
-            mockInfo = JacksonUtils.readValue(mockInfoString, TMockInfo.class);
-        } else {
+        TMockInfo mockInfo = (TMockInfo) this.redisUtils.get(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey);
+        if (Objects.isNull(mockInfo)) {
             mockInfo = this.mockInfoMapper.selectOne(
                     Wrappers.<TMockInfo>lambdaQuery().eq(TMockInfo::getProjectId, projectId)
                             .eq(TMockInfo::getUrl, url)
@@ -176,10 +163,7 @@ public class MockClientService {
             if (Objects.isNull(mockInfo)) {
                 throw new CoreException(CoreErrorCode.MOCK_URL_IS_NOT_EXIST);
             }
-            this.redisTemplate.opsForValue().set(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey, JacksonUtils.toJsonString(mockInfo), BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
-        }
-        if (Objects.isNull(mockInfo)) {
-            throw new CoreException(CoreErrorCode.MOCK_URL_IS_NOT_EXIST);
+            this.redisUtils.set(BusinessConstant.TENANT_MOCK_REDIS_KEY + projectId + urlKey, mockInfo, BusinessConstant.CACHE_SESSION_TIMEOUT, TimeUnit.SECONDS);
         }
         if (GlobalConstant.DISABLED.equals(mockInfo.getStatus())) {
             throw new CoreException(CoreErrorCode.MOCK_URL_IS_DISABLED);

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
@@ -13,6 +12,7 @@ import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
+import org.tinycloud.tinymock.common.utils.RedisUtils;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectAddDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectDeleteDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectEditDto;
@@ -53,7 +53,7 @@ public class ProjectInfoService {
     private MockInfoHistoryMapper mockInfoHistoryMapper;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     public List<ProjectInfoVo> query() {
         List<ProjectInfoVo> resultList = new ArrayList<>();
@@ -151,7 +151,7 @@ public class ProjectInfoService {
         wrapper.set(TProjectInfo::getIntroduce, dto.getIntroduce());
         int rows = this.projectInfoMapper.update(wrapper);
         // 刷新缓存
-        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + dto.getId());
+        this.redisUtils.del(BusinessConstant.TENANT_PROJECT_REDIS_KEY + dto.getId());
         return rows > 0;
     }
 
@@ -188,7 +188,7 @@ public class ProjectInfoService {
         this.mockInfoHistoryMapper.delete(wrapper4);
 
         // 刷新缓存
-        this.redisTemplate.delete(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectInfo.getId());
+        this.redisUtils.del(BusinessConstant.TENANT_PROJECT_REDIS_KEY + projectInfo.getId());
         return rows > 0;
     }
 }
