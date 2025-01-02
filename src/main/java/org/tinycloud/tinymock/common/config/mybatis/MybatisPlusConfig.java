@@ -5,29 +5,43 @@ import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.tinycloud.tinymock.common.utils.RedisUtils;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * <p>
- *     MybatisPlus配置
+ * MybatisPlus配置
  * </p>
  *
  * @author liuxingyu01
  * @since 2024-03-08 13:58
  */
+@Slf4j
 @Configuration
 @MapperScan({"org.tinycloud.tinymock.**.mapper"})
 public class MybatisPlusConfig {
+    
+    private static final String WORK_NODE_MAP_KEY = "tinymock:worknode_map";
 
-    private static final String WORKER_ID_KEY = "tinymock:snowflake:workerId";
-    private static final String DATA_CENTER_ID_KEY = "tinymock:snowflake:dataCenterId";
+    private static long WORKER_ID;
 
-    private static final long MAX_ID_VALUE = 31L; // workerId 和 dataCenterId 的最大值为 31
+    private static long DATACENTER_ID;
 
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
      * 分页拦截器配置
@@ -42,80 +56,100 @@ public class MybatisPlusConfig {
         return interceptor;
     }
 
+//    @Bean
+//    public IdentifierGenerator idGenerator(@Autowired StringRedisTemplate stringRedisTemplate) {
+//        // 初始化Redis脚本，设置脚本来源为classpath下的chooseWorkIdLua.lua文件
+//        DefaultRedisScript redisScript = new DefaultRedisScript();
+//        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("lua/chooseWorkIdLua.lua")));
+//        List<Long> luaResultList = null;
+//        try {
+//            // 设置脚本的返回类型为List类。
+//            redisScript.setResultType(List.class);
+//            // 执行Redis Lua脚本，获取结果。
+//            luaResultList = (ArrayList) stringRedisTemplate.execute(redisScript, null);
+//        } catch (Exception ex) {
+//            log.error("Redis Lua 脚本获取 WorkId 失败", ex);
+//        }
+//        if (!CollectionUtils.isEmpty(luaResultList)) {
+//            return new DefaultIdentifierGenerator(luaResultList.get(0), luaResultList.get(1));
+//        } else {
+//            return new DefaultIdentifierGenerator(0L, 0L);
+//        }
+//    }
+
     @Bean
-    public IdentifierGenerator idGenerator(@Autowired StringRedisTemplate stringRedisTemplate) {
-        // 这样也会有问题，会造成id的浪费，在服务重启后，会浪费一个ID
-        return new DefaultIdentifierGenerator(getWorkerId(stringRedisTemplate), getDataCenterId(stringRedisTemplate));
-    }
+    public IdentifierGenerator idGenerator() {
+        log.info("Initialization snowflake start!");
 
-
-    /**
-     * 获取 workerId，如果 Redis 中没有，则初始化
-     *
-     * @param stringRedisTemplate StringRedisTemplate
-     * @return workerId
-     */
-    private long getWorkerId(StringRedisTemplate stringRedisTemplate) {
-        // 从 Redis 获取当前 workerId
-        String workerIdStr = stringRedisTemplate.opsForValue().get(WORKER_ID_KEY);
-        if (workerIdStr == null) {
-            stringRedisTemplate.opsForValue().set(WORKER_ID_KEY, "0");
-            return 0L;
-        }
-        long workerId = Long.parseLong(workerIdStr);
-
-        // 每次递增 workerId
-        workerId = (workerId + 1) % (MAX_ID_VALUE + 1); // 让 workerId 回绕
-
-        // 保存新的 workerId 回 Redis
-        stringRedisTemplate.opsForValue().set(WORKER_ID_KEY, String.valueOf(workerId));
-
-        // 如果 workerId 达到上限，dataCenterId 增加 1
-        if (workerId == 0) {
-            incrementDataCenterId(stringRedisTemplate);
-        }
-        return workerId;
-    }
-
-
-    /**
-     * 获取 dataCenterId，如果 Redis 中没有，则初始化
-     *
-     * @param stringRedisTemplate StringRedisTemplate
-     * @return dataCenterId
-     */
-    private long getDataCenterId(StringRedisTemplate stringRedisTemplate) {
-        // 从 Redis 获取当前 dataCenterId
-        String dataCenterIdStr = stringRedisTemplate.opsForValue().get(DATA_CENTER_ID_KEY);
-        if (dataCenterIdStr != null) {
-            return Long.parseLong(dataCenterIdStr);
+        Map<Object, Object> allIdMap = redisUtils.hmGet(WORK_NODE_MAP_KEY);
+        List<Long> totalIdList;
+        if (allIdMap == null || allIdMap.isEmpty()) {
+            totalIdList = new ArrayList<>();
         } else {
-            // Redis 中没有，则初始化 dataCenterId
-            stringRedisTemplate.opsForValue().set(DATA_CENTER_ID_KEY, "0");
-            return 0L;
+            totalIdList = allIdMap.keySet().stream().map(key -> Long.parseLong(key.toString())).collect(Collectors.toList());
         }
+        log.info("Initialization snowflake totalIdList:" + totalIdList);
+
+        boolean condition = true;
+        long datacenterId = 0L;
+        long workerId = 0L;
+        while (condition) {
+            long nextTotalId;
+            do {
+                // 重新获取
+                nextTotalId = ThreadLocalRandom.current().nextLong(IdExtractor.MAX_TOTAL_ID + 1);
+            } while (totalIdList.contains(nextTotalId));
+
+            datacenterId = IdExtractor.extractDatacenterId((int) nextTotalId);
+            workerId = IdExtractor.extractWorkerId((int) nextTotalId);
+            try {
+                // 第二步、插入数据库，能插成功就行，
+                redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
+                condition = false;
+            } catch (Exception e) {
+                log.error("Other Exception : ", e);
+                throw e;
+            }
+        }
+        log.info("Initialization snowflake end!");
+        MybatisPlusConfig.WORKER_ID = workerId;
+        MybatisPlusConfig.DATACENTER_ID = datacenterId;
+        return new DefaultIdentifierGenerator(workerId, datacenterId);
     }
 
 
     /**
-     * 自增 dataCenterId，并更新 Redis
-     *
-     * @param stringRedisTemplate StringRedisTemplate
+     * 延迟60秒，后续每120秒执行一次
      */
-    private void incrementDataCenterId(StringRedisTemplate stringRedisTemplate) {
-        // 从 Redis 获取当前 dataCenterId
-        String dataCenterIdStr = stringRedisTemplate.opsForValue().get(DATA_CENTER_ID_KEY);
-        long dataCenterId = dataCenterIdStr != null ? Long.parseLong(dataCenterIdStr) : 0L;
+    @Scheduled(initialDelay = 1000 * 60, fixedDelay = 1000 * 120)
+    public void workNodeRefreshJob() {
+        log.info("WorkNodeRefresh job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        long nextTotalId = IdExtractor.generateTotalId((int) DATACENTER_ID, (int) WORKER_ID);
+        redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
+        log.info("WorkNodeRefresh job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    }
 
-        // 将 dataCenterId 增加 1
-        dataCenterId = dataCenterId + 1L;
+    /**
+     * 延迟120秒，后续每1小时执行一次
+     */
+    @Scheduled(initialDelay = 1000 * 120, fixedDelay = 1000 * 3600)
+    public void workNodeCleanJob() {
+        log.info("WorkNodeClean job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-        // 如果 dataCenterId 超过最大值（31），则抛出异常
-        if (dataCenterId > MAX_ID_VALUE) {
-            throw new IllegalArgumentException("dataCenterId can't be greater than " + MAX_ID_VALUE + " or less than 0");
+        Map<Object, Object> allIdMap = redisUtils.hmGet(WORK_NODE_MAP_KEY);
+        if (allIdMap == null || allIdMap.isEmpty()) {
+            return;
         }
+        allIdMap.forEach((hashKey, value) -> {
+            long time = Long.parseLong(value.toString());
+            // 一天的毫秒数（24小时 * 60分钟 * 60秒 * 1000毫秒）
+            long oneDayMillis = 24 * 60 * 60 * 1000;
+            // 已经一天时间没更新的，清除掉
+            if (System.currentTimeMillis() - time > oneDayMillis) {
+                redisUtils.hDel(WORK_NODE_MAP_KEY, hashKey);
+            }
+        });
 
-        // 将新的 dataCenterId 存入 Redis
-        stringRedisTemplate.opsForValue().set(DATA_CENTER_ID_KEY, String.valueOf(dataCenterId));
+        log.info("WorkNodeClean job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
 }
