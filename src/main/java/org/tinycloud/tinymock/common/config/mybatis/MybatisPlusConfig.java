@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Configuration
 @MapperScan({"org.tinycloud.tinymock.**.mapper"})
 public class MybatisPlusConfig {
-    
+
     private static final String WORK_NODE_MAP_KEY = "tinymock:worknode_map";
 
     private static long WORKER_ID;
@@ -77,6 +77,14 @@ public class MybatisPlusConfig {
 //        }
 //    }
 
+    /**
+     * <p>
+     * 自定义ID生成器配置，手动给雪花算法赋datacenterId和workerId，依赖于redis进行节点发号
+     * 需搭配下面的两个定时任务一起使用，有自动注册和清除机制
+     * </p>
+     *
+     * @return IdentifierGenerator
+     */
     @Bean
     public IdentifierGenerator idGenerator() {
         log.info("Initialization snowflake start!");
@@ -119,6 +127,7 @@ public class MybatisPlusConfig {
 
 
     /**
+     * 节点自动注册刷新定时器
      * 延迟60秒，后续每120秒执行一次
      */
     @Scheduled(initialDelay = 1000 * 60, fixedDelay = 1000 * 120)
@@ -130,6 +139,7 @@ public class MybatisPlusConfig {
     }
 
     /**
+     * 节点自动清除定时器（24小时内未刷新的视为无效节点，进行清除）
      * 延迟120秒，后续每1小时执行一次
      */
     @Scheduled(initialDelay = 1000 * 120, fixedDelay = 1000 * 3600)
