@@ -1,7 +1,7 @@
 # Tiny Mock
 # 一个基于SpringBoot开发的轻量级在线数据Mock平台
 
-![SpringBoot](https://img.shields.io/badge/springboot-3.2.9-green.svg?style=flat-square)
+![SpringBoot](https://img.shields.io/badge/springboot-3.2.12-green.svg?style=flat-square)
 ![Java](https://img.shields.io/badge/java-21-green.svg?style=flat-square)
 
 <a href="https://github.com/llllllxy/tiny-mock/stargazers"><img src="https://img.shields.io/github/stars/llllllxy/tiny-mock?style=flat-square&logo=GitHub"></a>
@@ -27,7 +27,7 @@
 
 | 依赖                 | 说明            |
 |--------------------|---------------|
-| SpringBoot 3.2.10  | 基础框架          |
+| SpringBoot 3.2.12  | 基础框架          |
 | Hikari             | 高性能数据库连接池     |
 | MyBatis-Plus 3.5.8 | MyBatis的增强ORM |
 | Redis              | 业务缓存、会话共享     |
@@ -55,7 +55,7 @@ tiny-mock
 │  │
 │  ├─init  系统初始化脚本
 │  │  
-│  ├─mapper mybatis xml文件 
+│  ├─mapper mybatis的xml文件 
 │  │  
 │  └─static 静态资源
 │      │   
@@ -101,6 +101,8 @@ tiny-mock
 │      │    │
 │      │    └─entity 实体类   
 │      │   
+│      ├─helper 业务工具类
+│      │ 
 │      ├─web 控制层
 │      │            
 │      ├─service 服务层
@@ -168,6 +170,7 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 自定义头像修改 `已完成`
 - 接口分模块管理 `未完成`
 - 成员协作功能 `已完成`
+- 操作日志记录功能 `已完成`
 
 ## 前后端分离部署示例（以windows环境举例，linux下大同小异）
 #### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
