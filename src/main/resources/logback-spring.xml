@@ -9,11 +9,11 @@
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder>
             <pattern>
                 ${CONSOLE_LOG_PATTERN}
             </pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <!-- 文件输出 -->

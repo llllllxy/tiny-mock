@@ -115,7 +115,7 @@ public class MybatisPlusConfig {
                 redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
                 condition = false;
             } catch (Exception e) {
-                log.error("Other Exception : ", e);
+                log.error("Initialization snowflake Exception : ", e);
                 throw e;
             }
         }
@@ -132,10 +132,10 @@ public class MybatisPlusConfig {
      */
     @Scheduled(initialDelay = 1000 * 60, fixedDelay = 1000 * 120)
     public void workNodeRefreshJob() {
-        log.info("WorkNodeRefresh job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("workNodeRefresh job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         long nextTotalId = IdExtractor.generateTotalId((int) DATACENTER_ID, (int) WORKER_ID);
         redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
-        log.info("WorkNodeRefresh job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("workNodeRefresh job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
 
     /**
@@ -144,7 +144,7 @@ public class MybatisPlusConfig {
      */
     @Scheduled(initialDelay = 1000 * 120, fixedDelay = 1000 * 3600)
     public void workNodeCleanJob() {
-        log.info("WorkNodeClean job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("workNodeClean job start in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         Map<Object, Object> allIdMap = redisUtils.hmGet(WORK_NODE_MAP_KEY);
         if (allIdMap == null || allIdMap.isEmpty()) {
@@ -160,6 +160,6 @@ public class MybatisPlusConfig {
             }
         });
 
-        log.info("WorkNodeClean job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("workNodeClean job end in {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
 }
