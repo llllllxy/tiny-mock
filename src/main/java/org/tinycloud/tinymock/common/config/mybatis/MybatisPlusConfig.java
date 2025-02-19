@@ -104,16 +104,21 @@ public class MybatisPlusConfig {
         while (condition) {
             long nextTotalId;
             do {
-                // 重新获取
+                // 获取随机值
                 nextTotalId = ThreadLocalRandom.current().nextLong(IdExtractor.MAX_TOTAL_ID + 1);
             } while (totalIdList.contains(nextTotalId));
 
             datacenterId = IdExtractor.extractDatacenterId((int) nextTotalId);
             workerId = IdExtractor.extractWorkerId((int) nextTotalId);
             try {
-                // 第二步、插入数据库，能插成功就行，
-                redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
-                condition = false;
+                // 再查一遍，防止启动时的并发问题
+                if (!redisUtils.hHasKey(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId))) {
+                    // 第二步、插入数据库，能插成功就行，
+                    redisUtils.hSet(WORK_NODE_MAP_KEY, String.valueOf(nextTotalId), System.currentTimeMillis());
+                    condition = false;
+                } else {
+                    totalIdList.add(nextTotalId);
+                }
             } catch (Exception e) {
                 log.error("Initialization snowflake Exception : ", e);
                 throw e;
