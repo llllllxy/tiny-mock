@@ -129,11 +129,6 @@
     </a>
 </script>
 
-<script type="text/html" id="switchTpl">
-    <input type="checkbox" name="urlStatus" value="{{= d.id }}" lay-skin="switch" lay-text="启用|停用"
-           lay-filter="statusDemo" {{=d.status== 0 ? "checked" : "" }}>
-</script>
-
 <script type="text/html" id="mockjsFlagTpl">
     {{#  if(d.mockjsFlag == '0'){ }}
     <span class="layui-badge layui-bg-blue">是</span>
@@ -432,7 +427,11 @@
                 {field: 'delay', width: '10%', title: '返回时延', align: 'center'},
                 {field: 'createdAt', title: '创建时间', width: '10%'},
                 {field: 'mockjsFlag', title: '启用mock.js', width: '10%', align: 'center', templet: '#mockjsFlagTpl'},
-                {field: 'status', title: '状态', width: '10%', align: 'center', templet: '#switchTpl'},
+                {
+                    field: 'status', title: '状态', width: '10%', align: 'center', templet: function (d) {
+                        return `<input type="checkbox" name="urlStatus" value="${d.id}" lay-skin="switch" lay-text="启用|停用" lay-filter="statusDemo" ${d.status === 0 ? "checked" : ""}>`;
+                    }
+                },
                 {field: 'remark', width: '10%', title: '备注信息'},
                 {title: '操作', width: '15%', toolbar: '#currentTableBar', align: "center"}
             ]],

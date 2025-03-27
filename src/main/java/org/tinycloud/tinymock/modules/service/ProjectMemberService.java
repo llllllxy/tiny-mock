@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
@@ -25,7 +24,6 @@ import org.tinycloud.tinymock.modules.mapper.ProjectMemberMapper;
 import org.tinycloud.tinymock.modules.mapper.TenantMapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -115,7 +113,11 @@ public class ProjectMemberService {
                 .and(i -> i.eq(TTenant::getTenantAccount, dto.getKeyword())
                         .or()
                         .eq(TTenant::getTenantName, dto.getKeyword())));
-        return BeanConvertUtils.convertListTo(tenantList, TenantInfoChooseVo::new);
+        List<TenantInfoChooseVo> list = BeanConvertUtils.convertListTo(tenantList, TenantInfoChooseVo::new);
+        return list.stream().map(x -> {
+            x.setTenantAccount(x.getTenantAccount() + "(" + x.getTenantName() + ")");
+            return x;
+        }).collect(Collectors.toList());
     }
 
 

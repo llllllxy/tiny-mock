@@ -27,7 +27,7 @@ public class OperateLogService {
 
     public void insert(TOperateLog operLog) {
         this.threadPoolTaskExecutor.execute(() -> {
-            // 插入操作日志
+            // 异步插入操作日志
             this.operateLogMapper.insert(operLog);
         });
     }
