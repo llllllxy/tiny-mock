@@ -1,12 +1,11 @@
 package org.tinycloud.tinymock.modules.bean.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -45,7 +44,8 @@ public class MockInfoAddDto implements Serializable {
     @Min(value = 0, message = "返回延时最小为0")
     private Long delay;
 
-    @Min(value = 0, message = "`是否开启mockjs模拟随机数据`参数错误")
+    @NotNull(message = "是否开启mockjs模拟随机数据参数不能为空")
+    @Min(value = 0, message = "是否开启mockjs模拟随机数据参数错误")
     private Integer mockjsFlag;
 
     @Length(max = 255, min = 0, message = "备注信息不能超过255个字符")

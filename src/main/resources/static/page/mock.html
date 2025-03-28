@@ -129,14 +129,6 @@
     </a>
 </script>
 
-<script type="text/html" id="mockjsFlagTpl">
-    {{#  if(d.mockjsFlag == '0'){ }}
-    <span class="layui-badge layui-bg-blue">是</span>
-    {{#  } else { }}
-    <span class="layui-badge layui-bg-orange">否</span>
-    {{#  } }}
-</script>
-
 <script type="text/html" id="addDialog">
     <div class="layuimini-form">
         <form class="layui-form" action="" lay-filter="add-form" id="add-form">
@@ -151,10 +143,7 @@
                 <label class="layui-form-label required">请求方式</label>
                 <div class="layui-input-block">
                     <select name="method" lay-filter="method" lay-verify="required" lay-reqtext="请求方式不能为空">
-                        <option value="POST">POST</option>
-                        <option value="GET">GET</option>
-                        <option value="GET">PUT</option>
-                        <option value="GET">DELETE</option>
+
                     </select>
                 </div>
             </div>
@@ -182,7 +171,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">开启Mock.js</label>
                 <div class="layui-input-block">
-                    <input type="checkbox" name="mockjsFlag" value="0" lay-skin="switch" lay-filter="switchFlag"
+                    <input type="checkbox" name="mockjsFlag" value="0" lay-skin="switch" lay-filter="mockjsFlag"
                            title="是|否">
                 </div>
             </div>
@@ -236,10 +225,6 @@
                 <label class="layui-form-label required">请求方式</label>
                 <div class="layui-input-block">
                     <select name="method" lay-filter="method" lay-verify="required" lay-reqtext="请求方式不能为空">
-                        <option value="POST">POST</option>
-                        <option value="GET">GET</option>
-                        <option value="GET">PUT</option>
-                        <option value="GET">DELETE</option>
                     </select>
                 </div>
             </div>
@@ -252,25 +237,21 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">接口路径</label>
                 <div class="layui-input-block">
-                    <input type="text" name="url" lay-verify="required" lay-reqtext="接口路径不能为空"
-                           placeholder="请输入接口路径" value="" class="layui-input">
+                    <input type="text" name="url" lay-verify="required" lay-reqtext="接口路径不能为空" placeholder="请输入接口路径" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">返回延时</label>
                 <div class="layui-input-block">
-                    <input type="number" name="delay" lay-affix="number" placeholder="请输入返回延时" class="layui-input"
-                           step="1" min="0">
+                    <input type="number" name="delay" lay-affix="number" placeholder="请输入返回延时" class="layui-input" step="1" min="0">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">开启Mock.js</label>
                 <div class="layui-input-block">
-                    <input type="checkbox" name="mockjsFlag" value="0" lay-skin="switch" lay-filter="switchFlag"
-                           title="是|否">
+                    <input type="checkbox" name="mockjsFlag" lay-filter="mockjsFlag" value="0" lay-skin="switch" title="是|否">
                 </div>
             </div>
-
             <div class="layui-row">
                 <div class="layui-col-md11">
                     <div class="layui-form-item layui-form-text">
@@ -418,7 +399,11 @@
             cols: [[
                 {type: 'numbers', width: '5%', title: '#', align: 'center'},
                 {field: 'mockName', width: '10%', title: '接口名称'},
-                {field: 'method', width: '5%', title: '请求类型'},
+                {
+                    field: 'method', width: '7%', title: '请求类型', templet: function (d) {
+                        return showDictValue("mock_info_method", d.method);
+                    }
+                },
                 {
                     field: 'url', width: '15%', title: 'URL', templet: function (d) {
                         return `<a href="javascript:;" class="layuimini-link" lay-event="copy" onmouseover="showTip(this)" onmouseleave="closeTip(this)">${d.url}</a>`
@@ -426,14 +411,18 @@
                 },
                 {field: 'delay', width: '10%', title: '返回时延', align: 'center'},
                 {field: 'createdAt', title: '创建时间', width: '10%'},
-                {field: 'mockjsFlag', title: '启用mock.js', width: '10%', align: 'center', templet: '#mockjsFlagTpl'},
+                {
+                    field: 'mockjsFlag', title: '启用mock.js', width: '10%', align: 'center', templet: function (d) {
+                        return showDictValue("mock_info_mockjs_flag", d.mockjsFlag);
+                    }
+                },
                 {
                     field: 'status', title: '状态', width: '10%', align: 'center', templet: function (d) {
                         return `<input type="checkbox" name="urlStatus" value="${d.id}" lay-skin="switch" lay-text="启用|停用" lay-filter="statusDemo" ${d.status === 0 ? "checked" : ""}>`;
                     }
                 },
                 {field: 'remark', width: '10%', title: '备注信息'},
-                {title: '操作', width: '15%', toolbar: '#currentTableBar', align: "center"}
+                {fixed: 'right', title: '操作', width: 200, toolbar: '#currentTableBar', align: "center"}
             ]],
             autoSort: false,
             limits: [10, 15, 20, 25, 50, 100],
@@ -520,6 +509,9 @@
                     area: '780px', // 宽度580, 高度自适应
                     content: $('#addDialog').html(),
                     success: function (layero, dIndex) {
+                        generateSelect("mock_info_method", layero.find("[name='method']"));
+                        updateSwitchAttributes("mock_info_mockjs_flag", layero.find("[name='mockjsFlag']"));
+
                         form.render(null, 'add-form');
                         form.val('add-form', {
                             "mockjsFlag": true,
@@ -542,6 +534,9 @@
 
                         // 表单提交事件
                         form.on('submit(addSaveBtn)', function (data) {
+                            if (!data.field.mockjsFlag) {
+                                data.field.mockjsFlag = 1;
+                            }
                             miniAjax.postJSON({
                                 url: '/mockinfo/add',
                                 data: JSON.stringify(Object.assign({}, data.field, {'projectId': projectId})),
@@ -586,6 +581,9 @@
                     area: '780px', // 宽度580, 高度自适应
                     content: $('#editDialog').html(),
                     success: function (layero, dIndex) {
+                        generateSelect("mock_info_method", layero.find("[name='method']"));
+                        updateSwitchAttributes("mock_info_mockjs_flag", layero.find("[name='mockjsFlag']"));
+
                         // 回显表单数据
                         form.render(null, 'edit-form');
                         form.val('edit-form', lineData);

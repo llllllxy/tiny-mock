@@ -202,6 +202,82 @@
             }
         });
 
+
+        var dictData = {
+            "mock_info_method": {
+                dictCode: "mock_info_method",
+                    list: [
+                    {
+                        "dictKey": "GET",
+                        "dictValue": "GET"
+                    },
+                    {
+                        "dictKey": "POST",
+                        "dictValue": "POST"
+                    },
+                    {
+                        "dictKey": "PUT",
+                        "dictValue": "PUT"
+                    },
+                    {
+                        "dictKey": "DELETE",
+                        "dictValue": "DELETE"
+                    },
+                ],
+                map: {
+                    "GET": {
+                        "dictKey": "GET",
+                        "dictValue": "GET",
+                        "background": "orange"
+                    },
+                    "POST": {
+                        "dictKey": "POST",
+                        "dictValue": "POST",
+                        "background": "cyan"
+                    },
+                    "PUT": {
+                        "dictKey": "PUT",
+                        "dictValue": "PUT",
+                        "background": "blue"
+                    },
+                    "DELETE": {
+                        "dictKey": "DELETE",
+                        "dictValue": "DELETE",
+                        "background": "red"
+                    }
+                }
+            },
+            "mock_info_mockjs_flag": {
+                dictCode: "mock_info_mockjs_flag",
+                list: [
+                    {
+                        "dictKey": "0",
+                        "dictValue": "是"
+                    },
+                    {
+                        "dictKey": "1",
+                        "dictValue": "否"
+                    },
+                ],
+                map: {
+                    "0": {
+                        "dictKey": "0",
+                        "dictValue": "是",
+                        "background": "blue"
+                    },
+                    "1": {
+                        "dictKey": "1",
+                        "dictValue": "否",
+                        "background": "orange"
+                    }
+                }
+            },
+            "2": {
+            }
+        };
+
+
+        sessionStorage.setItem("dictData", JSON.stringify(dictData));
     });
 </script>
 </body>

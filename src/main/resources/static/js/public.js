@@ -297,3 +297,81 @@ function uuid() {
     var uuid = s.join("");
     return uuid;
 }
+
+
+/**
+ * table cell 中状态标识转为字典文本显示
+ * @param dictCode
+ * @param dictKey
+ * @returns {string}
+ */
+function showDictValue(dictCode, dictKey) {
+    const dictData = JSON.parse(sessionStorage.getItem("dictData"));
+    const dict = dictData[dictCode];
+    if (dict && dict.map && dict.map[dictKey]) {
+        const { dictValue, background } = dict.map[dictKey];
+        const style = background ? `layui-badge layui-bg-${background}` : "layui-bg-rim";
+        return `<span class="${style}">${dictValue}</span>`;
+    }
+    return "";
+}
+
+/**
+ * 根据 dictCode 动态生成 select 元素的 option 内容
+ * @param dictCode
+ * @returns {string}
+ */
+function generateSelectOptions(dictCode) {
+    const dictData = JSON.parse(sessionStorage.getItem("dictData"));
+    const dict = dictData[dictCode];
+    if (!dict || !dict.list) {
+        return '';
+    }
+    let options = '<option value="">请选择</option>';
+    dict.list.forEach(item => {
+        options += `<option value="${item.dictKey}">${item.dictValue}</option>`;
+    });
+    return options;
+}
+
+/**
+ * 根据 dictCode 动态生成 select 元素的 option 内容
+ * @param dictCode
+ * @param target jQuery对象
+ * @param hasEmpty 是否添加空选项，默认为 false
+ */
+function generateSelect(dictCode, target, hasEmpty = false) {
+    const dictData = JSON.parse(sessionStorage.getItem("dictData"));
+    const dict = dictData[dictCode];
+    if (!dict || !dict.list) {
+        return;
+    }
+    let options = '';
+    if (hasEmpty) {
+        options = '<option value="">请选择</option>';
+    }
+    dict.list.forEach(item => {
+        options += `<option value="${item.dictKey}">${item.dictValue}</option>`;
+    });
+    target.append(options);
+}
+
+
+/**
+ * 根据 dictCode 更新已有开关按钮的 value 和 title 属性
+ * @param dictCode
+ * @param inputElement jQuery 对象，要更新属性的 input 元素
+ */
+function updateSwitchAttributes(dictCode, inputElement) {
+    const dictData = JSON.parse(sessionStorage.getItem("dictData"));
+    const dict = dictData[dictCode];
+    if (!dict || !dict.list || dict.list.length < 2) {
+        return;
+    }
+    const firstItem = dict.list[0];
+    const secondItem = dict.list[1];
+    inputElement.attr({
+        value: firstItem.dictKey,
+        title: `${firstItem.dictValue}|${secondItem.dictValue}`
+    });
+}
