@@ -15,8 +15,10 @@ import org.tinycloud.tinymock.modules.bean.dto.TenantEditDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantEditPasswordDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantLoginDto;
 import org.tinycloud.tinymock.modules.bean.dto.TenantRegisterDto;
+import org.tinycloud.tinymock.modules.bean.vo.DictInfoVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantCaptchaCodeVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoVo;
+import org.tinycloud.tinymock.modules.service.DictService;
 import org.tinycloud.tinymock.modules.service.TenantAuthService;
 
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ public class TenantAuthController {
 
     @Autowired
     private TenantAuthService tenantAuthService;
+
+    @Autowired
+    private DictService dictService;
 
     @GetMapping("/getCode")
     @ResponseBody
@@ -152,5 +157,11 @@ public class TenantAuthController {
     @PostMapping("/editPassword")
     public ApiResult<Boolean> editPassword(@Validated @RequestBody TenantEditPasswordDto dto) {
         return ApiResult.success(tenantAuthService.editPassword(dto), "修改密码成功，即将跳转到登录页！");
+    }
+
+    @GetMapping("/mapDicts")
+    @ResponseBody
+    public ApiResult<Map<String, DictInfoVo>> mapDicts() {
+        return ApiResult.success(dictService.mapDicts(), "获取字典成功");
     }
 }

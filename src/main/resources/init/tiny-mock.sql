@@ -67,7 +67,7 @@ INSERT INTO `t_invitees_info` VALUES (2024080000000001699, 2212121, 'AaNs8ROo', 
 -- ----------------------------
 DROP TABLE IF EXISTS `t_mail_config`;
 CREATE TABLE `t_mail_config`  (
-  `id` bigint(20) NOT NULL COMMENT '自增主键',
+  `id` bigint(20) NOT NULL COMMENT '主键id',
   `smtp_address` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'smtp服务器地址',
   `smtp_port` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'smtp端口',
   `email_account` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱账号',
@@ -85,6 +85,28 @@ CREATE TABLE `t_mail_config`  (
 -- ----------------------------
 -- Records of t_mail_config
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for t_dict
+-- ----------------------------
+DROP TABLE IF EXISTS `t_dict`;
+CREATE TABLE `t_dict`  (
+                           `id` bigint(20) NOT NULL COMMENT '主键id',
+                           `dict_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典标识编码',
+                           `dict_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典名称',
+                           `dict_key` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字典码',
+                           `dict_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字典值',
+                           `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注描述信息',
+                           `background` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '背景色',
+                           `order_num` int(4) NULL DEFAULT 0 COMMENT '排序',
+                           `status` tinyint(4) NOT NULL COMMENT '状态标志（0--启用1--禁用）',
+                           `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除标志（0--未删除1--已删除）',
+                           `created_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                           `updated_at` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+                           `created_by` bigint(20) NOT NULL COMMENT '创建人-对应t_user.id',
+                           `updated_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人-对应t_user.id',
+                           PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统数据字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_mock_access_log

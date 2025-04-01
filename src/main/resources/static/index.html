@@ -7,7 +7,7 @@
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="Keywords" content="TINY平台,mock,Mock,在线mock服务,前后端分离,在线mock,在线接口Mock平台,免费mock服务"/>
     <meta name="Description" content="Tiny Mock 是一个可视化, 易操作的能快速生成模拟数据的Mock服务平台"/>
@@ -202,82 +202,16 @@
             }
         });
 
-        // 模拟字典数据，后面改为从数据库获取
-        var dictData = {
-            "mock_info_method": {
-                dictCode: "mock_info_method",
-                    list: [
-                    {
-                        "dictKey": "GET",
-                        "dictValue": "GET"
-                    },
-                    {
-                        "dictKey": "POST",
-                        "dictValue": "POST"
-                    },
-                    {
-                        "dictKey": "PUT",
-                        "dictValue": "PUT"
-                    },
-                    {
-                        "dictKey": "DELETE",
-                        "dictValue": "DELETE"
-                    },
-                ],
-                map: {
-                    "GET": {
-                        "dictKey": "GET",
-                        "dictValue": "GET",
-                        "background": "orange"
-                    },
-                    "POST": {
-                        "dictKey": "POST",
-                        "dictValue": "POST",
-                        "background": "cyan"
-                    },
-                    "PUT": {
-                        "dictKey": "PUT",
-                        "dictValue": "PUT",
-                        "background": "blue"
-                    },
-                    "DELETE": {
-                        "dictKey": "DELETE",
-                        "dictValue": "DELETE",
-                        "background": "red"
-                    }
+
+        miniAjax.get({
+            url: "/auth/mapDicts",
+            success: function (res) {
+                if (res.code === 0) {
+                    var dictData = res.data;
+                    sessionStorage.setItem("dictData", JSON.stringify(dictData));
                 }
-            },
-            "mock_info_mockjs_flag": {
-                dictCode: "mock_info_mockjs_flag",
-                list: [
-                    {
-                        "dictKey": "0",
-                        "dictValue": "是"
-                    },
-                    {
-                        "dictKey": "1",
-                        "dictValue": "否"
-                    },
-                ],
-                map: {
-                    "0": {
-                        "dictKey": "0",
-                        "dictValue": "是",
-                        "background": "blue"
-                    },
-                    "1": {
-                        "dictKey": "1",
-                        "dictValue": "否",
-                        "background": "orange"
-                    }
-                }
-            },
-            "2": {
             }
-        };
-
-
-        sessionStorage.setItem("dictData", JSON.stringify(dictData));
+        });
     });
 </script>
 </body>

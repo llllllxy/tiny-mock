@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tinycloud.tinymock.modules.mapper.DictMapper">
+
+    <select id="getDictList" resultType="map">
+        SELECT dict_code,
+               max(dict_name)                                                 dict_name,
+               group_concat(replace(dict_key, ',', '，') ORDER BY order_num)   dict_key,
+               group_concat(replace(dict_value, ',', '，') ORDER BY order_num) dict_value,
+               group_concat(replace(background, ',', '，') ORDER BY order_num) background,
+               max(remark)                                                    remark
+        FROM t_dict
+        WHERE status = 0
+          AND del_flag = 0
+        GROUP BY dict_code
+    </select>
+
+</mapper>

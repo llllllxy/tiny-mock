@@ -2,9 +2,7 @@ package org.tinycloud.tinymock.common.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.slf4j.Logger;
@@ -63,7 +61,7 @@ public class JwtUtils {
             map.put("exp", String.valueOf(jwt.getExpiresAt().getTime()));
             map.put("iat", String.valueOf(jwt.getIssuedAt().getTime()));
             return map;
-        } catch (JWTDecodeException e) {
+        } catch (Exception e) {
             log.error("getClaims error：", e);
             return null;
         }
