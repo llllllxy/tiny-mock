@@ -109,6 +109,18 @@ CREATE TABLE `t_dict`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统数据字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of t_dict
+-- ----------------------------
+
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (1, 'mock_info_mockjs_flag', 'mock_info_mockjs_flag', '0', '是', NULL, 1, 0, 0, '2025-04-01 12:09:05', '2025-04-01 12:09:05', 1, NULL, 'blue');
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (2, 'mock_info_mockjs_flag', 'mock_info_mockjs_flag', '1', '否', NULL, 2, 0, 0, '2025-04-01 12:09:05', '2025-04-01 12:09:05', 1, NULL, 'orange');
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (3, 'mock_info_method', 'mock_info_method', 'GET', 'GET', NULL, 1, 0, 0, '2025-04-01 12:09:56', '2025-04-01 12:10:47', 1, NULL, 'orange');
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (4, 'mock_info_method', 'mock_info_method', 'POST', 'POST', NULL, 2, 0, 0, '2025-04-01 12:09:56', '2025-04-01 12:10:50', 1, NULL, 'cyan');
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (5, 'mock_info_method', 'mock_info_method', 'PUT', 'PUT', NULL, 3, 0, 0, '2025-04-01 12:09:56', '2025-04-01 12:10:56', 1, NULL, 'blue');
+INSERT INTO `t_dict`(`id`, `dict_code`, `dict_name`, `dict_key`, `dict_value`, `remark`, `order_num`, `status`, `del_flag`, `created_at`, `updated_at`, `created_by`, `updated_by`, `background`) VALUES (6, 'mock_info_method', 'mock_info_method', 'DELETE', 'DELETE', NULL, 4, 0, 0, '2025-04-01 12:09:56', '2025-04-01 12:10:58', 1, NULL, 'red');
+
+
+-- ----------------------------
 -- Table structure for t_mock_access_log
 -- ----------------------------
 DROP TABLE IF EXISTS `t_mock_access_log`;
