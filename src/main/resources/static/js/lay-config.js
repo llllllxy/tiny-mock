@@ -56,15 +56,6 @@ layui.table.set({
     },
 });
 
-// 全局layer设置
-layui.layer.config({
-    title: '提示',
-    shade: 0.2,
-    maxmin: true,
-    offset: 'auto',
-    shadeClose: false,
-});
-
 // 全局form设置
 layui.form.set({
     autocomplete: 'off' // 阻止 input 框默认的自动输入完成功能
