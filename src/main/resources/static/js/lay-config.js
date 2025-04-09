@@ -58,8 +58,7 @@ layui.table.set({
 
 // 全局layer设置
 layui.layer.config({
-    title: '信息',
-    type: 1,
+    title: '提示',
     shade: 0.2,
     maxmin: true,
     offset: 'auto',

@@ -8,6 +8,7 @@ import org.tinycloud.tinymock.common.enums.BusinessType;
 import org.tinycloud.tinymock.common.enums.OperatorType;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberAddDto;
+import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberListDto;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberSearchDto;
 import org.tinycloud.tinymock.modules.bean.vo.ProjectMemberVo;
 import org.tinycloud.tinymock.modules.bean.vo.TenantInfoChooseVo;
@@ -32,9 +33,9 @@ public class ProjectMemberController {
     /**
      * 协作人列表
      */
-    @GetMapping("/list")
-    public ApiResult<List<ProjectMemberVo>> list(@RequestParam("projectId") Long projectId) {
-        return ApiResult.success(projectMemberService.list(projectId), "获取成功");
+    @PostMapping("/list")
+    public ApiResult<List<ProjectMemberVo>> list(@Validated @RequestBody ProjectMemberListDto dto) {
+        return ApiResult.success(projectMemberService.list(dto.getProjectId()), "获取成功");
     }
 
     /**

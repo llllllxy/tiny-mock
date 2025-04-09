@@ -2,7 +2,10 @@ package org.tinycloud.tinymock.modules.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.tinycloud.tinymock.common.model.ApiResult;
 import org.tinycloud.tinymock.modules.bean.vo.DashboardQuantityVo;
 import org.tinycloud.tinymock.modules.service.DashboardService;
@@ -30,7 +33,7 @@ public class DashboardController {
         return ApiResult.success(dashboardService.quantity(), "获取成功!");
     }
 
-    @GetMapping(value = "/topList")
+    @PostMapping(value = "/topList")
     public ApiResult<List<Map<String, Object>>> topList() {
         return ApiResult.success(dashboardService.topList(), "查询成功");
     }

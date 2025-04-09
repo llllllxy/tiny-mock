@@ -95,7 +95,7 @@ public class MockInfoController {
     }
 
     @OperLog(title = "导入项目", code = "10017", operatorType = OperatorType.TENANT, businessType = BusinessType.IMPORT)
-    @PostMapping("/import")
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
     public ApiResult<Boolean> importZip(@RequestParam("file") MultipartFile multipartFile,
                                         @RequestParam(value = "projectId", required = false) Long projectId,
                                         @RequestParam(value = "fileName", required = false) String fileName) {

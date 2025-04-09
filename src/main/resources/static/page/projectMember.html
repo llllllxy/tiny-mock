@@ -69,8 +69,7 @@
         var memberTable = table.render({
             elem: '#projectMemberTableId',
             url: '/projectmember/list',
-            //contentType: 'application/json',
-            method: 'get', //如果无需自定义HTTP类型，可不加该参数
+            method: 'post', //如果无需自定义HTTP类型，可不加该参数
             where: {'projectId': projectId}, // 初始化时带的参数
             cols: [
                 [
