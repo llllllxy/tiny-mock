@@ -43,7 +43,7 @@ public class DictService {
             String backgroundStr = item.get("background").toString();
             List<String> dictKeys = Arrays.asList(dictKeyStr.split(","));
             List<String> dictValues = Arrays.asList(dictValueStr.split(","));
-            List<String> backgrounds = Arrays.asList(backgroundStr.split(","));
+            List<String> backgrounds = Arrays.asList(backgroundStr.split(",", -1));
 
             int length = dictKeys.size();
             for (int i = 0; i < length; i++) {
@@ -66,4 +66,5 @@ public class DictService {
         }
         return dictInfoVOMap;
     }
+
 }

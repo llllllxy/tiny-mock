@@ -7,7 +7,7 @@
                max(dict_name)                                                 dict_name,
                group_concat(replace(dict_key, ',', '，') ORDER BY order_num)   dict_key,
                group_concat(replace(dict_value, ',', '，') ORDER BY order_num) dict_value,
-               group_concat(replace(background, ',', '，') ORDER BY order_num) background,
+               group_concat(replace(IFNULL(background, ''), ',', '，') ORDER BY order_num) background,
                max(remark)                                                    remark
         FROM t_dict
         WHERE status = 0

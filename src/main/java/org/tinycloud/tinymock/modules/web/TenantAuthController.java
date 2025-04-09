@@ -82,22 +82,28 @@ public class TenantAuthController {
         menuItem3.put("target", "_self");
 
         Map<String, String> menuItem4 = new HashMap<>();
-        menuItem4.put("title", "使用文档");
-        menuItem4.put("href", "page/handbook.html");
+        menuItem4.put("title", "操作日志");
+        menuItem4.put("href", "page/operateLog.html");
         menuItem4.put("icon", "fa fa-navicon");
         menuItem4.put("target", "_self");
 
         Map<String, String> menuItem5 = new HashMap<>();
-        menuItem5.put("title", "问题和建议");
-        menuItem5.put("href", "page/feedback.html");
+        menuItem5.put("title", "使用文档");
+        menuItem5.put("href", "page/handbook.html");
         menuItem5.put("icon", "fa fa-navicon");
         menuItem5.put("target", "_self");
 
         Map<String, String> menuItem6 = new HashMap<>();
-        menuItem6.put("title", "Github");
-        menuItem6.put("href", "https://github.com/llllllxy/tiny-mock");
+        menuItem6.put("title", "问题和建议");
+        menuItem6.put("href", "page/feedback.html");
         menuItem6.put("icon", "fa fa-navicon");
-        menuItem6.put("target", "_blank");
+        menuItem6.put("target", "_self");
+
+        Map<String, String> menuItem7 = new HashMap<>();
+        menuItem7.put("title", "Github");
+        menuItem7.put("href", "https://github.com/llllllxy/tiny-mock");
+        menuItem7.put("icon", "fa fa-navicon");
+        menuItem7.put("target", "_blank");
 
         List<Map<String, String>> menuList = new ArrayList<>();
         menuList.add(menuItem2);
@@ -105,7 +111,7 @@ public class TenantAuthController {
         menuList.add(menuItem4);
         menuList.add(menuItem5);
         menuList.add(menuItem6);
-
+        menuList.add(menuItem7);
 
         Map<String, String> homeInfo = new HashMap<>();
         homeInfo.put("title", "首页");

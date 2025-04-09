@@ -1,0 +1,310 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form" action="" lay-filter="search-form" id="search-form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">业务名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="title" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">业务代码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="code" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">操作结果</label>
+                            <div class="layui-input-inline">
+                                <select name="operResult" lay-filter="operResult"></select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">操作时间</label>
+                            <div class="layui-inline" id="laydate-operateAt">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="startTime" autocomplete="off" id="startTime"
+                                           class="layui-input" placeholder="开始日期">
+                                </div>
+                                <div class="layui-form-mid">-</div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="endTime" autocomplete="off" id="endTime"
+                                           class="layui-input" placeholder="结束日期">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn" lay-submit lay-filter="data-search-btn">
+                                <i class="layui-icon layui-icon-search"></i>搜 索
+                            </button>
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                    lay-filter="data-reset-btn">
+                                <i class="layui-icon layui-icon-refresh"></i> 重 置
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+        <div class="layuimini-table">
+            <table class="layui-hide" id="operateLogTableId" lay-filter="operateLogTableFilter"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="currentTableBar">
+    <a class="layui-btn layui-bg-purple layui-btn-xs" lay-event="detail">详情</a>
+</script>
+
+<script type="text/html" id="detailDialog">
+    <div class="layuimini-form">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>日志ID：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="id" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>任务名称：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobName" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>任务组：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobGroup" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>请求地址：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobUrl" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>请求头：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobHeader" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>执行结果：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="status" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>异常信息：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="exceptionInfo" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>结束时间：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="endAt" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>任务ID：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobId" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>项目名称：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="projectName" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>请求方式：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobType" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>请求参数：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="jobParam" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>请求结果：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="returnInfo" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>执行时间：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="executeAt" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><b>耗时(毫秒)：</b></label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid" id="consuming" style="word-break: break-all"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate;
+
+
+        // 日期范围 - 左右面板联动选择模式
+        laydate.render({
+            elem: '#laydate-operateAt',
+            range: ['#startTime', '#endTime'],
+            rangeLinked: true // 开启日期范围选择时的区间联动标注模式 ---  2.8+ 新增
+        });
+
+        generateSelect("operate_log_oper_result", $("[name='operResult']"), true);
+        form.render('select', 'search-form');
+
+
+        var currTable = table.render({
+            elem: '#operateLogTableId',
+            url: '/operatelog/query',
+            method: 'post',
+            contentType: 'application/json',
+            request: {
+                pageName: 'pageNo',
+                limitName: 'pageSize'
+            },
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data ? res.data.totalCount : 0,
+                    "data": res.data ? res.data.records : []
+                };
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [[
+                {type: 'numbers', width: 50, title: '序号', align: 'center'},
+                {field: 'code', width: 100, title: '操作代码', align: 'center'},
+                {field: 'title', width: 150, title: '操作名称', align: 'center'},
+                {
+                    field: 'businessType', width: 100, title: '业务类型', align: 'center', templet: function (d) {
+                        return showDictValue("operate_log_business_type", d.businessType);
+                    }
+                },
+                {field: 'requestMethod', width: 100, title: '请求方式'},
+                {field: 'operUrl', width: 150, title: '请求url'},
+                {field: 'operIp', width: 150, title: '访问IP'},
+                {field: 'operLocation', width: 200, title: '访问IP归属地'},
+                {field: 'operateAt', width: 250, title: '操作时间'},
+                {
+                    field: 'operResult', width: 100, title: '结果', align: 'center', templet: function (d) {
+                        return showDictValue("operate_log_oper_result", d.operResult);
+                    }
+                },
+                {fixed: 'right', title: '操作', minWidth: 80, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            autoSort: false,
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            // 执行搜索重载
+            table.reloadData('operateLogTableId', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+            return false;
+        });
+
+        // 监听重置操作
+        form.on('submit(data-reset-btn)', function (data) {
+            form.val("search-form", {
+                "title": '',
+                "code": '',
+                "endTime": '',
+                "startTime": '',
+                "operResult": ''
+            });
+            // 执行搜索重载
+            table.reloadData('operateLogTableId', {
+                page: {
+                    curr: 1
+                },
+                where: form.val("search-form")
+            });
+            return false;
+        });
+
+
+        table.on('tool(operateLogTableFilter)', function (obj) {
+            var lineData = obj.data;
+            if (obj.event === 'detail') {
+                var index = layer.open({
+                    title: '日志详情',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: false,
+                    area: ['1000px', '500px'],
+                    content: $('#detailDialog').html(),
+                    success: function (layero, dIndex) {
+                        layero.find('#id').text(lineData.id);
+                        layero.find('#surl').text(lineData.surl);
+                        layero.find('#accessTime').text(lineData.accessTime);
+                        layero.find('#accessIp').text(lineData.accessIp);
+                        layero.find('#accessAddress').text(lineData.accessAddress);
+                        layero.find('#accessUserAgent').text(lineData.accessUserAgent);
+                    },
+                    end: function (index) {
+                    }
+                });
+
+            }
+        });
+
+    });
+</script>

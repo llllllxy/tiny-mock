@@ -27,3 +27,46 @@ layui.config({
     layarea: 'layarea/layarea', //  省市县区三级联动下拉选择器
     layCascader: 'cascader/cascader', // 级联选择器
 });
+
+
+// 全局table设置
+layui.table.set({
+    method: 'post',
+    contentType: 'application/json',
+    skin: 'line',
+    size: 'md',
+    toolbar: false,
+    defaultToolbar: ['filter'],
+    autoSort: false,
+    page: true,
+    cellMinWidth: 60,
+    limit: 10,
+    limits: [10, 15, 20, 25, 50, 100],
+    request: {
+        pageName: 'pageNo',
+        limitName: 'pageSize'
+    },
+    parseData: function (res) { // res即为原始返回的数据
+        return {
+            "code": res.code,
+            "msg": res.msg,
+            "count": res.data ? res.data.totalCount : 0,
+            "data": res.data ? res.data.records : []
+        };
+    },
+});
+
+// 全局layer设置
+layui.layer.config({
+    title: '信息',
+    type: 1,
+    shade: 0.2,
+    maxmin: true,
+    offset: 'auto',
+    shadeClose: false,
+});
+
+// 全局form设置
+layui.form.set({
+    autocomplete: 'off' // 阻止 input 框默认的自动输入完成功能
+});

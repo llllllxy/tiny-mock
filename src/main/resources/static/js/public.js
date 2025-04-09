@@ -310,7 +310,7 @@ function showDictValue(dictCode, dictKey) {
     const dict = dictData[dictCode];
     if (dict && dict.map && dict.map[dictKey]) {
         const { dictValue, background } = dict.map[dictKey];
-        const style = background ? `layui-badge layui-bg-${background}` : "layui-bg-rim";
+        const style = background ? `layui-badge layui-bg-${background}` : "layui-badge-rim";
         return `<span class="${style}">${dictValue}</span>`;
     }
     return "";

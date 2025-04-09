@@ -7,7 +7,7 @@
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" href="/images/favicon.ico">
     <link rel="stylesheet" href="/lib/layui/css/layui.css?v=2.8.11" media="all">
@@ -126,7 +126,7 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-note"></i>
                         </div>
-                        <input type="text" name="invitationCode" value="" lay-verify="required|invitationCode"
+                        <input type="text" name="invitationCode" value="" lay-verify="required|invitationCode" lay-vertype="tips"
                                placeholder="邀请码" lay-reqtext="请填写邀请码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-username"></i>
                         </div>
-                        <input type="text" name="tenantAccount" value="" lay-verify="required|tenantAccount"
+                        <input type="text" name="tenantAccount" value="" lay-verify="required|tenantAccount" lay-vertype="tips"
                                placeholder="组织团队账号" lay-reqtext="请填写组织团队账号" autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -146,7 +146,7 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-form"></i>
                         </div>
-                        <input type="text" name="tenantName" value="" lay-verify="required|tenantName"
+                        <input type="text" name="tenantName" value="" lay-verify="required|tenantName" lay-vertype="tips"
                                placeholder="组织团队名称"
                                lay-reqtext="请填写组织团队名称" autocomplete="off" class="layui-input">
                     </div>
@@ -157,7 +157,7 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-password"></i>
                         </div>
-                        <input type="password" name="password" value="" lay-verify="required|password" placeholder="密码"
+                        <input type="password" name="password" value="" lay-verify="required|password" placeholder="密码" lay-vertype="tips"
                                lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
                     </div>
                 </div>
@@ -167,8 +167,8 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-password"></i>
                         </div>
-                        <input type="password" name="confirmPassword" value="" lay-verify="required|confirmPassword"
-                               placeholder="确认密码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input"
+                        <input type="password" name="confirmPassword" value="" lay-verify="required|confirmPassword" lay-vertype="tips"
+                               placeholder="确认密码" lay-reqtext="请再次填写密码" autocomplete="off" class="layui-input"
                                lay-affix="eye">
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                                     <i class="layui-icon layui-icon-email"></i>
                                 </div>
                                 <input type="text" name="tenantEmail" id="tenantEmail" value=""
-                                       lay-verify="required|email" placeholder="邮箱" lay-reqtext="请填写邮箱"
+                                       lay-verify="required|email" placeholder="邮箱" lay-reqtext="请填写邮箱" lay-vertype="tips"
                                        autocomplete="off" class="layui-input">
                             </div>
                         </div>
@@ -200,7 +200,7 @@
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-vercode"></i>
                         </div>
-                        <input type="text" name="emailCode" value="" lay-verify="required|emailCode" placeholder="验证码"
+                        <input type="text" name="emailCode" value="" lay-verify="required|emailCode" placeholder="验证码" lay-vertype="tips"
                                lay-reqtext="请填写验证码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -237,8 +237,50 @@
 
         // 自定义验证规则
         form.verify({
-            // 确认密码
+            invitationCode: function (value, elem) {
+                if (value.length > 32) {
+                    return '邀请码不能超过32个字符';
+                }
+            },
+            // 验证用户名，且为必填项
+            tenantAccount: function(value, elem) {
+                if (value.length < 8) {
+                    return '组织团队账号不能少于8个字符';
+                }
+                if (value.length > 32) {
+                    return '组织团队账号不能超过32个字符';
+                }
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '组织团队账号不能有特殊字符';
+                }
+                if (/(^_)|(__)|(_+$)/.test(value)) {
+                    return '组织团队账号首尾不能出现下划线';
+                }
+                if (/^\d+$/.test(value)) {
+                    return '组织团队账号不能全为数字';
+                }
+            },
+            // 验证组织团队名称，且为必填项
+            tenantName: function(value, elem) {
+                // 自定义规则
+                if (value.length > 128) {
+                    return '组织团队名称不能超过128个字符';
+                }
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '组织团队名称不能有特殊字符';
+                }
+            },
+            // 验证密码，且为必填项
+            password: function(value, elem) {
+                if (!/^[\S]{6,16}$/.test(value)) {
+                    return '密码必须为 6 到 16 位的非空字符';
+                }
+            },
+            // 确认密码验证
             confirmPassword: function (value, item) {
+                if (!/^[\S]{6,16}$/.test(value)) {
+                    return '密码必须为 6 到 16 位的非空字符';
+                }
                 var passwordValue = $('input[name="password"]').val();
                 if (value !== passwordValue) {
                     return '两次密码输入不一致!';

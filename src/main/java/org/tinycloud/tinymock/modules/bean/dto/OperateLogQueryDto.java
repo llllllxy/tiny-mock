@@ -34,5 +34,15 @@ public class OperateLogQueryDto extends BasePageDto implements Serializable {
      * 业务码
      */
     private String code;
+
+    /**
+     * 操作时间
+     */
+    private String startTime;
+
+    /**
+     * 操作时间
+     */
+    private String endTime;
 }
 
