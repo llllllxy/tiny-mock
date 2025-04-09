@@ -7,12 +7,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.model.PageModel;
-import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
 import org.tinycloud.tinymock.modules.bean.dto.MockInfoHistoryQueryDto;
-import org.tinycloud.tinymock.modules.bean.entity.TMailConfig;
 import org.tinycloud.tinymock.modules.bean.entity.TMockInfoHistory;
 import org.tinycloud.tinymock.modules.bean.entity.TTenant;
 import org.tinycloud.tinymock.modules.bean.enums.OperateTypeEnum;
@@ -45,6 +42,7 @@ public class MockInfoHistoryService {
         PageModel<MockInfoHistoryVo> responsePage = new PageModel<>(queryParam.getPageNo(), queryParam.getPageSize());
         LambdaQueryWrapper<TMockInfoHistory> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TMockInfoHistory::getMockId, queryParam.getMockId());
+        queryWrapper.orderByDesc(TMockInfoHistory::getVersion);
 
         Page<TMockInfoHistory> historyPage = this.mockInfoHistoryMapper.selectPage(Page.of(queryParam.getPageNo(), queryParam.getPageSize()), queryWrapper);
 

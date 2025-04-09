@@ -40,7 +40,10 @@
                     {field: 'method', title: '请求方式', align: 'center'},
                     {field: 'url', title: '接口地址', align: 'center'},
                     {field: 'delay', title: '延迟时间', align: "center"},
-                    {field: 'mockjsFlag', title: '开启Mock.js', align: "center"},
+                    {field: 'mockjsFlag', title: '启用mock.js', align: 'center', templet: function (d) {
+                            return showDictValue("mock_info_mockjs_flag", d.mockjsFlag);
+                        }
+                    },
                     {field: 'jsonData', title: '接口数据', align: 'center', expandedMode: 'tips', templet: '<div><a href="javascript:;" class="layuimini-link" lay-event="preview">{{= d.jsonData }}</a></div>'}
                 ]
             ],
