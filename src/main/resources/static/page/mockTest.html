@@ -1,0 +1,227 @@
+<style>
+    .layui-form-item {
+        margin-bottom: 15px;
+    }
+
+    .layui-btn {
+        margin-right: 10px;
+    }
+
+    .layui-btn-sm {
+        height: 38px;
+        line-height: 38px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    /* 为 Query 参数输入框添加上下间隔 */
+    .query-param-item {
+        margin-bottom: 10px;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-row  layui-col-space10">
+            <div class="layui-col-md6">
+                <fieldset class="layui-elem-field">
+                    <legend><h3>接口信息</h3></legend>
+                    <div class="layui-field-box">
+                        <form class="layui-form" id="api-test-form">
+                            <!-- 接口地址 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">接口地址</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="url" placeholder="请输入接口地址" class="layui-input"
+                                           lay-verify="required">
+                                </div>
+                            </div>
+                            <!-- 接口类型 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">接口类型</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="method" value="GET" title="GET" checked>
+                                    <input type="radio" name="method" value="POST" title="POST">
+                                    <input type="radio" name="method" value="PUT" title="PUT">
+                                    <input type="radio" name="method" value="DELETE" title="DELETE">
+                                </div>
+                            </div>
+                            <!-- Query Parameters -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Query 参数</label>
+                                <div class="layui-input-block">
+                                    <div id="query-params"></div>
+                                    <button type="button" class="layui-btn layui-btn-sm" id="add-query-param">+
+                                        添加参数
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="layui-form-item" id="body">
+                                <label class="layui-form-label">Body</label>
+                                <div class="layui-input-block">
+                                    <textarea name="body" placeholder="请输入请求体内容（JSON 格式）"
+                                              class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                            <!-- Header -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Header</label>
+                                <div class="layui-input-block">
+                                    <div id="headers"></div>
+                                    <button type="button" class="layui-btn layui-btn-sm" id="add-header">+ 添加 Header
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 提交按钮 -->
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="api-test-submit">
+                                        发送请求
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="layui-col-md6">
+                <fieldset class="layui-elem-field">
+                    <legend><h3>接口返回结果</h3></legend>
+                    <div class="layui-field-box max-height-setting" style="overflow: auto">
+                        <pre class="layui-code code-demo" id="result-content"></pre>
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layer = layui.layer;
+
+        form.render();
+
+        // 添加 Query 参数输入框
+        document.getElementById('add-query-param').addEventListener('click', function () {
+            var paramDiv = document.createElement('div');
+            paramDiv.className = 'query-param-item';
+            paramDiv.innerHTML = `
+                    <input type="text" name="query-key" placeholder="参数名" class="layui-input" style="width: 40%; display: inline-block; margin-right: 10px;">
+                    <input type="text" name="query-value" placeholder="参数值" class="layui-input" style="width: 40%; display: inline-block;">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger remove-query-param">- 删除</button>
+                `;
+            document.getElementById('query-params').appendChild(paramDiv);
+            // 绑定删除事件
+            paramDiv.querySelector('.remove-query-param').addEventListener('click', function () {
+                paramDiv.remove();
+            });
+        });
+
+        // 添加 Header 输入框
+        document.getElementById('add-header').addEventListener('click', function () {
+            var headerDiv = document.createElement('div');
+            headerDiv.className = 'query-param-item';
+            headerDiv.innerHTML = `
+                    <input type="text" name="header-key" placeholder="Header 名" class="layui-input" style="width: 40%; display: inline-block; margin-right: 10px;">
+                    <input type="text" name="header-value" placeholder="Header 值" class="layui-input" style="width: 40%; display: inline-block;">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger remove-header">- 删除</button>
+                `;
+            document.getElementById('headers').appendChild(headerDiv);
+            // 绑定删除事件
+            headerDiv.querySelector('.remove-header').addEventListener('click', function () {
+                headerDiv.remove();
+            });
+        });
+
+        // 监听表单提交事件
+        form.on('submit(api-test-submit)', function (data) {
+            var url = data.field.url;
+            var method = data.field.method;
+            var body = data.field.body;
+            var queryParams = [];
+            var headers = {};
+
+            // 收集 Query 参数
+            var queryKeyInputs = document.querySelectorAll('input[name="query-key"]');
+            var queryValueInputs = document.querySelectorAll('input[name="query-value"]');
+            for (var i = 0; i < queryKeyInputs.length; i++) {
+                var key = queryKeyInputs[i].value;
+                var value = queryValueInputs[i].value;
+                if (key && value) {
+                    queryParams.push(key + '=' + value);
+                }
+            }
+            if (queryParams.length > 0) {
+                url += '?' + queryParams.join('&');
+            }
+
+            // 收集 Header
+            var headerKeyInputs = document.querySelectorAll('input[name="header-key"]');
+            var headerValueInputs = document.querySelectorAll('input[name="header-value"]');
+            for (var j = 0; j < headerKeyInputs.length; j++) {
+                var headerKey = headerKeyInputs[j].value;
+                var headerValue = headerValueInputs[j].value;
+                if (headerKey && headerValue) {
+                    headers[headerKey] = headerValue;
+                }
+            }
+
+            // 设置默认的 Content-Type
+            if (method === 'POST' || method === 'PUT') {
+                headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+            }
+
+            // 发送请求
+            $.ajax({
+                url: url,
+                method: method,
+                headers: headers,
+                data: (body),
+                success: function (response) {
+                    console.log(response);
+                    layui.code({
+                        elem: '#result-content',
+                        lang: 'json',
+                        code: JSON.stringify(response, null, 2)
+                    });
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 404) {
+                        error = '接口不存在';
+                    }
+                    if (xhr.status === 400) {
+                        error = '请检查接口类型是否匹配';
+                    }
+                    if (xhr.status === 500) {
+                        error = '服务的接口报错';
+                    }
+                    layer.msg('请求出错：' + error, {icon: 5});
+                }
+            });
+
+            return false;
+        });
+
+
+        // 设置自适应高度
+        function setFieldBoxHeight() {
+            var windowHeight = window.innerHeight;
+            var offset = 220; // 可根据实际情况调整减去的值
+            var fieldBox = document.querySelector('.max-height-setting');
+            fieldBox.style['max-height'] = (windowHeight - offset) + 'px';
+        }
+
+        // 页面加载时设置高度
+        setFieldBoxHeight();
+
+        // 窗口大小改变时重新设置高度
+        window.addEventListener('resize', setFieldBoxHeight);
+    });
+</script>
