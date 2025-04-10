@@ -68,111 +68,89 @@
         <div class="layui-form">
             <div class="layui-row">
                 <div class="layui-col-md6">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>日志ID：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作编码：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="id" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="code" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>任务名称：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>业务类型：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobName" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="businessType" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>任务组：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>请求方式：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobGroup" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="requestMethod" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>请求地址：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作地址IP：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobUrl" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="operIp" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>请求头：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作结果：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobHeader" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="operResult" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>执行结果：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作时间：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="status" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="operateAt" style="word-break: break-all"></div>
                         </div>
                     </div>
-
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>异常信息：</b></label>
-                        <div class="layui-input-block">
-                            <div class="layui-form-mid" id="exceptionInfo" style="word-break: break-all"></div>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>结束时间：</b></label>
-                        <div class="layui-input-block">
-                            <div class="layui-form-mid" id="endAt" style="word-break: break-all"></div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="layui-col-md6">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>任务ID：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作名称：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobId" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="title" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>项目名称：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>请求方法：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="projectName" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="method" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>请求方式：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>请求url：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobType" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="operUrl" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>请求参数：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>操作地点：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="jobParam" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="operLocation" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>请求结果：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>消耗时间：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="returnInfo" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="costTime" style="word-break: break-all"></div>
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>执行时间：</b></label>
+                    <div class="layui-form-item label-wide">
+                        <label class="layui-form-label"><b>审计哈希：</b></label>
                         <div class="layui-input-block">
-                            <div class="layui-form-mid" id="executeAt" style="word-break: break-all"></div>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><b>耗时(毫秒)：</b></label>
-                        <div class="layui-input-block">
-                            <div class="layui-form-mid" id="consuming" style="word-break: break-all"></div>
+                            <div class="layui-form-mid" id="auditHash" style="word-break: break-all"></div>
                         </div>
                     </div>
                 </div>
@@ -220,7 +198,7 @@
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
-                {type: 'numbers', width: 50, title: '序号', align: 'center'},
+                {type: 'numbers', width: 60, title: '序号', align: 'center'},
                 {field: 'code', width: 100, title: '操作代码', align: 'center'},
                 {field: 'title', width: 150, title: '操作名称', align: 'center'},
                 {
@@ -284,20 +262,26 @@
             var lineData = obj.data;
             if (obj.event === 'detail') {
                 var index = layer.open({
-                    title: '日志详情',
+                    title: '操作日志详情',
                     type: 1,
                     shade: 0.2,
                     maxmin: true,
                     shadeClose: false,
-                    area: ['1000px', '500px'],
+                    area: '1000px',
                     content: $('#detailDialog').html(),
                     success: function (layero, dIndex) {
-                        layero.find('#id').text(lineData.id);
-                        layero.find('#surl').text(lineData.surl);
-                        layero.find('#accessTime').text(lineData.accessTime);
-                        layero.find('#accessIp').text(lineData.accessIp);
-                        layero.find('#accessAddress').text(lineData.accessAddress);
-                        layero.find('#accessUserAgent').text(lineData.accessUserAgent);
+                        layero.find('#code').text(lineData.code);
+                        layero.find('#title').text(lineData.title);
+                        layero.find('#businessType').html(showDictValue("operate_log_business_type", lineData.businessType));
+                        layero.find('#requestMethod').text(lineData.requestMethod);
+                        layero.find('#operIp').text(lineData.operIp);
+                        layero.find('#operResult').html(showDictValue("operate_log_oper_result", lineData.operResult));
+                        layero.find('#operateAt').text(lineData.operateAt);
+                        layero.find('#method').text(lineData.method);
+                        layero.find('#operUrl').text(lineData.operUrl);
+                        layero.find('#operLocation').text(lineData.operLocation);
+                        layero.find('#costTime').text(lineData.costTime + '(ms)');
+                        layero.find('#auditHash').text(lineData.auditHash);
                     },
                     end: function (index) {
                     }
