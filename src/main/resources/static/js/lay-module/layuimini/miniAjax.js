@@ -149,7 +149,7 @@ layui.define(["jquery"], function (exports) {
                 cache: options.cache,
                 dataType: options.dataType,
                 data: options.data,
-                contentType: options.contentType, // 发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"
+                contentType: options.contentType,
                 success: function (data, textStatus, jqXHR) {
                     // 成功回调
                     options.success(data);
@@ -184,7 +184,7 @@ layui.define(["jquery"], function (exports) {
                 cache: options.cache,
                 dataType: options.dataType,
                 data: options.data,
-                contentType: options.contentType, // 发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"
+                contentType: options.contentType,
                 success: function (data, textStatus, jqXHR) {
                     // 成功回调
                     options.success(data);
