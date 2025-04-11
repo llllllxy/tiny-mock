@@ -142,11 +142,20 @@ tiny-mock
 接口管理-访问日志
 ![接口管理-访问日志](src/main/resources/static/images/readme/接口管理-访问日志.png)
 
+接口管理-成员协助
+![接口管理-成员协助](src/main/resources/static/images/readme/接口管理-成员协助.png)
+
 数据统计
 ![数据统计](src/main/resources/static/images/readme/数据统计.png)
 
+操作日志
+![操作日志](src/main/resources/static/images/readme/操作日志.png)
+
 问题与建议
 ![问题与建议](src/main/resources/static/images/readme/问题与建议.png)
+
+接口测试工具
+![接口测试工具](src/main/resources/static/images/readme/接口测试工具.png)
 
 使用文档
 ![使用文档](src/main/resources/static/images/readme/使用文档.png)
@@ -172,23 +181,23 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 租户操作日志记录功能 `已完成`
 - 租户操作日志查询功能 `已完成`
 
-## 前后端分离部署示例（以windows环境举例，linux下大同小异）
+## 前后端分离部署示例（以linux环境举例）
 #### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
 ![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
 
 #### 2、安装 `nginx` 并更改配置 `nginx.conf`
 ```editorconfig
-    listen       8000;
+    listen       80;
     server_name  localhost;
     client_max_body_size 50M;
 
     # 前端文件的实际路径部署，实际路径在D:\nginxplace\mock 
     location / {
-      root   D:/nginxplace/mock;
+      root   /usr/share/nginx/html;
       index  index.html index.htm;
     }
 
-     # 后端反向代理，其中 /back 和 miniAjax.js 里的 baseURL 属性对应
+     # 后端服务反向代理，其中 /back 和 miniAjax.js 里的 baseURL 属性对应
     location /back/ {
       proxy_pass  http://127.0.0.1:9019/;
       proxy_redirect off;
@@ -197,10 +206,22 @@ Mock.js 文档地址 http://mockjs.com/examples.html
       proxy_set_header  X-Real-IP  $remote_addr;
       proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
       proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    } 
+                                                                                  
+      # mock地址反向代理，其中 /mock 和 核心mock地址对应
+    location /mock/ {
+      proxy_pass  http://127.0.0.1:9019/mock/;
+      proxy_redirect off;
+      # bForwarded-ForIP
+      proxy_set_header  Host  $host:$server_port;
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
     }
+
 ```
 
-#### 3、将 `/resources/static` 目录下的内容 全部复制到 `D:\nginxplace\mock` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
+#### 3、将 `/resources/static` 目录下的内容 全部复制到 `/usr/share/nginx/html` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
 ![img.png](src/main/resources/static/images/readme/前后端分离部署_2.png)
 
-#### 4、刷新nginx配置 `nginx.exe -s reload`，即可访问 `http://localhost:8000/`
+#### 4、刷新nginx配置 `nginx -s reload`，然后即可访问 `http://localhost`
