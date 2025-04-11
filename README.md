@@ -181,11 +181,33 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 - 租户操作日志记录功能 `已完成`
 - 租户操作日志查询功能 `已完成`
 
+
+
+## 项目部署
+#### 1、安装`jdk21`，比如安装到`/opt/jdk-21.0.4`目录下
+
+#### 2、安装`MySQL`数据库
+
+#### 3、安装`Redis`数据库
+
+#### 4、修改配置文件`application.yml`，自定义端口号、MySQL数据库连接信息、Redis连接信息、文件存放位置、各种密钥信息
+
+#### 5、上传`tiny-mock-1.1.2.jar`和自定义配置文件`application.yml`到服务器指定目录下，比如上传到opt目录下，则执行命令`nohup  /opt/jdk-21.0.4/bin/java -jar /opt/tiny-mock-1.1.2.jar >/dev/null 2>&1 &`即可
+![部署-部署位置.png](src/main/resources/static/images/readme/部署-部署位置.png)
+
+#### 6、如需开启注册功能，还需要配置数据库中的`t_mail_config`表，添加一条数据，填写自己的邮箱服务器配置
+![部署-邮箱配置示例.png](src/main/resources/static/images/readme/部署-邮箱配置示例.png)
+
+
+
 ## 前后端分离部署示例（以linux环境举例）
-#### 1、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
+
+#### 1、安装 `nginx`
+
+#### 2、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
 ![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
 
-#### 2、安装 `nginx` 并更改配置 `nginx.conf`
+#### 3、安装 `nginx` 并更改配置 `nginx.conf`
 ```editorconfig
     listen       80;
     server_name  localhost;
@@ -221,7 +243,7 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 
 ```
 
-#### 3、将 `/resources/static` 目录下的内容 全部复制到 `/usr/share/nginx/html` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
+#### 4、将 `/resources/static` 目录下的内容 全部复制到 `/usr/share/nginx/html` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
 ![img.png](src/main/resources/static/images/readme/前后端分离部署_2.png)
 
-#### 4、刷新nginx配置 `nginx -s reload`，然后即可访问 `http://localhost`
+#### 5、刷新nginx配置 `nginx -s reload`，然后即可访问 `http://localhost`
