@@ -65,7 +65,10 @@ public class EmailUtils {
             props.setProperty("mail.smtp.connectiontimeout", "15000");
             props.setProperty("mail.smtp.timeout", "15000");
             props.setProperty("mail.smtp.writetimeout", "15000");
-            props.setProperty("mail.smtp.ssl.enable", "true"); // 是否开启ssl，一般开启ssl后使用465端口，否则使用25端口
+            if (isSSL) {
+                props.setProperty("mail.smtp.ssl.enable", "true"); // 是否开启ssl，一般开启ssl后使用465端口，否则使用25端口
+            }
+
             // 2. 根据配置创建会话对象, 用于和邮件服务器交互
             Session session = Session.getInstance(props);
             // 设置为debug模式, 可以查看详细的发送 log
