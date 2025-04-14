@@ -85,6 +85,11 @@ public class LocalStorageServiceImpl implements StorageService {
         // 根据folderPath创建文件夹
         Path path = Paths.get(folderPath + newFilename);
         try {
+            // 创建目录
+            Path parentDir = path.getParent();
+            if (parentDir != null) {
+                Files.createDirectories(parentDir);
+            }
             storageFile = new StorageFile();
             storageFile.setFileName(filename);
             storageFile.setFileNameNew(newFilename);
