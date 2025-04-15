@@ -1,0 +1,141 @@
+# 项目相关配置
+tinymock:
+  # 名称
+  name: tiny-mock
+  # 版本
+  version: 1.0.0
+  # 数据库类型
+  dbType: mysql
+  # 文件存放位置，示例（ Windows配置D:/data/tinymock，Linux配置 /home/data/tinymock）
+  uploadPath: ${TINYMOCK_UPLOADPATH:/home/data/tinymock}
+  # 会话控制(时间类的单位都是秒)
+  tenantAuthTimeout: ${TINYMOCK_TENANTAUTHTIMEOUT:1800}
+  # 最大登录并发数
+  maximumConcurrentLogins: ${TINYMOCK_MAXIMUMCONCURRENTLOGINS:2}
+  # 项目导出备份加密密钥（sm4）
+  projectExportDek: ${TINYMOCK_PROJECTEXPORTDEK:Sq91g702s71/q6yUaAsgTw==}
+  jwtSecret: ${TINYMOCK_JWTSECRET:K$N)A3*sGGf<wo*22*%&(DF)}
+  storageType: ${TINYMOCK_STORAGETYPE:local}
+  minio:
+    endpoint: ${TINYMOCK_ENDPOINT:http://127.0.0.1:9000}
+    accessKey: ${TINYMOCK_ACCESSKEY:minioadmin}
+    secretKey: ${TINYMOCK_SECRETKEY:123654}
+    bucket: ${TINYMOCK_BUCKET:tinymock}
+
+server:
+  port: 9019
+  servlet:
+    # 设置编码
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+spring:
+  application:
+    name: tiny-mock
+  mvc:
+    throw-exception-if-no-handler-found: true
+  # 设置上传文件大小
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 200MB
+  # 设置jackson的默认时区和默认格式
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: jdbc:mysql://${MYSQL_SERVICE_HOST}:${MYSQL_SERVICE_PORT:3306}/${MYSQL_SERVICE_DB_NAME}?${MYSQL_SERVICE_DB_PARAM:useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=true&allowMultiQueries=true}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_SERVICE_USER}
+    password: ${MYSQL_SERVICE_PASSWORD}
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 15
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  data:
+    # Redis配置
+    redis:
+      host: ${REDIS_SERVICE_HOST:127.0.0.1} # Redis服务器地址
+      port: ${REDIS_SERVICE_PORT:6379} # Redis服务器连接端口
+      password: ${REDIS_SERVICE_PASSWORD:123456} # Redis服务器连接密码（默认为空）
+      database: ${REDIS_SERVICE_DATABASE:0} #Redis数据库索引（默认为0）
+      timeout: 10s # 连接超时时间
+      lettuce:
+        pool:
+          max-active: 12 # 连接池最大连接数（使用负值表示没有限制）
+          max-idle: 8 # 连接池中的最大空闲连接
+          min-idle: 0 # 连接池中的最小空闲连接
+          max-wait: 5s # 连接池最大阻塞等待时间（使用负值表示没有限制）
+
+# MyBatis-plus配置 映射xml文件
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  # 起别名
+  type-aliases-package: org.tinycloud.tinymock.**.entity
+  # 去除打印
+  global-config:
+    banner: false
+  # 驼峰命名匹配
+  configuration:
+    map-underscore-to-camel-case: true
+    # 设置在控制台打印sql语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    org.tinycloud.tinymock: info
+    org.springframework: warn
+
+# springboot异步线程配置
+async:
+  executor:
+    thread:
+      core-pool-size: 5 #配置核心线程数
+      keep-alive-seconds: 60 #设置线程活跃时间（秒）
+      max-pool-size: 10 #配置最大线程数
+      name-prefix: async-service- #配置线程池中的线程的名称前缀
+      queue-capacity: 100 #配置队列大小
+
+
+# 1、redisson单机模式配置
+redisson:
+  mode: single
+  address: redis://${REDIS_SERVICE_HOST:127.0.0.1}:${REDIS_SERVICE_PORT:6379}
+  password: ${REDIS_SERVICE_PASSWORD:123456}
+  timeout: 5000
+  connectTimeout: 5000
+  connectionPoolSize: 64
+  connectionMinimumIdleSize: 10
+
+
+# 2、redisson哨兵模式配置
+# redisson:
+#  mode: sentinel
+#  masterName: mymaster
+#  sentinelAddresses: redis://127.0.0.1:6379,redis://127.0.0.1:6380,redis://127.0.0.1:6381
+#  password: 123654
+#  connectTimeout: 5000
+#  timeout: 5000
+#  connectionMinimumIdleSize: 10
+#  slaveConnectionPoolSize: 64
+#  masterConnectionPoolSize: 64
+
+# 3、redisson集群模式配置
+# redisson:
+#  mode: cluster
+#  nodes: redis://127.0.0.1:6379,redis://127.0.0.1:6380,redis://127.0.0.1:6381,redis://127.0.0.1:6382,
+#  password: 123654
+#  connectTimeout: 5000
+#  timeout: 5000
+#  connectionMinimumIdleSize: 10
+#  slaveConnectionPoolSize: 64
+#  masterConnectionPoolSize: 64
