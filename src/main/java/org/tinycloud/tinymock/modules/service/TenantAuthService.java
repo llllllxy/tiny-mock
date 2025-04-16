@@ -255,9 +255,9 @@ public class TenantAuthService {
         EmailUtils.sendMsg(mailConfig.getEmailAccount(), mailConfig.getEmailPassword(), mailConfig.getSmtpAddress(), mailConfig.getSmtpPort(), mailConfig.getSslFlag() == 0,
                 new String[]{receiveEmail}, emailTitle, emailMsg);
 
-        // 将验证码和私钥，存入redis 60秒
-        this.redisUtils.set(codeRedisKey, String.join("&", randomCode, privateKey), 60, TimeUnit.SECONDS);
-        HashMap<String, String> result = new HashMap<String, String>();
+        // 将验证码和私钥，存入redis 600秒（十分钟）
+        this.redisUtils.set(codeRedisKey, String.join("&", randomCode, privateKey), 600, TimeUnit.SECONDS);
+        HashMap<String, String> result = new HashMap<>();
         result.put("publicKey", publicKey);
         result.put("uuid", uuid);
         return result;
