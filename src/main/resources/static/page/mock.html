@@ -17,7 +17,7 @@
         position: absolute;
         left: 0;
         top: 0;
-        background-color: #4579ee;
+        background-color: #5E7CE0;
         color: #fff;
         width: 100px;
         text-align: center;
@@ -203,9 +203,9 @@
                               placeholder="请输入其他备注信息"></textarea>
                 </div>
             </div>
-            <div class="layui-form-item text-right">
-                <button class="layui-btn" lay-submit lay-filter="addSaveBtn">保存</button>
-                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeAddDialog">取消</button>
+
+            <div class="layui-form-item layui-hide">
+                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addSaveBtn">保存</button>
             </div>
         </form>
     </div>
@@ -279,9 +279,8 @@
                               placeholder="请输入其他备注信息"></textarea>
                 </div>
             </div>
-            <div class="layui-form-item text-right">
+            <div class="layui-form-item layui-hide">
                 <button class="layui-btn" lay-submit lay-filter="editSaveBtn">保存</button>
-                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeEditDialog">取消</button>
             </div>
         </form>
     </div>
@@ -508,6 +507,10 @@
                     shadeClose: false,
                     area: '780px', // 宽度580, 高度自适应
                     content: $('#addDialog').html(),
+                    btn: ['保存', '取消'], // 按钮
+                    yes: function(index, layero) {
+                        layero.find("button[lay-filter='addSaveBtn']").click();  // 这一句就是点击确认按钮触发form的隐藏提交
+                    },
                     success: function (layero, dIndex) {
                         generateSelect("mock_info_method", layero.find("[name='method']"));
                         updateSwitchAttributes("mock_info_mockjs_flag", layero.find("[name='mockjsFlag']"));
@@ -555,11 +558,6 @@
                             });
                             return false;
                         });
-
-                        // 监听取消按钮
-                        layero.find("button[lay-filter='closeAddDialog']").click(function () {
-                            layer.close(dIndex);
-                        });
                     },
                     end: function (index) {
                         // 重载表格，刷新数据
@@ -579,6 +577,10 @@
                     maxmin: true,
                     shadeClose: false,
                     area: '780px', // 宽度580, 高度自适应
+                    btn: ['保存', '取消'], // 按钮
+                    yes: function(index, layero) {
+                        layero.find("button[lay-filter='editSaveBtn']").click();  // 这一句就是点击确认按钮触发form的隐藏提交
+                    },
                     content: $('#editDialog').html(),
                     success: function (layero, dIndex) {
                         generateSelect("mock_info_method", layero.find("[name='method']"));
@@ -630,11 +632,6 @@
                                 }
                             });
                             return false;
-                        });
-
-                        // 监听取消按钮
-                        layero.find("button[lay-filter='closeEditDialog']").click(function () {
-                            layer.close(dIndex);
                         });
                     },
                     end: function (index) {

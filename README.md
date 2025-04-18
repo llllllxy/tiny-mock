@@ -200,14 +200,14 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 
 
 
-## 前后端分离部署示例（以linux环境举例）
+## 前后端分离部署示例（以linux环境举例，nginx版本1.24.0）
 
 #### 1、安装 `nginx`
 
 #### 2、将 `/resources/static/js/layuimini/miniAjax.js` 里的 `baseURL` 属性改为 `/back`
 ![img_1.png](src/main/resources/static/images/readme/前后端分离部署_1.png)
 
-#### 3、安装 `nginx` 并更改配置 `nginx.conf`
+#### 3、安装 `nginx` 并更改配置 `default.conf` （位置一般在 /etc/nginx/conf.d 文件夹下）
 ```editorconfig
     listen       80;
     server_name  localhost;
@@ -246,4 +246,104 @@ Mock.js 文档地址 http://mockjs.com/examples.html
 #### 4、将 `/resources/static` 目录下的内容 全部复制到 `/usr/share/nginx/html` 目录下，此目录和 nginx 的 location.root 路径配置保持一致
 ![img.png](src/main/resources/static/images/readme/前后端分离部署_2.png)
 
-#### 5、刷新nginx配置 `nginx -s reload`，然后即可访问 `http://localhost`
+#### 5、刷新nginx配置 `nginx -s reload`，然后即可访问 `http://ip地址`
+
+#### 6、配置https(扩展)
+1. 申请免费证书，得到一个key文件和pem文件（教程见<a href="https://developer.aliyun.com/article/1595201">阿里云免费SSL证书申请流程（一键申请20张）
+   </a>）
+
+2. 更改nginx配置（default.conf）
+```editorconfig
+server {
+    listen       443  ssl;
+    server_name  lxyccc.top;
+    ssl_certificate lxyccc.top.pem;
+    ssl_certificate_key  lxyccc.top.key;
+
+    # 优化SSL配置
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+	
+	 # 后端反向代理，其中 /back 和 miniAjax.js 里的 baseURL 属性对应
+    location /back/ {
+      proxy_pass  http://127.0.0.1:9019/;
+      proxy_redirect off;
+      # bForwarded-ForIP
+      proxy_set_header  Host  $host:$server_port;
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    }
+
+	 # 后端反向代理，其中 /back 和 miniAjax.js 里的 baseURL 属性对应
+    location /mock/ {
+      proxy_pass  http://127.0.0.1:9019/mock/;
+      proxy_redirect off;
+      # bForwarded-ForIP
+      proxy_set_header  Host  $host:$server_port;
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    }
+
+
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+```
+
+3. 新增nginx配置（httpToHttps.conf）
+```editorconfig
+# HTTP强制跳转HTTPS
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+```
+
+4. 也可使用Let's encrypt 申请免费证书
+地址 https://letsencrypt.org/zh-cn/ 或者 https://letsencrypt.top/

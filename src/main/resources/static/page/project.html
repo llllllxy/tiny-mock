@@ -120,9 +120,8 @@
                     <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
                 </div>
             </div>
-            <div class="layui-form-item text-right">
+            <div class="layui-form-item layui-hide">
                 <button class="layui-btn" lay-submit lay-filter="addSaveBtn">保存</button>
-                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeAddDialog">取消</button>
             </div>
         </form>
     </div>
@@ -156,9 +155,8 @@
                     <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
                 </div>
             </div>
-            <div class="layui-form-item text-right">
+            <div class="layui-form-item layui-hide">
                 <button class="layui-btn" lay-submit lay-filter="editSaveBtn">保存</button>
-                <button class="layui-btn layui-btn-primary" type="button" lay-filter="closeEditDialog">取消</button>
             </div>
         </form>
     </div>
@@ -269,6 +267,10 @@
                 maxmin: true,
                 shadeClose: false,
                 area: '580px', // 宽度580, 高度自适应
+                btn: ['保存', '取消'], // 自定义按钮
+                yes: function(index, layero) {
+                    layero.find("button[lay-filter='editSaveBtn']").click();
+                },
                 content: $('#editDialog').html(),
                 success: function (layero, dIndex) {
                     // 回显表单数据
@@ -347,6 +349,10 @@
                     maxmin: true,
                     shadeClose: false,
                     area: '580px', // 宽度580, 高度自适应
+                    btn: ['保存', '取消'], // 自定义按钮
+                    yes: function(index, layero) {
+                        layero.find("button[lay-filter='addSaveBtn']").click();
+                    },
                     content: $('#addDialog').html(),
                     success: function (layero, dIndex) {
                         // 表单提交事件

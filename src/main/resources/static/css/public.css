@@ -56,6 +56,35 @@
     padding: 10px 0 0 0;
 }
 
+/* 重写 layui-card 边框样式 */
+.layui-card {
+    border: 1px solid #e0e0e0; /* 设置边框宽度为 1px，颜色为浅灰色 */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.08); /* 添加阴影效果，使卡片更立体 */
+}
+
+/* 重写 layui-card-header 背景和边框样式 */
+.layui-card-header {
+    background-color: #fafafa; /* 设置标题背景颜色 */
+    border-bottom: 1px solid #e0e0e0; /* 设置标题底部边框 */
+}
+
+/* 重写 layer弹框样式（针对于page页面层） */
+.layui-layer-page > .layui-layer-btn {
+    text-align: right;
+    /*padding: 0 15px 12px;*/
+    pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    border-top: 1px solid #e9e7e7;
+}
+
+/* 重写 layer弹框里的按钮的颜色样式 */
+.layui-layer-btn .layui-layer-btn0 {
+    border-color: transparent;
+    background-color: #5E7CE0;
+    color: #fff;
+}
+
 .text-left {
     text-align: left
 }
