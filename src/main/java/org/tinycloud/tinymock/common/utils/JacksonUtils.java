@@ -19,9 +19,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
-import org.tinycloud.tinymock.common.exception.BusinessException;
 import org.tinycloud.tinymock.common.utils.function.CheckedConsumer;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.util.*;
  * @since 2024-03-13 16:39
  */
 public class JacksonUtils {
+    private final static Logger log = LoggerFactory.getLogger(JacksonUtils.class);
 
     private JacksonUtils() {
     }
@@ -61,7 +63,8 @@ public class JacksonUtils {
         try {
             return getInstance().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new BusinessException(e);
+            log.error("toJsonString JsonProcessingException: ", e);
+            return null;
         }
     }
 
@@ -78,7 +81,8 @@ public class JacksonUtils {
         try {
             return getInstance().writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
-            throw new BusinessException(e);
+            log.error("toJsonAsBytes JsonProcessingException: ", e);
+            return null;
         }
     }
 
@@ -93,7 +97,8 @@ public class JacksonUtils {
         try {
             return getInstance().readTree(jsonString);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readTree IOException: ", e);
+            return null;
         }
     }
 
@@ -108,7 +113,8 @@ public class JacksonUtils {
         try {
             return getInstance().readTree(in);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readTree IOException: ", e);
+            return null;
         }
     }
 
@@ -123,7 +129,8 @@ public class JacksonUtils {
         try {
             return getInstance().readTree(content);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readTree IOException: ", e);
+            return null;
         }
     }
 
@@ -138,7 +145,8 @@ public class JacksonUtils {
         try {
             return getInstance().readTree(jsonParser);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readTree IOException: ", e);
+            return null;
         }
     }
 
@@ -157,7 +165,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, valueType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -176,7 +185,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(jsonString, valueType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -195,7 +205,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(in, valueType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -214,7 +225,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, typeReference);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -233,7 +245,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(jsonString, typeReference);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -252,7 +265,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(in, typeReference);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -271,7 +285,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, javaType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -290,7 +305,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(jsonString, javaType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -309,7 +325,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(in, javaType);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readValue IOException: ", e);
+            return null;
         }
     }
 
@@ -374,7 +391,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getListType(elementClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readList IOException: ", e);
+            return null;
         }
     }
 
@@ -393,7 +411,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getListType(elementClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readList IOException: ", e);
+            return null;
         }
     }
 
@@ -412,7 +431,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getListType(elementClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readList IOException: ", e);
+            return null;
         }
     }
 
@@ -499,7 +519,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getMapType(keyClass, valueClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readMap IOException: ", e);
+            return null;
         }
     }
 
@@ -520,7 +541,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getMapType(keyClass, valueClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readMap IOException: ", e);
+            return null;
         }
     }
 
@@ -541,7 +563,8 @@ public class JacksonUtils {
         try {
             return getInstance().readValue(content, getMapType(keyClass, valueClass));
         } catch (IOException e) {
-            throw new BusinessException(e);
+            log.error("readMap IOException: ", e);
+            return null;
         }
     }
 
@@ -593,7 +616,8 @@ public class JacksonUtils {
         try {
             return getInstance().treeToValue(treeNode, valueType);
         } catch (JsonProcessingException e) {
-            throw new BusinessException(e);
+            log.error("treeToValue JsonProcessingException: ", e);
+            return null;
         }
     }
 
@@ -702,7 +726,7 @@ public class JacksonUtils {
             // 将对象格式化输出为 JSON 字符串
             return getInstance().writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
         } catch (IOException e) {
-            throw new BusinessException(e);
+            return null;
         }
     }
 

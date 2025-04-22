@@ -9,6 +9,8 @@ public enum CoreErrorCode {
 
     MOCK_URL_IS_DISABLED(1006, "Mock地址已禁用！"),
 
+    PLEASE_CHECK_MOCK_DATA_OR_OPEN_MOCK_JS(1007, "请检查Mock数据是否为标准JSON，或开启`启用mock.js`后再试！"),
+
     FILE_UPLOAD_FAILED(2001, "文件上传失败，请联系系统管理员！"),
     FILE_NOT_EXIST(2002, "文件不存在！"),
     FILE_DOWNLOAD_FAILED(2003, "文件下载失败，请联系系统管理员！"),

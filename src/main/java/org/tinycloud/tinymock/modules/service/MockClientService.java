@@ -105,6 +105,9 @@ public class MockClientService {
                 map = DataMockUtils.mock(jsonData);
             } else {
                 map = JacksonUtils.readMap(jsonData);
+                if (Objects.isNull(map)) {
+                    throw new CoreException(CoreErrorCode.PLEASE_CHECK_MOCK_DATA_OR_OPEN_MOCK_JS);
+                }
             }
             this.saveAccessLog(mockInfo, request);
 
