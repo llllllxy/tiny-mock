@@ -1,6 +1,7 @@
 package org.tinycloud.tinymock.common.model;
 
 
+import org.slf4j.MDC;
 import org.tinycloud.tinymock.common.enums.CommonCode;
 
 /**
@@ -17,6 +18,8 @@ public class ApiResult<T> {
     private String msg;
 
     private long time;
+
+    private String traceId;
 
     public Integer getCode() {
         return this.code;
@@ -50,10 +53,19 @@ public class ApiResult<T> {
         this.time = time;
     }
 
+    public String getTraceId() {
+        return this.traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
+
     public ApiResult() {
         this.code = CommonCode.SUCCESS.getCode();
         this.msg = CommonCode.SUCCESS.getDesc();
         this.time = System.currentTimeMillis();
+        this.traceId = MDC.get("traceId");
     }
 
     public ApiResult(Integer code, String msg, T data) {
@@ -61,6 +73,7 @@ public class ApiResult<T> {
         this.msg = msg;
         this.data = data;
         this.time = System.currentTimeMillis();
+        this.traceId = MDC.get("traceId");
     }
 
     public static <T> ApiResult<T> success() {

@@ -3,9 +3,9 @@
     <!-- 日志存放路径 -->
     <property name="LOG_PATH" value="/opt/tinymock/logs" />
     <!-- 日志输出格式 -->
-    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level]  %c [%method,%line]  : %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level  %c [%method,%line] : %msg%n"/>
     <!-- 日志输出格式 -->
-    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} [%thread] %-5level %logger - [%method,%line] - %msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level %logger - [%method,%line] - %msg%n"/>
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
