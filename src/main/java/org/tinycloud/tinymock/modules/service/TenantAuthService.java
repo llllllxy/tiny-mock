@@ -16,7 +16,7 @@ import org.tinycloud.tinymock.common.constant.GlobalConstant;
 import org.tinycloud.tinymock.common.enums.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.*;
-import org.tinycloud.tinymock.common.utils.captcha.GifCaptcha;
+import org.tinycloud.tinymock.common.utils.captcha.PngCaptcha;
 import org.tinycloud.tinymock.common.utils.cipher.SM2Utils;
 import org.tinycloud.tinymock.common.utils.cipher.SM3Utils;
 import org.tinycloud.tinymock.common.utils.web.IpAddressUtils;
@@ -72,10 +72,10 @@ public class TenantAuthService {
         String codeRedisKey = GlobalConstant.TENANT_CAPTCHA_CODE_REDIS_KEY + uuid;
 
         // 生成验证码图片，并返回base64编码
-        GifCaptcha gifCaptcha = new GifCaptcha(120, 38, 5);
-        String base64 = gifCaptcha.toBase64();
+        PngCaptcha captchaCode = new PngCaptcha(120, 38, 5, 10);
+        String base64 = captchaCode.getBase64();
         // 生成4位随机数，作为验证码图片里的数
-        String code = gifCaptcha.text().toLowerCase();
+        String code = captchaCode.getCode();
 
         Map<String, String> rsaKey = SM2Utils.genKeyPair();
         String publicKey = rsaKey.get("pubKey");
