@@ -127,6 +127,15 @@
     </dependencies>
 
     <build>
+        <!-- 排除 static 文件夹下的所有文件，当前后端分离部署时可选择 -->
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <excludes>-->
+<!--                    <exclude>static/**</exclude>-->
+<!--                </excludes>-->
+<!--            </resource>-->
+<!--        </resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

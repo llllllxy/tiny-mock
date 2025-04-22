@@ -16,38 +16,158 @@
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>
-        html, body {width: 100%;height: 100%;overflow: hidden}
-        body {background: #5E7CE0;}
-        body:after {content:'';background-repeat:no-repeat;background-size:cover;-webkit-filter:blur(3px);-moz-filter:blur(3px);-o-filter:blur(3px);-ms-filter:blur(3px);filter:blur(3px);position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;}
-        .layui-container {width: 100%;height: 100%;overflow: hidden}
-        .admin-login-background {width:360px;height:300px;position:absolute;left:50%;top:40%;margin-left:-180px;margin-top:-100px;}
-        .logo-title {text-align:center;letter-spacing:2px;padding:14px 0;}
-        .logo-title h1 {color:#5E7CE0;font-size:25px;font-weight:bold;}
-        .login-form {background-color:#fff;border:1px solid #fff;border-radius:3px;padding:14px 20px;box-shadow:0 0 8px #eeeeee;}
-        .login-form .layui-form-item {position:relative;}
-        .login-form .layui-form-item label {position:absolute;left:1px;top:1px;width:38px;line-height:36px;text-align:center;color:#d2d2d2;}
-        .login-form .layui-form-item input {padding-left:36px;}
-
-        .captcha-img img {border:1px solid #e6e6e6;height:36px;width:100%;}
-
-        a {
-            color: #5E7CE0;
-            text-decoration: underline;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
-        a:hover {
-            color: #7E96E6
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none !important;
+        }
+
+        .login-container {
+            width: 100%;
+            height: 100%;
+            background: url(/images/login/login-bg.png) no-repeat center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container .box-item {
+            width: 444px;
+            height: 600px;
+        }
+
+        .login-container .box-item.desc {
+            background: #ffffff;
+            border-radius: 12px 0px 0px 12px;
+            box-shadow: 0px 16px 73px 8px rgba(203, 203, 203, 0.2);
+            padding: 23px 25px;
+        }
+
+        .login-container .box-item.login {
+            background: #ffffff;
+            border-radius: 0px 12px 12px 0px;
+            padding: 34px 42px;
+            position: relative;
+        }
+
+        .login-container .box-item .login-qr {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 66px;
+            height: 66px;
+        }
+
+        .login-container .box-item .welcome {
+            background: url(/images/login/left-bg1.png) no-repeat center;
+            background-size: cover;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0px 6px 20px 0px rgba(33, 47, 117, 0.1);
+            padding-top: 35px;
+        }
+
+        .login-container .box-item .welcome p {
+            color: #333333;
+            line-height: 25px;
+            letter-spacing: 0.26px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 26px;
+        }
+
+        .login-container .box-item .welcome .sub-welcome {
+            color: #333333;
+            line-height: 25px;
+            letter-spacing: 0.26px;
+            font-weight: 700;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .login-container .box-item .login-title {
+            font-size: 30px;
+            font-weight: 700;
+            text-align: center;
+            color: #1e1e1e;
+            margin-bottom: 35px;
+            margin-top: 35px;
+        }
+
+        .login-container .box-item .login-form .captcha-img {
+            cursor: pointer;
+        }
+
+        .login-container .more {
+            margin-top: 30px;
+        }
+
+        .login-container .more .title-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container .more .title-box > p {
+            margin-bottom: 0;
+        }
+
+        .login-container .more .line {
+            width: 114px;
+            height: 1px;
+            background: #e6e6e6;
+        }
+
+        .login-container .more .title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #a1aebe;
+            margin: 0 19px;
+        }
+
+        .login-container .more .login-type {
+            padding: 0 5px;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .login-container .more .login-type > img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .captcha-img img {
+            border: 1px solid #e6e6e6;
+            height: 36px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-<div class="layui-container">
-    <div class="admin-login-background">
-        <div class="layui-form login-form">
-            <form class="layui-form" action="">
-                <div class="layui-form-item logo-title">
-                    <h1>用户登录</h1>
-                </div>
 
+<div class="login-container">
+    <div class="box-item desc">
+        <div class="welcome">
+            <p>欢迎使用 TINY-MOCK</p>
+            <p class="sub-welcome">「简洁、好用、安全」的在线接口Mock平台</p>
+        </div>
+    </div>
+    <div class="box-item login">
+        <img class="login-qr" src="/images/login/login-qr.png" alt="二维码"/>
+        <div class="login-title">后台登录</div>
+
+        <div class="login-form">
+            <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <div class="layui-input-wrap">
                         <div class="layui-input-prefix">
@@ -56,16 +176,14 @@
                         <input type="text" name="username" value="" lay-verify="required|username" lay-vertype="tips" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <div class="layui-input-wrap">
                         <div class="layui-input-prefix">
                             <i class="layui-icon layui-icon-password"></i>
                         </div>
-                        <input type="password" name="password" value="" lay-verify="required|password" lay-vertype="tips" placeholder="密   码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                        <input type="password" name="password" value="" lay-verify="required|password" lay-vertype="tips" placeholder="密  码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <div class="layui-row">
                         <div class="layui-col-xs7">
@@ -73,30 +191,45 @@
                                 <div class="layui-input-prefix">
                                     <i class="layui-icon layui-icon-vercode"></i>
                                 </div>
-                                <input type="text" name="captcha" value="" lay-verify="required" lay-vertype="tips" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                                <input type="text" name="captcha" value="" lay-verify="required|captcha" lay-vertype="tips" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
                             </div>
                         </div>
                         <div class="layui-col-xs5">
                             <div style="margin-left: 10px;" class="captcha-img">
-                                <img id="captcha" lay-on="getCaptcha">
+                                <img id="captcha" lay-on="getCaptcha"  alt="验证码">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <a href="/page/register.html">注册账号</a>
-                    &nbsp;&nbsp;
-                    <a style="float: right;" href="/page/forget.html">忘记密码？</a>
+                    <a class="layuimini-link" href="/page/register.html">注册账号</a>
+                    <a class="layuimini-link" style="float: right;" href="/page/forget.html">忘记密码？</a>
                 </div>
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login" id="login">登 录</button>
                 </div>
             </form>
         </div>
+
+        <div class="more">
+            <div class="title-box">
+                <p class="line"></p>
+                <p class="title">其他方式登录</p>
+                <p class="line"></p>
+            </div>
+            <div class="login-type">
+                <img src="/images/login/wechat-icon.png" alt="wechat"/>
+                <img src="/images/login/ali-icon.png" alt="ali"/>
+                <img src="/images/login/douyin-icon.png" alt="douyin"/>
+                <img src="/images/login/qq-icon.png" alt="qq"/>
+                <img src="/images/login/weibo-icon.png" alt="weibo"/>
+                <img src="/images/login/feishu-icon.png" alt="feishu"/>
+                <img src="/images/login/google-icon.png" alt="google"/>
+            </div>
+        </div>
     </div>
 </div>
-<script src="/lib/jquery/jquery-2.1.4.min.js" charset="utf-8"></script>
-<script src="/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+
 <script src="/lib/cipher/sm3.js?v=2.0.0" charset="utf-8"></script>
 <script src="/lib/cipher/sm2.js?v=2.0.0" charset="utf-8"></script>
 <script src="/lib/layui/layui.js?v=2.9.25" charset="utf-8"></script>
@@ -118,12 +251,6 @@
         if (top.location != self.location) {
             top.location = self.location;
         }
-
-        // 粒子线条背景
-        $('.layui-container').particleground({
-            dotColor:'#7ec7fd',
-            lineColor:'#7ec7fd'
-        });
 
         util.on('lay-on', {
             getCaptcha: function () {
@@ -191,7 +318,35 @@
             return false;
         });
 
-
+       // 为所有登录方式图片注册点击事件
+        $('.login-type').on('click', '[alt]', function () {
+            var type = $(this).attr('alt');
+            switch (type) {
+                case 'wechat':
+                    layer.msg('你点击了微信图标');
+                    break;
+                case 'ali':
+                    layer.msg('你点击了阿里图标');
+                    break;
+                case 'douyin':
+                    layer.msg('你点击了抖音图标');
+                    break;
+                case 'qq':
+                    layer.msg('你点击了QQ图标');
+                    break;
+                case 'weibo':
+                    layer.msg('你点击了微博图标');
+                    break;
+                case 'feishu':
+                    layer.msg('你点击了飞书图标');
+                    break;
+                case 'google':
+                    layer.msg('你点击了谷歌图标');
+                    break;
+                default:
+                    break;
+            }
+        });
 
         // 获取图形验证码
         function getCaptcha() {
