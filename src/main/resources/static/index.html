@@ -144,6 +144,10 @@
             miniAjax = layui.miniAjax,
             miniAdmin = layui.miniAdmin;
 
+        if (!sessionStorage.getItem('token')) {
+            window.location = '/page/login.html';
+        }
+
         var options = {
             initUrl: "/auth/initMenu",    // 初始化接口
             clearUrl: "/cache/clear",   // 缓存清理接口
