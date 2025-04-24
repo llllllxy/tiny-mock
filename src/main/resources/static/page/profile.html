@@ -94,7 +94,7 @@
                     if (tenantAvatarAddress) {
                         $(".pic-img").attr('src', tenantAvatarAddress);
                     } else {
-                        $(".pic-img").attr('src', '/images/avatar.gif');
+                        $(".pic-img").attr('src', '/images/photoIcon.png');
                     }
                 } else {
                     layer.msg(res.msg, {time: 1000, icon: 2});
@@ -103,6 +103,14 @@
             error: function (error) {
                 layer.msg(error, {time: 1000, icon: 2});
             }
+        });
+
+        $('#pic-input').on('mouseenter', function () {
+            var elem = this;
+            layer.tips('修改头像', elem, {
+                tips: [1, '#5E7CE0'],
+                time: 3000
+            })
         });
 
         $('#pic-input').change(function () {
