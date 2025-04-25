@@ -4,14 +4,15 @@ public enum TenantErrorCode {
     TENANT_NOT_LOGIN(3001, "会话已过期，请重新登录！"),
     TENANT_USERNAME_OR_PASSWORD_MISMATCH(3002, "用户名或密码错误！"),
     MAXIMUM_LOGIN_CONCURRENCY_HAS_EXCEEDED_THE_LIMIT(3003, "最大登录并发数已超过上限，无法登录！"),
-    TENANT_IS_DISABLE(3004, "租户已被禁用，请联系工作人员！"),
-    CAPTCHA_IS_MISMATCH(3005, "验证码错误或已过期！"),
-    EMAILCODE_IS_MISMATCH(3006, "邮箱验证码错误或已过期！"),
+    MAXIMUM_LOGIN_ATTEMPT_TIMES_HAS_EXCEEDED_THE_LIMIT(3004, "您已多次输错密码，账号已经被锁定，请五分钟后再试！"),
+    TENANT_IS_DISABLE(3005, "租户已被禁用，请联系工作人员！"),
+    CAPTCHA_IS_MISMATCH(3006, "验证码错误或已过期！"),
+    EMAILCODE_IS_MISMATCH(3007, "邮箱验证码错误或已过期！"),
 
-    INVITATIONCODE_IS_NOT_EXIST(3007, "邀请码不正确或不存在！"),
-    TENANT_IS_NOT_EXIST(3008, "租户不存在！"),
-    TENANT_PASSWORD_IS_ENTERED_INCONSISTENTLY(3009, "新密码前后输入不一致，请检查！"),
-    TENANT_OLD_PASSWORD_IS_WRONG(3010, "旧密码不正确，请检查！"),
+    INVITATIONCODE_IS_NOT_EXIST(3008, "邀请码不正确或不存在！"),
+    TENANT_IS_NOT_EXIST(3009, "租户不存在！"),
+    TENANT_PASSWORD_IS_ENTERED_INCONSISTENTLY(30010, "新密码前后输入不一致，请检查！"),
+    TENANT_OLD_PASSWORD_IS_WRONG(3011, "旧密码不正确，请检查！"),
 
 
     TENANT_PROJECT_NAME_OR_PATH_ALREADY_EXIST(3100, "项目名称或项目路径已存在，请修改！"),

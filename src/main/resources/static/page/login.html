@@ -316,7 +316,7 @@
         });
 
        // 为所有登录方式图片注册点击事件
-        $('.login-type').on('click', '[alt]', function () {
+        $('.login-type').on('click', 'img[alt]', function () {
             var type = $(this).attr('alt');
             switch (type) {
                 case 'wechat':

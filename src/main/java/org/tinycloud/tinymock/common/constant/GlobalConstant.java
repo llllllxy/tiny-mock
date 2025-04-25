@@ -60,10 +60,13 @@ public class GlobalConstant {
      */
     public static final String TOKEN_PREFIX = "Bearer ";
 
-
     /**
      * 租户登陆记录缓存 redis key
      */
     public static final String TENANT_NAME_REDIS_KEY = "tinymock:tenant:name:";
 
+    /**
+     * 租户尝试登录次数 redis key
+     */
+    public static final String AUTH_LOGIN_ATTEMPT_TIMES = "tinymock:tenant:attempt_times:";
 }

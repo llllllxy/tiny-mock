@@ -12,6 +12,8 @@ tinymock:
   tenantAuthTimeout: 1800
   # 最大登录并发数
   maximumConcurrentLogins: 2
+  # 最大尝试登录次数
+  maximumLoginAttemptTimes: 3
   # 项目导出备份加密密钥（sm4）
   projectExportDek: Sq91g702s71/q6yUaAsgTw==
   jwtSecret: K$N)A3*sGGf<wo*22*%&(DF

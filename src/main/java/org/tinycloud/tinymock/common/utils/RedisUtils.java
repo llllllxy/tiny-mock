@@ -26,6 +26,10 @@ public class RedisUtils {
         this.redisTemplate = redisTemplate;
     }
 
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisTemplate;
+    }
+
     /*============================Common Start=============================*/
 
     /**

@@ -103,12 +103,24 @@ public class TenantAuthService {
         String redisCache = (String) this.redisUtils.get(codeRedisKey);
         if (StrUtils.isEmpty(redisCache)) {
             throw new TenantException(TenantErrorCode.CAPTCHA_IS_MISMATCH);
+        } else {
+            // 验证码只让使用一次，防止被装库，提高安全性
+            this.redisUtils.del(codeRedisKey);
         }
         String code = redisCache.split("&")[0];
         String privateKey = redisCache.split("&")[1];
         if (!captcha.equalsIgnoreCase(code)) {
             throw new TenantException(TenantErrorCode.CAPTCHA_IS_MISMATCH);
         }
+
+        // 校验账户最大尝试次数，超过次数后锁定账户
+        if (this.redisUtils.hasKey(GlobalConstant.AUTH_LOGIN_ATTEMPT_TIMES + username)) {
+            Integer attemptTimes = (Integer) this.redisUtils.get(GlobalConstant.AUTH_LOGIN_ATTEMPT_TIMES + username);
+            if (attemptTimes >= applicationConfig.getMaximumLoginAttemptTimes()) {
+                throw new TenantException(TenantErrorCode.MAXIMUM_LOGIN_ATTEMPT_TIMES_HAS_EXCEEDED_THE_LIMIT);
+            }
+        }
+
         TTenant entity = this.tenantMapper.selectOne(
                 Wrappers.<TTenant>lambdaQuery().eq(TTenant::getTenantAccount, username)
                         .eq(TTenant::getDelFlag, GlobalConstant.NOT_DELETED));
@@ -124,6 +136,7 @@ public class TenantAuthService {
         }
         String passwordDecryptHash = SM3Utils.hash(passwordDecrypt);
         if (!entity.getTenantPassword().equals(passwordDecryptHash)) {
+            this.recordFailUserLogin(username);
             throw new TenantException(TenantErrorCode.TENANT_USERNAME_OR_PASSWORD_MISMATCH);
         }
 
@@ -182,6 +195,19 @@ public class TenantAuthService {
             tokenList = new ArrayList<>();
         }
         return tokenList;
+    }
+
+    /**
+     * 当登录失败的时候，记录尝试次数
+     *
+     * @param tenantAccount 用户名
+     */
+    private void recordFailUserLogin(String tenantAccount) {
+        String redisKey = GlobalConstant.AUTH_LOGIN_ATTEMPT_TIMES + tenantAccount;
+        // 尝试次数加1
+        this.redisUtils.incr(redisKey, 1L);
+        // 刷新缓存时间为5分钟
+        this.redisUtils.expire(redisKey, 5, TimeUnit.MINUTES);
     }
 
     public Boolean logout(HttpServletRequest request) {

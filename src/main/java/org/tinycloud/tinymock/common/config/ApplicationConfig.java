@@ -53,6 +53,9 @@ public class ApplicationConfig {
     @Value("${tinymock.maximumConcurrentLogins:2}")
     private Integer maximumConcurrentLogins;
 
+    @Value("${tinymock.maximumLoginAttemptTimes:5}")
+    private Integer maximumLoginAttemptTimes;
+
     /**
      * 项目导出备份加密密钥（sm4）
      */
@@ -147,5 +150,13 @@ public class ApplicationConfig {
 
     public void setMaximumConcurrentLogins(Integer maximumConcurrentLogins) {
         this.maximumConcurrentLogins = maximumConcurrentLogins;
+    }
+
+    public Integer getMaximumLoginAttemptTimes() {
+        return maximumLoginAttemptTimes;
+    }
+
+    public void setMaximumLoginAttemptTimes(Integer maximumLoginAttemptTimes) {
+        this.maximumLoginAttemptTimes = maximumLoginAttemptTimes;
     }
 }
