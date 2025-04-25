@@ -1,3 +1,9 @@
+var CommonConfig = {
+    // 密码长度为8-20位且必须包含字母、数字、特殊符号（如：@#$%^&*()_+-=）等三种字符
+    passwordRegex: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#$%^&*()_+\-=])[a-zA-Z\d@#$%^&*()_+\-=]{8,20}$/,
+
+    passwordSalt: "W%o$gxG6Nbbg+S4@W5&9VQeud&2O1^V8&We^YwhX-1N+_m7&KQ#JJ@a+UX9Rr5Bk"
+};
 
 /**
  * 判断对象是否为空
@@ -309,7 +315,7 @@ function showDictValue(dictCode, dictKey) {
     const dictData = JSON.parse(sessionStorage.getItem("dictData"));
     const dict = dictData[dictCode];
     if (dict && dict.map && dict.map[dictKey]) {
-        const { dictValue, background } = dict.map[dictKey];
+        const {dictValue, background} = dict.map[dictKey];
         const style = background ? `layui-badge layui-bg-${background}` : "layui-badge-rim";
         return `<span class="${style}">${dictValue}</span>`;
     }

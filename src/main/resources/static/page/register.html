@@ -224,7 +224,6 @@
 <script src="/js/lay-config.js?v=2.9.25" charset="utf-8"></script>
 <script src="/js/public.js?v=2.9.25" charset="utf-8"></script>
 <script>
-    var salt = "W%o$gxG6Nbbg+S4@W5&9VQeud&2O1^V8&We^YwhX-1N+_m7&KQ#JJ@a+UX9Rr5Bk";
     var verifyKey;
     var publicKey;
 
@@ -272,14 +271,14 @@
             },
             // 验证密码，且为必填项
             password: function(value, elem) {
-                if (!/^[\S]{6,16}$/.test(value)) {
-                    return '密码必须为 6 到 16 位的非空字符';
+                if (!CommonConfig.passwordRegex.test(value)) {
+                    return '密码长度为8-20位且必须包含字母、数字、特殊符号（如：@#$%^&*()_+-=）等三种字符';
                 }
             },
             // 确认密码验证
             confirmPassword: function (value, item) {
-                if (!/^[\S]{6,16}$/.test(value)) {
-                    return '密码必须为 6 到 16 位的非空字符';
+                if (!CommonConfig.passwordRegex.test(value)) {
+                    return '密码长度为8-20位且必须包含字母、数字、特殊符号（如：@#$%^&*()_+-=）等三种字符';
                 }
                 var passwordValue = $('input[name="password"]').val();
                 if (value !== passwordValue) {
@@ -354,7 +353,7 @@
             }
 
             // 先对密码做哈希运算
-            let hashData = sm3(data.password + salt);
+            let hashData = sm3(data.password + CommonConfig.passwordSalt);
             // 然后再做sm2公钥加密
             let encryptData = sm2.doEncrypt(hashData, publicKey);
             // 加密结果

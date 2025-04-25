@@ -44,7 +44,7 @@
 1. 新建`MySQL`数据库并导入`resources\init`文件夹下的数据库脚本
 2. 修改配置文件中`application.yml`中数据库连接信息和Redis连接信息
 3. 运行启动类`TinyMockApplication`，即可正常启动项目
-4. 管理后台登录地址：`http://localhost:9019`  账户密码 `zhangsan / 123456`
+4. 管理后台登录地址：`http://localhost:9019`  账户密码 `zhangsan / Aa123456@`
 
 ## 项目结构
 
