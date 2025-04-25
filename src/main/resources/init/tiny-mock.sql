@@ -421,7 +421,7 @@ CREATE TABLE `t_tenant`  (
 -- ----------------------------
 -- Records of t_tenant
 -- ----------------------------
-INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', '724c6ab2d6e60fa1f08fec9f7222fbb3cdeb1151dc13cb02dc1f8992e9504c95', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', 'AaNs8ROo', 1853985145965862913, '2024-11-06 10:21:36');
+INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', 'd9918e4c9b4d7729d8915446536e9d6cf0927ed2e4dbece14577ef78e9281129', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', 'AaNs8ROo', 1853985145965862913, '2024-11-06 10:21:36');
 INSERT INTO `t_tenant` VALUES (2024080000000001698, 'lisi', 'e960be68749241c3e3562094239e28e2b4482e9d28c65413bbe2f9bd0419cdb8', '李四', NULL, 'leisure01@aliyun.com', 0, 0, '2024-03-20 22:05:28', NULL, NULL, '2024-03-20 22:05:28');
 
 -- ----------------------------
