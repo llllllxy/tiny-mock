@@ -40,7 +40,7 @@ public class ThreadPoolConfig {
 
     @Bean("asyncServiceExecutor")
     public ThreadPoolTaskExecutor asyncServiceExecutor() {
-        logger.info("start init asyncServiceExecutor");
+        logger.info("start initializing asyncServiceExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 配置核心线程数
         executor.setCorePoolSize(corePoolSize);
@@ -64,7 +64,7 @@ public class ThreadPoolConfig {
 
         // 执行初始化，初始化 core 线程
         executor.initialize();
+        logger.info("finish initializing asyncServiceExecutor");
         return executor;
     }
-
 }
