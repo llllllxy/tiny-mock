@@ -6,6 +6,7 @@ import org.tinycloud.tinymock.modules.helper.storage.model.StorageStreamFile;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -67,7 +68,7 @@ public interface StorageService {
      */
      boolean deleteById(String fileId);
 
-    String getExpiryUrlById(String fileId, Integer expires);
+    String getExpiryUrlById(String fileId, Integer expires, TimeUnit timeUnit);
 
     String getExpiryUrlById(String fileId);
 }

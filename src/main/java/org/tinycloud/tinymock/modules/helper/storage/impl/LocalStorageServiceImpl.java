@@ -22,6 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -125,7 +126,7 @@ public class LocalStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String getExpiryUrlById(String fileId, Integer expires) {
+    public String getExpiryUrlById(String fileId, Integer expires, TimeUnit timeUnit) {
         return null;
     }
 

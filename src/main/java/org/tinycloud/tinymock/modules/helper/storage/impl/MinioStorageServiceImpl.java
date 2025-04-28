@@ -202,16 +202,13 @@ public class MinioStorageServiceImpl implements StorageService {
     /**
      * 获取文件外链
      *
-     * @param fileId  文件名称
-     * @param expires 过期时间 单位小时
+     * @param fileId   文件名称
+     * @param expires  过期时间 单位小时
+     * @param timeUnit 时间单位
      * @return url
      */
     @Override
-    public String getExpiryUrlById(String fileId, Integer expires) {
-        if (expires < 1 || expires > (7 * 24)) {
-            logger.error("MinioStorageServiceImpl -- 过期时间必须在1小时和七天之间！");
-            return "";
-        }
+    public String getExpiryUrlById(String fileId, Integer expires, TimeUnit timeUnit) {
         try {
             MinioClient minioClient = getMinioClient();
             return minioClient.getPresignedObjectUrl(
@@ -219,7 +216,7 @@ public class MinioStorageServiceImpl implements StorageService {
                             .method(Method.GET)
                             .bucket(defaultBucket)
                             .object(fileId)
-                            .expiry(expires, TimeUnit.HOURS)
+                            .expiry(expires, timeUnit)
                             .build());
         } catch (Exception e) {
             logger.error("MinioStorageServiceImpl -- getExpiryUrlById -- Exception = {e}", e);
