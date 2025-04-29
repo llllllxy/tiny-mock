@@ -24,13 +24,13 @@ layui.define(["jquery"], function (exports) {
     var _ajax = $.ajax;
     $.ajax = function (opt) {
         var fn = {
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XHR, textStatus, errorThrown) {
             },
-            success: function (data, textStatus) {
+            success: function (data, textStatus, XHR) {
             },
-            beforeSend: function (XHR) {
+            beforeSend: function (XHR, settings) {
             },
-            complete: function (XHR, TS) {
+            complete: function (XHR, textStatus) {
             }
         };
         if (opt.error) {
@@ -47,13 +47,13 @@ layui.define(["jquery"], function (exports) {
         }
         //扩展增强处理
         var _opt = $.extend(opt, {
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XHR, textStatus, errorThrown) {
                 // 错误方法增强处理
-                fn.error(XMLHttpRequest, textStatus, errorThrown);
+                fn.error(XHR, textStatus, errorThrown);
             },
             // 只有 HTTP 状态码为 200（包括 200-299 范围内）的 Ajax 请求才会触发 success 回调函数
             // 其他状态码将触发 error 回调函数
-            success: function (res, textStatus) {
+            success: function (res, textStatus, XHR) {
                 if (res.code === 3001 || res.code === '3001') {
                     layer.alert('会话已过期，请重新登录', function (index) {
                         layer.close(index);
@@ -62,7 +62,7 @@ layui.define(["jquery"], function (exports) {
                 } else {
                     // 其他返回码不是401的请求，都由各页面自行处理
                     // 成功回调方法增强处理
-                    fn.success(res, textStatus);
+                    fn.success(res, textStatus, XHR);
                 }
             },
             beforeSend: function (XHR, settings) {
@@ -79,7 +79,7 @@ layui.define(["jquery"], function (exports) {
                 }
                 XHR.setRequestHeader("Powered-By", 'TINYCLOUD');
                 // 提交前回调方法
-                fn.beforeSend(XHR);
+                fn.beforeSend(XHR, settings);
             },
             complete: function (XHR, textStatus) {
                 // 完成后回调方法
