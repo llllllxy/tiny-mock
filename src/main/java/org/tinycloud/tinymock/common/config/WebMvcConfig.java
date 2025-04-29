@@ -71,7 +71,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 配置静态资源映射
+     * 配置静态资源映射（spring.web.resources.add-mappings配置为false后，这里需要自定义资源映射）
      *
      * @param registry ResourceHandlerRegistry
      */
@@ -84,10 +84,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/lib/**").addResourceLocations("classpath:/static/lib/");
         registry.addResourceHandler("/page/**").addResourceLocations("classpath:/static/page/");
         registry.addResourceHandler("/index.html").addResourceLocations("classpath:/static/");
-
-        // 配置swagger-ui资源映射(knife4j)
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }
