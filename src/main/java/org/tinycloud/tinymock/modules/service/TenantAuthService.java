@@ -34,7 +34,6 @@ import org.tinycloud.tinymock.modules.mapper.TenantMapper;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -166,9 +165,8 @@ public class TenantAuthService {
             tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);
             this.redisUtils.set(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token, (tenantAuthCache), applicationConfig.getTenantAuthTimeout(), TimeUnit.SECONDS);
 
-            // 记录此账号同时在线记录
-            tokenList.add(token);
-            this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + username, (tokenList));
+            // 记录此账号的同时在线记录
+            this.redisUtils.lRightPush(GlobalConstant.TENANT_NAME_REDIS_KEY + username, token);
 
             return GlobalConstant.TOKEN_PREFIX + jwtToken;
         }, "LOGIN_LOCK_KEY_" + username, 3, 10);
@@ -181,17 +179,20 @@ public class TenantAuthService {
      * @param tenantAccount 用户名
      */
     private List<String> clearNotExistsToken(String tenantAccount) {
-        List<String> tokenList = (List) this.redisUtils.get(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
+        // 获取此账号的所有会话列表
+        List<String> tokenList = (List) this.redisUtils.lGet(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, 0, -1);
         if (!CollectionUtils.isEmpty(tokenList)) {
-            tokenList.removeIf(token -> Boolean.FALSE.equals(this.redisUtils.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token)));
+            Iterator<String> iterator = tokenList.iterator();
+            while (iterator.hasNext()) {
+                String token = iterator.next();
+                if (!this.redisUtils.hasKey(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token)) {
+                    this.redisUtils.lRemove(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, 1, token);
+                    iterator.remove();
+                }
+            }
         }
         if (CollectionUtils.isEmpty(tokenList)) {
             this.redisUtils.del(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount);
-        } else {
-            this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + tenantAccount, (tokenList));
-        }
-
-        if (CollectionUtils.isEmpty(tokenList)) {
             tokenList = new ArrayList<>();
         }
         return tokenList;
@@ -214,17 +215,10 @@ public class TenantAuthService {
         String token = TenantHolder.getTenant().getToken();
         // 先清除token
         this.redisUtils.del(GlobalConstant.TENANT_TOKEN_REDIS_KEY + token);
-        // 再清除登录记录
-        List<String> tokenList = (List) this.redisUtils.get(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
-        if (!CollectionUtils.isEmpty(tokenList)) {
-            tokenList = tokenList.stream()
-                    .filter(s -> !s.equals(token))
-                    .collect(Collectors.toList());
-            if (CollectionUtils.isEmpty(tokenList)) {
-                this.redisUtils.del(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
-            } else {
-                this.redisUtils.set(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount(), (tokenList));
-            }
+        this.redisUtils.lRemove(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount(), 1, token);
+        List<String> tokenList = (List) this.redisUtils.lGet(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount(), 0, -1);
+        if (CollectionUtils.isEmpty(tokenList)) {
+            this.redisUtils.del(GlobalConstant.TENANT_NAME_REDIS_KEY + TenantHolder.getTenantAccount());
         }
         return true;
     }
