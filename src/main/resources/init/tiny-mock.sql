@@ -415,14 +415,15 @@ CREATE TABLE `t_tenant`  (
   `invitation_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注册邀请码（8位随机字符）',
   `tenant_avatar` bigint(20) NULL DEFAULT NULL COMMENT '租户头像',
   `updated_at` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `password_salt` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '租户密码盐',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_tenant
 -- ----------------------------
-INSERT INTO `t_tenant` VALUES (2212121, 'zhangsan', 'd9918e4c9b4d7729d8915446536e9d6cf0927ed2e4dbece14577ef78e9281129', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', 'AaNs8ROo', 1853985145965862913, '2024-11-06 10:21:36');
-INSERT INTO `t_tenant` VALUES (2024080000000001698, 'lisi', 'e960be68749241c3e3562094239e28e2b4482e9d28c65413bbe2f9bd0419cdb8', '李四', NULL, 'leisure01@aliyun.com', 0, 0, '2024-03-20 22:05:28', NULL, NULL, '2024-03-20 22:05:28');
+INSERT INTO `t_tenant`(`id`, `tenant_account`, `tenant_password`, `tenant_name`, `tenant_phone`, `tenant_email`, `status`, `del_flag`, `created_at`, `invitation_code`, `tenant_avatar`, `updated_at`, `password_salt`) VALUES (2212121, 'zhangsan', '02ec674189cf69fbf65cafe95be168a25e3fb9a2324dfc7e99751100a1111663', '张三', '17862718963', '17862718963@email.com', 0, 0, '2023-12-05 16:33:46', 'AaNs8ROo', 1853985145965862913, '2025-05-08 11:29:47', '289a3aecd27d429d93982e5da14feece');
+INSERT INTO `t_tenant`(`id`, `tenant_account`, `tenant_password`, `tenant_name`, `tenant_phone`, `tenant_email`, `status`, `del_flag`, `created_at`, `invitation_code`, `tenant_avatar`, `updated_at`, `password_salt`) VALUES (2024080000000001698, 'lisi', '060519b8108a57db0aa4f6e6a3ef9281a0fcd020a29b4e585214fa0a2f8a1682', '李四', NULL, 'leisure01@aliyun.com', 0, 0, '2024-03-20 22:05:28', NULL, NULL, '2025-05-08 11:30:05', '21aac4945e4046bcac602b14cb81b8ec');
 
 -- ----------------------------
 -- Table structure for t_upload_file

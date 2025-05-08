@@ -61,4 +61,7 @@ public class TTenant implements Serializable {
 
     @TableField("tenant_avatar")
     private Long tenantAvatar;
+
+    @TableField("password_salt")
+    private String passwordSalt;
 }

@@ -71,7 +71,7 @@ public class SM3Utils {
      * @param salt    盐值字符串
      * @return 摘要值，对于SM3算法来说是32字节，转换成了16进制字符串
      */
-    public static String hashWithRand(String content, String salt) {
+    public static String hashWithSalt(String content, String salt) {
         byte[] srcData = content.getBytes(StandardCharsets.UTF_8);
         byte[] rand = salt.getBytes(StandardCharsets.UTF_8);
         return Hex.toHexString(hashWithRand(srcData, rand));
@@ -149,9 +149,9 @@ public class SM3Utils {
      * @param args
      */
     public static void main(String[] args) {
-        String str = "abcdefg";
-        String result = hash(str);
-        System.out.println(result);
+        String str = "123456";
+        String salt = "abcde";
+        System.out.println(hashWithSalt(str, salt));
 
         String key = "123456";
         String result2 = hmac(key, str);

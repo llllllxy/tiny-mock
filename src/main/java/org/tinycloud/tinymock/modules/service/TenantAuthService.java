@@ -133,7 +133,7 @@ public class TenantAuthService {
         if (StrUtils.isEmpty(passwordDecrypt)) {
             throw new TenantException(TenantErrorCode.CAPTCHA_IS_MISMATCH);
         }
-        String passwordDecryptHash = SM3Utils.hash(passwordDecrypt);
+        String passwordDecryptHash = SM3Utils.hashWithSalt(passwordDecrypt, entity.getPasswordSalt());
         if (!entity.getTenantPassword().equals(passwordDecryptHash)) {
             this.recordFailUserLogin(username);
             throw new TenantException(TenantErrorCode.TENANT_USERNAME_OR_PASSWORD_MISMATCH);
@@ -315,7 +315,8 @@ public class TenantAuthService {
         if (StrUtils.isEmpty(passwordDecrypt)) {
             throw new TenantException(TenantErrorCode.EMAILCODE_IS_MISMATCH);
         }
-        String passwordDecryptHash = SM3Utils.hash(passwordDecrypt);
+        String passwordSalt = UUID.randomUUID().toString().trim().replaceAll("-", "");
+        String passwordDecryptHash = SM3Utils.hashWithSalt(passwordDecrypt, passwordSalt);
 
         // 插入租户
         TTenant entity = new TTenant();
@@ -325,6 +326,7 @@ public class TenantAuthService {
         entity.setTenantAccount(tenantAccount);
         entity.setTenantEmail(tenantEmail);
         entity.setTenantName(tenantName);
+        entity.setPasswordSalt(passwordSalt);
         this.tenantMapper.insert(entity);
 
         // 记录租户邀请码记录表
@@ -380,8 +382,8 @@ public class TenantAuthService {
         if (!newPasswordDecrypt.equals(againPasswordDecrypt)) {
             throw new TenantException(TenantErrorCode.TENANT_PASSWORD_IS_ENTERED_INCONSISTENTLY);
         }
-        String oldPasswordDecryptHash = SM3Utils.hash(oldPasswordDecrypt);
-        String newPasswordDecryptHash = SM3Utils.hash(newPasswordDecrypt);
+        String oldPasswordDecryptHash = SM3Utils.hashWithSalt(oldPasswordDecrypt, entity.getPasswordSalt());
+        String newPasswordDecryptHash = SM3Utils.hashWithSalt(newPasswordDecrypt, entity.getPasswordSalt());
 
         if (!oldPasswordDecryptHash.equals(entity.getTenantPassword())) {
             throw new TenantException(TenantErrorCode.TENANT_OLD_PASSWORD_IS_WRONG);
