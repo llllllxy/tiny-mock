@@ -40,7 +40,7 @@ public class RedisUtils {
      * @return
      */
     public boolean expire(final String key, final long time) {
-        if (StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasLength(key)) {
             return false;
         }
         try {
@@ -64,7 +64,7 @@ public class RedisUtils {
      * @return
      */
     public boolean expire(final String key, final long time, final TimeUnit unit) {
-        if (StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasLength(key)) {
             return false;
         }
         try {
@@ -341,7 +341,7 @@ public class RedisUtils {
      * @return true成功 false 失败
      */
     public boolean update(final String key, Object value) {
-        if (StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasLength(key)) {
             return false;
         }
         try {
@@ -642,9 +642,9 @@ public class RedisUtils {
      * 获取list缓存的内容
      *
      * @param key   键
-     * @param start 开始
-     * @param end   结束  0 到 -1代表所有值
-     * @return
+     * @param start 起始索引。索引从 0 开始
+     * @param end   结束索引。若为 -1，则表示获取列表中的所有元素。
+     * @return 返回指定索引范围内的元素列表
      */
     public List<Object> lGet(String key, long start, long end) {
         try {
@@ -671,11 +671,11 @@ public class RedisUtils {
     }
 
     /**
-     * 通过索引 获取list中的值
+     * 获取指定列表中特定索引位置的元素
      *
      * @param key   键
      * @param index 索引  index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
-     * @return
+     * @return 该方法返回指定索引位置的元素。如果索引超出了列表的范围，也就是指定的索引位置不存在对应的元素，那么方法将返回 null。
      */
     public Object lGetIndex(String key, long index) {
         try {
@@ -693,7 +693,7 @@ public class RedisUtils {
      * @param key   键
      * @param index 索引
      * @param value 值
-     * @return
+     * @return true成功，false失败
      */
     public boolean lUpdateIndex(String key, long index, Object value) {
         try {
@@ -711,7 +711,7 @@ public class RedisUtils {
      *
      * @param key   键
      * @param value 值
-     * @return
+     * @return true成功，false失败
      */
     public boolean lRightPush(String key, Object value) {
         try {
@@ -729,7 +729,7 @@ public class RedisUtils {
      * @param key   键
      * @param value 值
      * @param time  时间(秒)
-     * @return
+     * @return true成功，false失败
      */
     public boolean lRightPush(String key, Object value, long time) {
         try {
@@ -749,7 +749,7 @@ public class RedisUtils {
      *
      * @param key   键
      * @param value 值
-     * @return
+     * @return true成功，false失败
      */
     public boolean lRightPushAll(String key, List<Object> value) {
         try {
@@ -767,7 +767,7 @@ public class RedisUtils {
      * @param key   键
      * @param value 值
      * @param time  时间(秒)
-     * @return
+     * @return true成功，false失败
      */
     public boolean lRightPushAll(String key, List<Object> value, long time) {
         try {
@@ -864,12 +864,14 @@ public class RedisUtils {
 
 
     /**
-     * 移除N个值为value
+     * 从列表中移除指定数量的指定元素
      *
      * @param key   键
-     * @param count 移除多少个
-     * @param value 值
-     * @return 移除的个数
+     * @param count 移除元素的数量
+     * @param value 指定要移除的元素值，当count > 0时，从列表头部开始搜索，移除与value相等的元素，最多移除count个。例如，列表为[1, 2, 2, 3]，执行remove("mylist", 2, 2)后，列表变为[1, 3] 。
+     *              当count < 0时，从列表尾部开始搜索，移除与value相等的元素，最多移除Math.abs(count)个。比如列表为[1, 2, 2, 3]，执行remove("mylist", -1, 2)后，列表变为[1, 2, 3]。
+     *              当count = 0时，移除列表中所有与value相等的元素。例如列表为[1, 2, 2, 3]，执行remove("mylist", 0, 2)后，列表变为[1, 3]。
+     * @return 返回实际移除的元素数量，类型为Long。如果列表不存在，返回0 。
      */
     public long lRemove(String key, long count, Object value) {
         try {
