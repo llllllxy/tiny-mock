@@ -31,8 +31,7 @@ public class GlobalExceptionHandler {
     /**
      * 捕获404异常
      *
-     * @param e
-     * @return
+     * @param e NoHandlerFoundException
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public ApiResult<?> handle404Error(Throwable e) {
@@ -41,10 +40,9 @@ public class GlobalExceptionHandler {
 
 
     /**
-     * 参数校验异常
+     * 参数校验异常1
      *
-     * @param e
-     * @return
+     * @param e BindException
      */
     @ExceptionHandler(BindException.class)
     public ApiResult<?> paramBind(BindException e) {
@@ -62,7 +60,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 参数校验异常1
+     * 参数校验异常2
+     *
+     * @param e MethodArgumentNotValidException
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -79,11 +79,21 @@ public class GlobalExceptionHandler {
         return ApiResult.fail(CommonCode.PARAM_ERROR.getCode(), message);
     }
 
+    /**
+     * 自定义业务异常
+     *
+     * @param e BusinessException
+     */
     @ExceptionHandler(BusinessException.class)
     public ApiResult<?> handleBusinessException(BusinessException e) {
         return ApiResult.fail(e.getCode(), e.getMessage());
     }
 
+    /**
+     * 其他所有异常
+     *
+     * @param throwable Throwable
+     */
     @ExceptionHandler(Exception.class)
     public ApiResult<?> exception(Throwable throwable) {
         log.error("系统处理异常：", throwable);

@@ -3,7 +3,7 @@ package org.tinycloud.tinymock.common.enums;
 public enum TenantErrorCode {
     TENANT_NOT_LOGIN(3001, "会话已过期，请重新登录！"),
     TENANT_USERNAME_OR_PASSWORD_MISMATCH(3002, "用户名或密码错误！"),
-    MAXIMUM_LOGIN_CONCURRENCY_HAS_EXCEEDED_THE_LIMIT(3003, "最大登录并发数已超过上限，无法登录！"),
+    MAXIMUM_LOGIN_CONCURRENCY_HAS_EXCEEDED_THE_LIMIT(3003, "同一账号最大登录数量已超过上限，无法登录！"),
     MAXIMUM_LOGIN_ATTEMPT_TIMES_HAS_EXCEEDED_THE_LIMIT(3004, "您已多次输错密码，账号已经被锁定，请五分钟后再试！"),
     TENANT_IS_DISABLE(3005, "租户已被禁用，请联系工作人员！"),
     CAPTCHA_IS_MISMATCH(3006, "验证码错误或已过期！"),
