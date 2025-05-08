@@ -3,7 +3,7 @@ package org.tinycloud.tinymock.common.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.tinycloud.tinymock.common.enums.CoreErrorCode;
+import org.tinycloud.tinymock.common.enums.error.CoreErrorCode;
 import org.tinycloud.tinymock.common.exception.BusinessException;
 import org.tinycloud.tinymock.common.exception.CoreException;
 

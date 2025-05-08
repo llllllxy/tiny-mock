@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.tinycloud.tinymock.common.constant.BusinessConstant;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
-import org.tinycloud.tinymock.common.enums.CoreErrorCode;
+import org.tinycloud.tinymock.common.enums.error.CoreErrorCode;
 import org.tinycloud.tinymock.common.exception.CoreException;
 import org.tinycloud.tinymock.common.utils.*;
 import org.tinycloud.tinymock.common.utils.web.IpAddressUtils;

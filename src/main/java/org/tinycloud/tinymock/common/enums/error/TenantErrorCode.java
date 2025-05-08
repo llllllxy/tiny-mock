@@ -1,4 +1,4 @@
-package org.tinycloud.tinymock.common.enums;
+package org.tinycloud.tinymock.common.enums.error;
 
 public enum TenantErrorCode {
     TENANT_NOT_LOGIN(3001, "会话已过期，请重新登录！"),

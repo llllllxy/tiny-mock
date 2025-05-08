@@ -1,4 +1,4 @@
-package org.tinycloud.tinymock.common.enums;
+package org.tinycloud.tinymock.common.enums.error;
 
 public enum CoreErrorCode {
     MOCK_ADDRESS_RESOLUTION_ERROR(1001, "Mock地址解析错误！"),

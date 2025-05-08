@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
-import org.tinycloud.tinymock.common.enums.TenantErrorCode;
+import org.tinycloud.tinymock.common.enums.error.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.JwtUtils;
 import org.tinycloud.tinymock.common.utils.RedisUtils;

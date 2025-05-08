@@ -9,7 +9,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
-import org.tinycloud.tinymock.common.enums.TenantErrorCode;
+import org.tinycloud.tinymock.common.enums.error.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.BeanConvertUtils;
 import org.tinycloud.tinymock.modules.bean.dto.ProjectMemberAddDto;

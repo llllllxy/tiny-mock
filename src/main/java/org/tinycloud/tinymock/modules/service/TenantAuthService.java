@@ -13,7 +13,7 @@ import org.tinycloud.tinymock.common.config.ApplicationConfig;
 import org.tinycloud.tinymock.common.config.interceptor.TenantAuthCache;
 import org.tinycloud.tinymock.common.config.interceptor.TenantHolder;
 import org.tinycloud.tinymock.common.constant.GlobalConstant;
-import org.tinycloud.tinymock.common.enums.TenantErrorCode;
+import org.tinycloud.tinymock.common.enums.error.TenantErrorCode;
 import org.tinycloud.tinymock.common.exception.TenantException;
 import org.tinycloud.tinymock.common.utils.*;
 import org.tinycloud.tinymock.common.utils.captcha.PngCaptcha;

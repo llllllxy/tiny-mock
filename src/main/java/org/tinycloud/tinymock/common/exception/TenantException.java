@@ -2,7 +2,7 @@ package org.tinycloud.tinymock.common.exception;
 
 
 import org.tinycloud.tinymock.common.enums.CommonCode;
-import org.tinycloud.tinymock.common.enums.TenantErrorCode;
+import org.tinycloud.tinymock.common.enums.error.TenantErrorCode;
 
 /**
  * <p>
