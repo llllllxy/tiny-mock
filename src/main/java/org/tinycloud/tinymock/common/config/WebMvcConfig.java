@@ -47,7 +47,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         tenantExcludePaths.add("/mock/**");
 
         // 添加静态资源路径
-        tenantExcludePaths.add("/static/**");
         tenantExcludePaths.add("/css/**");
         tenantExcludePaths.add("/images/**");
         tenantExcludePaths.add("/js/**");
