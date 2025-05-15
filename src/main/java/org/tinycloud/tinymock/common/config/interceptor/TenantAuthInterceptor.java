@@ -83,6 +83,7 @@ public class TenantAuthInterceptor implements HandlerInterceptor {
         }
         long expireTime = tenantAuthCache.getLoginExpireTime();
         long currentTime = System.currentTimeMillis();
+        // 验证有效期，相差不足10分钟，才自动刷新缓存
         if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
             // 刷新会话缓存时长
             tenantAuthCache.setLoginExpireTime(currentTime + applicationConfig.getTenantAuthTimeout() * 1000);

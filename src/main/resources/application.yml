@@ -8,7 +8,7 @@ tinymock:
   dbType: mysql
   # 文件存放位置，示例（ Windows配置D:/data/tinymock，Linux配置 /home/data/tinymock）
   uploadPath: D:/data/tinymock
-  # 会话控制(时间类的单位都是秒)
+  # 会话控制(时间类的单位都是秒)，请不要设置低于600
   tenantAuthTimeout: 1800
   # 最大登录并发数
   maximumConcurrentLogins: 2
