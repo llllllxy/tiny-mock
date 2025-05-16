@@ -153,13 +153,6 @@
             url: '/dashboard/topList',
             method: 'post',
             page: false,
-            parseData: function (res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code,
-                    "msg": res.msg,
-                    "data": res.data
-                };
-            },
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
                 {type: 'numbers', width: '5%', title: '#', align: 'center'},

@@ -381,18 +381,6 @@
             method: 'post',
             contentType: 'application/json',
             where: {'projectId': projectId}, // 初始化时带的参数
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            parseData: function (res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code,
-                    "msg": res.msg,
-                    "count": res.data.totalCount,
-                    "data": res.data.records
-                };
-            },
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
