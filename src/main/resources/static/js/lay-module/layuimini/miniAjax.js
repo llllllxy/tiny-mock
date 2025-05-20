@@ -244,7 +244,7 @@ layui.define(["jquery"], function (exports) {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', options.url, true); // 也可以使用POST方式，根据接口
             xhr.responseType = 'blob'; // 返回类型blob
-            xhr.setRequestHeader("token", sessionStorage.getItem('token'));
+            xhr.setRequestHeader("Authorization", sessionStorage.getItem('token'));
             // 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
             xhr.onload = function () {
                 // 请求完成
