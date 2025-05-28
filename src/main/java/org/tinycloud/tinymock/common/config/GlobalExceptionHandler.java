@@ -1,6 +1,10 @@
 package org.tinycloud.tinymock.common.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -9,11 +13,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.tinycloud.tinymock.common.enums.CommonCode;
 import org.tinycloud.tinymock.common.exception.BusinessException;
 import org.tinycloud.tinymock.common.model.ApiResult;
 
+import javax.naming.SizeLimitExceededException;
 import java.util.List;
 
 /**
@@ -27,6 +33,26 @@ import java.util.List;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @Autowired
+    private Environment environment;
+
+    /**
+     * 文件上传错误
+     *
+     * @return MultipartException
+     */
+    @ExceptionHandler(value = MultipartException.class)
+    public ApiResult<?> multipartExceptionHandler(HttpServletRequest req, MultipartException ex) {
+        if (ex.getCause().getCause() instanceof FileSizeLimitExceededException) {
+            return ApiResult.fail(CommonCode.PRECONDITION_FAILED.getCode(), "单个文件上传大小不能超过" + environment.getProperty("spring.servlet.multipart.max-file-size"));
+        } else if (ex.getCause().getCause() instanceof SizeLimitExceededException) {
+            return ApiResult.fail(CommonCode.PRECONDITION_FAILED.getCode(), "请求的总上传文件大小不能超过" + environment.getProperty("spring.servlet.multipart.max-request-size"));
+        } else {
+            return ApiResult.fail(CommonCode.PRECONDITION_FAILED.getCode(), "上传文件失败");
+        }
+    }
+
 
     /**
      * 捕获404异常
