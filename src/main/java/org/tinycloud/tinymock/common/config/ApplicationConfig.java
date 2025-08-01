@@ -140,23 +140,11 @@ public class ApplicationConfig {
         return jwtSecret;
     }
 
-    public void setJwtSecret(String jwtSecret) {
-        this.jwtSecret = jwtSecret;
-    }
-
     public Integer getMaximumConcurrentLogins() {
         return maximumConcurrentLogins;
     }
 
-    public void setMaximumConcurrentLogins(Integer maximumConcurrentLogins) {
-        this.maximumConcurrentLogins = maximumConcurrentLogins;
-    }
-
     public Integer getMaximumLoginAttemptTimes() {
         return maximumLoginAttemptTimes;
-    }
-
-    public void setMaximumLoginAttemptTimes(Integer maximumLoginAttemptTimes) {
-        this.maximumLoginAttemptTimes = maximumLoginAttemptTimes;
     }
 }

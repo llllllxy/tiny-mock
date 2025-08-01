@@ -95,7 +95,7 @@ public class RedissonConfig {
      * @return RedissonClient
      */
     @Bean("redissonCluster")
-    @ConditionalOnProperty(prefix = "redisson", name = "mode", havingValue = "sentinel")
+    @ConditionalOnProperty(prefix = "redisson", name = "mode", havingValue = "cluster")
     public RedissonClient redissonCluster() {
         // 解析redis地址列表
         String[] noteArray = redissonProperties.getNodes().split(",");
